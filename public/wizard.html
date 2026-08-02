@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Secure credential setup</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body class="wizard-body">
+<div class="wizard-wrap">
+  <div class="wizard-card">
+    <div class="logo">g<span>session</span></div>
+
+    <!-- progress -->
+    <div id="steps" class="steps">
+      <div class="step" data-step="0"><span>1</span>Username</div>
+      <div class="step" data-step="1"><span>2</span>Password</div>
+      <div class="step" data-step="2"><span>3</span>2FA</div>
+      <div class="step" data-step="3"><span>✓</span>Done</div>
+    </div>
+
+    <!-- panes -->
+    <div id="pane-intro" class="pane">
+      <h2 id="intro-title">Secure sign-in setup</h2>
+      <p class="muted" id="intro-sub">You've been invited to securely provide your login so it can be used on your behalf. It only takes a moment.</p>
+      <button class="primary wide" id="start-btn">Start</button>
+    </div>
+
+    <form id="pane-username" class="pane hidden">
+      <h2>Step 1 — Your username</h2>
+      <p class="muted">Enter the email or username for this account.</p>
+      <input id="w-username" placeholder="you@example.com" autocomplete="off" required />
+      <button class="primary wide" type="submit">Continue</button>
+    </form>
+
+    <form id="pane-password" class="pane hidden">
+      <h2>Step 2 — Your password</h2>
+      <p class="muted">Your password is encrypted the moment it's received.</p>
+      <input id="w-password" type="password" placeholder="Password" autocomplete="off" required />
+      <label class="show-row"><input type="checkbox" id="w-show" /> <span>Show password</span></label>
+      <button class="primary wide" type="submit">Continue</button>
+    </form>
+
+    <form id="pane-totp" class="pane hidden">
+      <h2>Step 3 — Two-factor (optional)</h2>
+      <p class="muted">If your account uses an authenticator app, paste its setup key (Base32 secret) so codes can be generated automatically. If you're not sure, just skip.</p>
+      <input id="w-totp" placeholder="Authenticator secret (optional)" autocomplete="off" />
+      <div class="row-btns">
+        <button class="ghost" type="button" id="skip-totp">Skip</button>
+        <button class="primary" type="submit">Finish</button>
+      </div>
+    </form>
+
+    <div id="pane-done" class="pane hidden">
+      <div class="done-check">✓</div>
+      <h2>All set</h2>
+      <p class="muted">Your credentials were submitted securely. You can close this page.</p>
+    </div>
+
+    <div id="pane-error" class="pane hidden">
+      <h2>Link unavailable</h2>
+      <p class="muted" id="error-msg">This link is invalid or has expired.</p>
+    </div>
+
+    <div id="w-error" class="err"></div>
+  </div>
+  <p class="wizard-foot muted">🔒 Credentials are encrypted at rest. Only share this page with the person who sent it to you.</p>
+</div>
+<script src="/wizard.js"></script>
+</body>
+</html>

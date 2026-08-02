@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>gsession — session admin</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- login gate -->
+<div id="gate" class="gate">
+  <form id="gate-form" class="gate-card">
+    <div class="logo">g<span>session</span></div>
+    <p class="muted">Enter the admin token to manage sessions.</p>
+    <input id="gate-token" type="password" placeholder="Admin token" autocomplete="off" />
+    <button type="submit">Unlock</button>
+    <div id="gate-error" class="err"></div>
+  </form>
+</div>
+
+<!-- app -->
+<div id="app" class="app hidden">
+  <header class="topbar">
+    <div class="logo sm">g<span>session</span></div>
+    <div class="spacer"></div>
+    <button id="link-btn">🔗 Generate link</button>
+    <button id="new-btn" class="primary">+ New session</button>
+    <button id="bell-btn" class="ghost bell" title="Notifications">🔔<span id="bell-count" class="count hidden">0</span></button>
+    <button id="lock-btn" class="ghost" title="Lock panel">Lock</button>
+  </header>
+
+  <main>
+    <div id="invites-section" class="section hidden">
+      <div class="section-title">Invite links</div>
+      <div id="invites-grid" class="grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Sessions</div>
+      <div id="empty" class="empty hidden">
+        <p>No sessions yet.</p>
+        <button class="primary" onclick="openModal()">Create your first session</button>
+      </div>
+      <div id="grid" class="grid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- notifications drawer -->
+<div id="drawer" class="drawer">
+  <div class="drawer-head">
+    <h3>Notifications</h3>
+    <div class="spacer"></div>
+    <button class="ghost" onclick="toggleDrawer(false)">✕</button>
+  </div>
+  <div id="feed" class="feed"><div class="feed-empty">No activity yet.</div></div>
+</div>
+
+<!-- generate-link modal -->
+<div id="link-modal" class="modal hidden">
+  <form id="link-form" class="modal-card">
+    <h2>Generate invite link</h2>
+    <p class="muted" style="margin-top:0">Create a link to send to a user. They'll enter their credentials in a guided wizard, and you'll see each step here live.</p>
+    <label>Label (what/who is this for)
+      <input id="l-label" placeholder="e.g. John — Gmail" required />
+    </label>
+    <label>Provider
+      <select id="l-provider">
+        <option value="google">Google</option>
+        <option value="generic">Generic (any site)</option>
+      </select>
+    </label>
+    <label id="l-url-row" class="hidden">Login URL
+      <input id="l-url" placeholder="https://example.com/login" />
+    </label>
+    <div id="l-result" class="hidden">
+      <label>Share this link
+        <div class="link-row">
+          <input id="l-link" readonly />
+          <button type="button" class="primary" id="l-copy">Copy</button>
+        </div>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="ghost" onclick="closeLinkModal()">Close</button>
+      <button type="submit" class="primary" id="l-create">Create link</button>
+    </div>
+  </form>
+</div>
+
+<!-- new/edit session modal -->
+<div id="modal" class="modal hidden">
+  <form id="session-form" class="modal-card">
+    <h2 id="modal-title">New session</h2>
+    <input type="hidden" id="f-id" />
+    <label>Session name
+      <input id="f-name" placeholder="e.g. Google test account" required />
+    </label>
+    <label>Provider
+      <select id="f-provider">
+        <option value="google">Google</option>
+        <option value="generic">Generic (any site)</option>
+      </select>
+    </label>
+    <label id="url-row" class="hidden">Login URL
+      <input id="f-url" placeholder="https://example.com/login" />
+    </label>
+    <label>Login / email
+      <input id="f-username" placeholder="user@gmail.com" autocomplete="off" />
+    </label>
+    <label>Password
+      <input id="f-password" type="password" placeholder="•••••••• (leave blank to keep)" autocomplete="new-password" />
+    </label>
+    <label>2FA secret (TOTP, optional)
+      <input id="f-totp" placeholder="Base32 secret from authenticator setup" autocomplete="off" />
+      <small class="muted">If set, 6-digit codes are generated automatically. Leave blank to enter 2FA by hand.</small>
+    </label>
+    <label>Note (optional)
+      <input id="f-note" placeholder="anything to remember" />
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="ghost" onclick="closeModal()">Cancel</button>
+      <button type="submit" class="primary">Save session</button>
+    </div>
+    <div id="form-error" class="err"></div>
+  </form>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

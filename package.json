@@ -1,0 +1,16 @@
+{
+  "name": "gsession",
+  "version": "1.0.0",
+  "description": "Remote browser session manager - store credentials and manage isolated persistent Chrome sessions from an admin panel",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "setup": "playwright install chromium"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "otplib": "^12.0.1",
+    "playwright": "^1.47.2"
+  }
+}
