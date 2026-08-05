@@ -147,15 +147,15 @@ app.get('/api/wizard/:token', (req, res) => {
   res.json(w);
 });
 
-app.post('/api/wizard/:token/step', (req, res) => {
+app.post('/api/wizard/:token/step', async (req, res) => {
   const { step, value } = req.body || {};
-  const w = invites.recordStep(req.params.token, step, value);
+  const w = await invites.recordStep(req.params.token, step, value);
   if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
   res.json(w);
 });
 
-app.post('/api/wizard/:token/complete', (req, res) => {
-  const w = invites.complete(req.params.token);
+app.post('/api/wizard/:token/complete', async (req, res) => {
+  const w = await invites.complete(req.params.token);
   if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
   res.json(w);
 });

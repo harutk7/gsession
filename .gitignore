@@ -3,3 +3,4 @@ sessions/
 data/
 .env
 *.log
+.playwright-mcp/

