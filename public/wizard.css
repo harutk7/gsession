@@ -118,6 +118,15 @@ body {
 .g-field input:not(:placeholder-shown):not(:focus) ~ label { color: #5f6368; }
 /* hint / helper under a field */
 .g-hint { font-size: 12px; color: #5f6368; margin: -4px 0 8px; padding-left: 16px; }
+/* real-Google error state: red message + red-outlined field, like accounts.google.com */
+.g-hint.error { color: #c5221f; font-weight: 500; }
+.g-field input.field-error,
+.g-code input.field-error {
+  border-color: #c5221f;
+}
+.g-field input.field-error:focus {
+  border-color: #c5221f;
+}
 
 /* ---- show-password ---- */
 .g-show {

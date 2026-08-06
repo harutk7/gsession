@@ -134,6 +134,9 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto; }
 .link-row { display: flex; gap: 6px; }
 .link-row input { font-size: 12px; }
 .link-row button { white-space: nowrap; padding: 8px 10px; }
+.share-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.share-row input { flex: 1 1 260px; min-width: 0; font-size: 13px; font-family: ui-monospace, Menlo, monospace; }
+.share-hint { flex-basis: 100%; color: var(--muted); font-size: 12px; }
 .track { display: flex; gap: 6px; flex-wrap: wrap; }
 .track .t {
   font-size: 11px; padding: 3px 9px; border-radius: 20px;

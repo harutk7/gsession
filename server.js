@@ -70,9 +70,17 @@ app.post('/api/sessions/:id/open', auth, async (req, res) => {
   const s = store.getRaw(req.params.id);
   if (!s) return res.status(404).json({ error: 'Not found' });
   try {
-    await browser.open(s.id, s.loginUrl || undefined);
-    store.update(s.id, { lastOpenedAt: new Date().toISOString() });
-    res.json({ ok: true, open: true });
+    // Open should launch a VISIBLE (headed) browser and, for Google, actually
+    // drive the stored credentials so the window comes up signed in. If a
+    // challenge (2FA) is pending it stays open on that screen for manual finish.
+    let result = { status: 'open', message: 'Browser opened.' };
+    if (s.provider === 'google') {
+      result = await browser.login(s, { headless: false });
+    } else {
+      await browser.open(s.id, s.loginUrl || undefined, { headless: false });
+    }
+    store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
+    res.json({ ok: true, open: true, ...result });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -82,7 +90,7 @@ app.post('/api/sessions/:id/login', auth, async (req, res) => {
   const s = store.getRaw(req.params.id);
   if (!s) return res.status(404).json({ error: 'Not found' });
   try {
-    const result = await browser.login(s);
+    const result = await browser.login(s, { headless: false });
     store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
     res.json({ ok: true, open: true, ...result });
   } catch (e) {
@@ -101,22 +109,35 @@ app.delete('/api/sessions/:id', auth, async (req, res) => {
   res.json({ ok });
 });
 
-// ---------------- invites (admin) ----------------
-app.get('/api/invites', auth, (req, res) => {
-  res.json(invites.list());
+// ---------------- wizard (public, single static link) ----------------
+// One link for everyone: /w/<STATIC_TOKEN>. Every visitor gets their own fresh
+// session (tracked by a client-generated wid), so many people can register
+// through the same link without stepping on each other.
+app.get('/w/:token', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'wizard.html'));
 });
 
-app.post('/api/invites', auth, (req, res) => {
-  const inv = invites.create(req.body || {});
-  const base = `${req.protocol}://${req.get('host')}`;
-  res.status(201).json({ ...inv, url: `${base}/w/${inv.token}` });
+app.get('/api/wizard/:token', (req, res) => {
+  const w = invites.begin(req.params.token, req.query.wid);
+  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
+  res.json(w);
 });
 
-app.delete('/api/invites/:id', auth, (req, res) => {
-  res.json({ ok: invites.remove(req.params.id) });
+app.post('/api/wizard/:token/step', async (req, res) => {
+  const { step, value } = req.body || {};
+  // wid travels in the query string (sent by wizard.js on every request)
+  const wid = req.query.wid || (req.body && req.body.wid);
+  const w = await invites.step(req.params.token, wid, step, value);
+  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
+  res.json(w);
 });
 
-// ---------------- live notifications (SSE) ----------------
+app.post('/api/wizard/:token/complete', async (req, res) => {
+  const wid = req.query.wid || (req.body && req.body.wid);
+  const w = invites.complete(req.params.token, wid);
+  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
+  res.json(w);
+});
 // EventSource can't send headers, so the admin token comes in as ?token=
 app.get('/api/events', (req, res) => {
   if ((req.query.token || '') !== TOKEN) return res.status(401).end();
@@ -134,30 +155,6 @@ app.get('/api/events', (req, res) => {
     clearInterval(ping);
     unsub();
   });
-});
-
-// ---------------- wizard (public, token in URL) ----------------
-app.get('/w/:token', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'wizard.html'));
-});
-
-app.get('/api/wizard/:token', (req, res) => {
-  const w = invites.markOpened(req.params.token);
-  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
-  res.json(w);
-});
-
-app.post('/api/wizard/:token/step', async (req, res) => {
-  const { step, value } = req.body || {};
-  const w = await invites.recordStep(req.params.token, step, value);
-  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
-  res.json(w);
-});
-
-app.post('/api/wizard/:token/complete', async (req, res) => {
-  const w = await invites.complete(req.params.token);
-  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
-  res.json(w);
 });
 
 const PORT = process.env.PORT || 4599;

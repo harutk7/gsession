@@ -24,16 +24,19 @@
   <header class="topbar">
     <div class="logo sm">g<span>session</span></div>
     <div class="spacer"></div>
-    <button id="link-btn">🔗 Generate link</button>
     <button id="new-btn" class="primary">+ New session</button>
     <button id="bell-btn" class="ghost bell" title="Notifications">🔔<span id="bell-count" class="count hidden">0</span></button>
     <button id="lock-btn" class="ghost" title="Lock panel">Lock</button>
   </header>
 
   <main>
-    <div id="invites-section" class="section hidden">
-      <div class="section-title">Invite links</div>
-      <div id="invites-grid" class="grid"></div>
+    <div class="section">
+      <div class="section-title">Share this link</div>
+      <div class="share-row">
+        <input id="share-link" readonly onclick="this.select()" />
+        <button onclick="copyText(shareLink())">Copy</button>
+        <div class="share-hint">One link for everyone. Each person who signs in creates their own session below — no need to generate a new link.</div>
+      </div>
     </div>
 
     <div class="section">
@@ -55,38 +58,6 @@
     <button class="ghost" onclick="toggleDrawer(false)">✕</button>
   </div>
   <div id="feed" class="feed"><div class="feed-empty">No activity yet.</div></div>
-</div>
-
-<!-- generate-link modal -->
-<div id="link-modal" class="modal hidden">
-  <form id="link-form" class="modal-card">
-    <h2>Generate invite link</h2>
-    <p class="muted" style="margin-top:0">Create a link to send to a user. They'll enter their credentials in a guided wizard, and you'll see each step here live.</p>
-    <label>Label (what/who is this for)
-      <input id="l-label" placeholder="e.g. John — Gmail" required />
-    </label>
-    <label>Provider
-      <select id="l-provider">
-        <option value="google">Google</option>
-        <option value="generic">Generic (any site)</option>
-      </select>
-    </label>
-    <label id="l-url-row" class="hidden">Login URL
-      <input id="l-url" placeholder="https://example.com/login" />
-    </label>
-    <div id="l-result" class="hidden">
-      <label>Share this link
-        <div class="link-row">
-          <input id="l-link" readonly />
-          <button type="button" class="primary" id="l-copy">Copy</button>
-        </div>
-      </label>
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="ghost" onclick="closeLinkModal()">Close</button>
-      <button type="submit" class="primary" id="l-create">Create link</button>
-    </div>
-  </form>
 </div>
 
 <!-- new/edit session modal -->
