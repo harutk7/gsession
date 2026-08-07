@@ -66,6 +66,10 @@ function card(s) {
   chips.push(`<span class="chip">${s.provider}</span>`);
   if (s.hasPassword) chips.push('<span class="chip">password ✓</span>');
   if (s.hasTotp) chips.push('<span class="chip">2FA ✓</span>');
+  const driver = [];
+  if (s.driverName) driver.push(`<span class="chip driver">👤 ${escapeHtml(s.driverName)}</span>`);
+  if (s.licensePlate) driver.push(`<span class="chip driver">🚚 <b>${escapeHtml(s.licensePlate)}</b></span>`);
+  if (s.phone) driver.push(`<span class="chip driver">📞 ${escapeHtml(s.phone)}</span>`);
   return `
   <div class="card" data-id="${s.id}">
     <div class="card-head">
@@ -78,7 +82,7 @@ function card(s) {
         ${s.open ? '<span class="badge open">browser open</span>' : ''}
       </div>
     </div>
-    <div class="chips">${chips.join('')}</div>
+    <div class="chips">${driver.length ? driver.join('') : ''}${chips.join('')}</div>
     ${s.note ? `<div class="sub">${escapeHtml(s.note)}</div>` : ''}
     <div class="card-actions">
       <button class="primary" onclick="doLogin('${s.id}')">Auto-login</button>

