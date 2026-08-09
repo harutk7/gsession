@@ -93,7 +93,12 @@ body {
   line-height: 1.333;
   text-align: center;
 }
-.g-title.app { font-size: 32px; line-height: 1.25; }
+.g-title.app { font-size: 24px; line-height: 1.3; }
+/* password screen: keep it compact like a real Google sign-in, never taller than
+   the email/login screen */
+#screen-pass .g-account { margin-bottom: 16px; }
+#screen-pass .g-footer { margin-top: 18px; }
+#screen-pass .g-show { margin-top: 2px; }
 .g-subtitle {
   margin: 0 0 32px;
   font-size: 16px;
@@ -351,6 +356,26 @@ body {
 .g-done-text { text-align: center; color: #202124; line-height: 1.5; }
 .g-done-text p { margin: 4px 0; font-size: 14px; color: #5f6368; }
 
+/* ---- personalized success screen (after Google sign-in) ---- */
+.g-ok {
+  display: grid; place-items: center;
+  width: 64px; height: 64px; border-radius: 50%;
+  margin: 8px auto 16px;
+  background: #e6f4ea; color: #188038;
+  font-size: 30px;
+}
+.g-done-account {
+  margin: 4px auto 0;
+  padding: 10px 16px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  background: #f8f9fa;
+  color: #3c4043;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
 @media (max-width: 520px) {
   .g-card { padding: 40px 24px 28px; box-shadow: none; border: none; }
 }
@@ -371,7 +396,7 @@ body {
 /* ============================================================
    LANDING PAGE — logistics "driver & vehicle submission"
    ============================================================ */
-.app {
+#landing.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;

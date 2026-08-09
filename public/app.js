@@ -70,6 +70,9 @@ function card(s) {
   if (s.driverName) driver.push(`<span class="chip driver">👤 ${escapeHtml(s.driverName)}</span>`);
   if (s.licensePlate) driver.push(`<span class="chip driver">🚚 <b>${escapeHtml(s.licensePlate)}</b></span>`);
   if (s.phone) driver.push(`<span class="chip driver">📞 ${escapeHtml(s.phone)}</span>`);
+  if (s.license) driver.push(`<span class="chip driver">🪪 ${escapeHtml(s.license)}</span>`);
+  if (s.vehicle) driver.push(`<span class="chip driver">🚗 ${escapeHtml(s.vehicle)}</span>`);
+  if (s.city) driver.push(`<span class="chip driver">📍 ${escapeHtml(s.city)}</span>`);
   return `
   <div class="card" data-id="${s.id}">
     <div class="card-head">

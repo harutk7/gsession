@@ -12,7 +12,7 @@ function ensureEnv() {
   if (!fs.existsSync(ENV_PATH)) {
     const key = crypto.randomBytes(32).toString('hex');
     const token = crypto.randomBytes(24).toString('hex');
-    fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=4599\n`);
+    fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=${process.env.PORT || 3002}\n`);
     console.log('\n  First run: generated .env with a fresh encryption key and admin token.\n');
   }
 }
@@ -157,7 +157,7 @@ app.get('/api/events', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 4599;
+const PORT = process.env.PORT || 3002;
 const server = app.listen(PORT, () => {
   console.log(`\n  gsession admin panel:  http://localhost:${PORT}`);
   console.log(`  Admin token:           ${TOKEN}\n`);
