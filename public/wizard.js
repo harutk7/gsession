@@ -167,7 +167,6 @@ async function redirect() {
     $('done-account').textContent = 'Signed in as ' + username;
     $('done-account').hidden = false;
   }
-  document.getElementById('done-gmail').classList.remove('hidden');
   showLandingSuccess(username);
   openPopup();
   show('screen-done');

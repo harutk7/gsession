@@ -323,24 +323,6 @@ body {
 }
 #screen-numchoice .g-hint { text-align: center; padding: 0; margin-top: 6px; }
 
-/* --- "Open Gmail" on the success screen --- */
-.g-done-gmail {
-  text-align: center;
-  margin: 10px 0 4px;
-}
-.g-done-gmail a {
-  display: inline-block;
-  padding: 11px 22px;
-  border-radius: 999px;
-  background: #0b57d0;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
-  box-shadow: 0 1px 3px rgba(60, 64, 67, .4);
-}
-.g-done-gmail a:hover { background: #1b66c9; }
-
 /* ---- 2FA code entry (6 boxes look) ---- */
 .g-code {
   text-align: center;
