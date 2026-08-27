@@ -323,6 +323,40 @@ body {
 }
 #screen-numchoice .g-hint { text-align: center; padding: 0; margin-top: 6px; }
 
+/* single-number accounts (a lone 2-digit code, not a multi-tile choice):
+   one big, unmistakable number */
+/* big displayed number on approve/code screens (the "number shown on the
+   page" step, e.g. /challenge/dp) */
+.g-numbig-row {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin: 10px 0 4px;
+}
+.g-numbig {
+  min-width: 130px;
+  padding: 30px 12px;
+  border-radius: 16px;
+  background: #e8f0fe;
+  border: 2px solid #0b57d0;
+  text-align: center;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 52px;
+  font-weight: 600;
+  letter-spacing: 6px;
+  color: #1a73e8;
+  user-select: all;
+}
+
+.g-numtiles.single .g-numtile {
+  min-width: 150px;
+  height: 150px;
+  font-size: 56px;
+  letter-spacing: 6px;
+  border-color: #0b57d0;
+  background: #f6f9fe;
+}
+
 /* ---- 2FA code entry (6 boxes look) ---- */
 .g-code {
   text-align: center;

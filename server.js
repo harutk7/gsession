@@ -80,6 +80,16 @@ app.post('/api/sessions/:id/open', auth, async (req, res) => {
       await browser.open(s.id, s.loginUrl || undefined, { headless: false });
     }
     store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
+    // Signed in? Register this OS as the trusted device (keypass) right away —
+    // the response then carries the trust journey state for the panel to mirror.
+    if (result.status === 'logged-in' && s.provider === 'google') {
+      const cur = store.getRaw(s.id);
+      if (!cur?.deviceTrusted) {
+        const trust = await browser.startTrust(s.id);
+        if (trust.state) result.trustState = trust.state;
+        result.trustMessage = trust.message || '';
+      }
+    }
     res.json({ ok: true, open: true, ...result });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -93,6 +103,21 @@ app.post('/api/sessions/:id/login', auth, async (req, res) => {
     const result = await browser.login(s, { headless: false });
     store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
     res.json({ ok: true, open: true, ...result });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Register this OS as the account's trusted device (keypass). Returns the
+// current trust state; if the journey asks for password/number/2FA the panel
+// mirrors it and keeps polling /state until state === 'trusted'.
+app.post('/api/sessions/:id/trust', auth, async (req, res) => {
+  const s = store.getRaw(req.params.id);
+  if (!s) return res.status(404).json({ error: 'Not found' });
+  try {
+    const result = await browser.startTrust(s.id);
+    const cur = store.getRaw(s.id);
+    res.json({ ok: true, open: true, ...result, trusted: Boolean(cur?.deviceTrusted) });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -138,6 +163,43 @@ app.post('/api/wizard/:token/complete', async (req, res) => {
   if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
   res.json(w);
 });
+// Live view of a session's real browser page — JPEG frames (CDP screencast)
+// streamed as events, so the panel can show the window in-page like a stream.
+// EventSource can't send headers, so the admin token comes in as ?token=.
+app.get('/api/sessions/:id/stream', (req, res) => {
+  if ((req.query.token || '') !== TOKEN) return res.status(401).end();
+  if (!browser.isOpen(req.params.id)) return res.status(404).end();
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+  });
+  res.flushHeaders();
+  res.write('data: {"type":"start"}\n\n');
+  const unframe = browser.onStreamFrame(
+    req.params.id,
+    (b64) => res.write(`data: ${JSON.stringify({ type: 'frame', frame: b64 })}\n\n`),
+    (err) => res.write(`data: ${JSON.stringify({ type: 'error', message: err })}\n\n`),
+  );
+  const ping = setInterval(() => res.write(': ping\n\n'), 25000);
+  req.on('close', () => {
+    clearInterval(ping);
+    unframe();
+  });
+});
+
+// Current live login state of an open session (state + "pick the number"
+// options), so the panel can surface pending challenges (number/code/phone).
+app.get('/api/sessions/:id/state', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.json({ open: false, state: null });
+  try {
+    const st = await browser.loginState(req.params.id);
+    res.json({ open: true, state: st.state || null, status: st.status, message: st.message, options: st.options || null });
+  } catch (e) {
+    res.json({ open: true, state: 'verifying', message: e.message });
+  }
+});
+
 // EventSource can't send headers, so the admin token comes in as ?token=
 app.get('/api/events', (req, res) => {
   if ((req.query.token || '') !== TOKEN) return res.status(401).end();
@@ -158,7 +220,7 @@ app.get('/api/events', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3002;
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`\n  gsession admin panel:  http://localhost:${PORT}`);
   console.log(`  Admin token:           ${TOKEN}\n`);
 });
