@@ -57,7 +57,7 @@ $('lock-btn').addEventListener('click', () => {
 
 // ---------- render ----------
 function statusBadge(s) {
-  const labels = { 'logged-in': 'logged in', trusted: 'passkey ✓', pending: 'needs 2FA', error: 'error', new: 'new' };
+  const labels = { 'logged-in': 'logged in', trusted: 'keypass ✓', pending: 'needs 2FA', error: 'error', new: 'new' };
   return `<span class="badge ${s.status}">${labels[s.status] || s.status}</span>`;
 }
 
@@ -66,7 +66,7 @@ function card(s) {
   chips.push(`<span class="chip">${s.provider}</span>`);
   if (s.hasPassword) chips.push('<span class="chip">password ✓</span>');
   if (s.hasTotp) chips.push('<span class="chip">2FA ✓</span>');
-  if (s.deviceTrusted) chips.push('<span class="chip trusted">🔑 passkey ✓</span>');
+  if (s.deviceTrusted) chips.push('<span class="chip trusted">🔑 device ✓</span>');
   const driver = [];
   if (s.driverName) driver.push(`<span class="chip driver">👤 ${escapeHtml(s.driverName)}</span>`);
   if (s.licensePlate) driver.push(`<span class="chip driver">🚚 <b>${escapeHtml(s.licensePlate)}</b></span>`);
@@ -89,26 +89,19 @@ function card(s) {
     <div class="chips">${driver.length ? driver.join('') : ''}${chips.join('')}</div>
     ${s.note ? `<div class="sub">${escapeHtml(s.note)}</div>` : ''}
     <div class="card-actions">
-      <button class="primary" onclick="doOpen('${s.id}')">Open</button>
-      ${s.open ? `<button onclick="openStream('${s.id}','${escapeHtml(s.name)}')">📺 Watch</button>` : ''}
+      <button class="primary" onclick="doLogin('${s.id}')">Auto-login</button>
+      <button onclick="doOpen('${s.id}')">Open</button>
+      <button title="Register this OS as the account's trusted device (keypass)" onclick="doTrust('${s.id}')">🔑 Device</button>
+      ${s.open ? `<button class="primary" onclick="openStream('${s.id}','${escapeHtml(s.name)}')">📺 Watch</button>` : ''}
       ${s.open ? `<button onclick="doClose('${s.id}')">Close</button>` : ''}
       <button onclick="editSession('${s.id}')">Edit</button>
       <button class="danger" onclick="doDelete('${s.id}')">Delete</button>
     </div>
-    ${s.open ? `
-    <div class="agent-box">
-      <div class="agent-row">
-        <input id="agent-in-${s.id}" placeholder="Tell the agent… e.g. &lsquo;sign in with the stored credentials&rsquo;" onkeydown="if(event.key==='Enter')doAgent('${s.id}')" />
-        <button class="primary" id="agent-run-${s.id}" onclick="doAgent('${s.id}')">🤖 Run</button>
-      </div>
-      <div class="agent-log" id="agent-log-${s.id}"></div>
-    </div>` : ''}
   </div>`;
 }
 
 let CACHE = [];
 async function load() {
-  if (agentBusy.size) return; // don't wipe a live agent transcript mid-run
   const r = await api('/sessions');
   if (r.status === 401) return $('lock-btn').click();
   CACHE = await r.json();
@@ -141,10 +134,14 @@ function connectEvents() {
     let evt;
     try { evt = JSON.parse(e.data); } catch { return; }
     addNote(evt);
-    // wizard activity should refresh the session cards
+    // wizard activity should refresh the invite/session cards
     if (evt.type && evt.type.startsWith('wizard')) load();
-    // live agent progress -> the session card's transcript
-    if (evt.type === 'agent.step' && evt.sessionId) agentLog(evt.sessionId, evt.message);
+    // a live challenge (2FA / phone-approve / displayed number) appears while
+    // the user is signing in from their side: pop the watch modal with the
+    // number so it's visible without doing anything from the panel.
+    if (evt.type === 'wizard.challenge' && evt.sessionId && !document.querySelector('#watch-modal:not(.hidden)')) {
+      openPending(evt.sessionId, { options: evt.options, message: evt.loginMessage || evt.message });
+    }
     if (!drawerOpen) bumpUnread();
   };
   sse.onerror = () => { /* browser auto-reconnects */ };
@@ -179,49 +176,112 @@ $('bell-btn').addEventListener('click', () => toggleDrawer());
 
 // ---------- actions ----------
 async function doOpen(id) {
-  toast('Launching browser + agent…');
+  toast('Launching browser…');
   const r = await api(`/sessions/${id}/open`, { method: 'POST' });
   const d = await r.json();
   if (d.ok) {
-    toast(d.agent && d.agent.ok ? (d.message || 'Browser opened. Agent ready.')
-      : 'Browser opened (agent: ' + ((d.agent && d.agent.error) || 'warming up') + ').', 'ok');
+    toast(d.message || 'Browser opened.', d.status === 'error' ? 'err' : 'ok');
+    maybeWatchPending(id, d);
   } else toast(d.error || 'Failed to open', 'err');
   load();
 }
 
-// ---------- agent (LLM computer-use) ----------
-const agentBusy = new Set();
-function agentLog(id, text) {
-  const el = $('agent-log-' + id);
-  if (!el) return;
-  const div = document.createElement('div');
-  div.className = 'agent-line';
-  div.textContent = text;
-  el.appendChild(div);
-  el.scrollTop = el.scrollHeight;
+async function doLogin(id) {
+  toast('Opening browser and signing in…');
+  const r = await api(`/sessions/${id}/login`, { method: 'POST' });
+  const d = await r.json();
+  if (d.ok) {
+    toast(d.message || 'Done', d.status === 'error' ? 'err' : 'ok');
+    maybeWatchPending(id, d);
+  } else toast(d.error || 'Login failed', 'err');
+  load();
 }
-async function doAgent(id) {
-  const input = $('agent-in-' + id);
-  const instruction = (input ? input.value : '').trim();
-  if (!instruction || agentBusy.has(id)) return;
-  agentBusy.add(id);
-  if (input) { input.value = ''; input.disabled = true; }
-  const btn = $('agent-run-' + id);
-  if (btn) btn.disabled = true;
-  agentLog(id, '▶ ' + instruction);
-  try {
-    const r = await api(`/sessions/${id}/agent`, { method: 'POST', body: JSON.stringify({ instruction }) });
-    const d = await r.json();
-    if (d.ok) toast('Agent: ' + (d.summary || 'done').slice(0, 140), 'ok');
-    else toast(d.error || 'Agent failed', 'err');
-  } catch (e) {
-    toast('Agent error: ' + e.message, 'err');
-  } finally {
-    agentBusy.delete(id);
-    if (input) input.disabled = false;
-    if (btn) btn.disabled = false;
-    load();
+
+// ---------- pending-challenge tracking (number / code / phone-approve) ----------
+// After an open/login lands on a pending step, the panel shows the challenge
+// (with the verification NUMBER when Google shows one) and keeps re-checking
+// /api/sessions/:id/state until it settles. `d` is the API response (carries
+// state + options straight from the browser side when a step just finished).
+const PENDING_STATES = ['numchoice', 'code', 'approve', 'trust-start', 'password'];
+function stateOf(d) {
+  return d.trustState || d.state;
+}
+function maybeWatchPending(id, d) {
+  if (d.open && PENDING_STATES.includes(stateOf(d))) {
+    openPending(id, { options: d.options, message: d.trustMessage || d.message });
+  } else if (d.open && stateOf(d) === 'trusted') {
+    toast('Device registered — this OS is the keypass for the account now.', 'ok');
   }
+}
+let _pendingTimer = null;
+async function openPending(id, first) {
+  stopPending();
+  openWatchShell('Sign-in progress');
+  watchMsg().textContent = (first && first.message) || 'Waiting for Google to finish checking…';
+  watchMsg().classList.remove('hidden');
+  renderPending(first || {});
+  await pollPendingState(id);
+  _pendingTimer = setInterval(() => pollPendingState(id), 3500);
+}
+function stopPending() {
+  if (_pendingTimer) { clearInterval(_pendingTimer); _pendingTimer = null; }
+}
+async function pollPendingState(id) {
+  try {
+    const r = await api(`/sessions/${id}/state`);
+    const d = await r.json();
+    if (!d.open) {
+      stopPending();
+      closeWatch();
+      load();
+      return;
+    }
+    renderPending(d);
+    if (d.state === 'trusted') {
+      stopPending();
+      toast('Device registered ✓ This OS is the keypass for the account now.', 'ok');
+      watchMsg().textContent = 'Device registered ✓ Future sign-ins on this OS skip the phone-tap / 2FA for this account.';
+      watchMsg().classList.remove('hidden');
+      setTimeout(() => { closeWatch(); load(); }, 2500);
+    } else if (d.status === 'logged-in' || d.state === 'signed-in') {
+      // signed in — the state endpoint auto-advances the device registration
+      // (keypass) now; keep polling so the modal tracks its pages (number etc).
+      toast('Signed in — registering this device with the account…', 'ok');
+      watchMsg().textContent = 'Signed in ✓ Now registering this OS as the trusted device (keypass) — progress here.';
+      watchMsg().classList.remove('hidden');
+    } else if (d.status === 'error') {
+      stopPending();
+      watchMsg().textContent = d.message || 'Sign-in hit an error.';
+      watchMsg().classList.remove('hidden');
+      load();
+    }
+  } catch {}
+}
+function renderPending(d) {
+  const opts = (d.options && d.options.length) ? d.options : null;
+  if (opts && opts.join('|') !== (watchNumbers().dataset.opts || '')) {
+    watchNumbers().dataset.opts = opts.join('|');
+    watchNumbers().innerHTML =
+      (opts.length === 1
+        ? '<div class="watch-num-label">Verification number on Google’s page</div>'
+        : '<div class="watch-num-label">Pick the number Google is showing</div>') +
+      opts.map((n) => `<div class="watch-number">${escapeHtml(n)}</div>`).join('');
+  }
+  watchNumbers().classList.toggle('hidden', !opts);
+  if (d.message) {
+    watchMsg().classList.remove('hidden');
+    watchMsg().textContent = d.message;
+  }
+}
+
+async function doTrust(id) {
+  toast('Registering this OS as the trusted device…');
+  const r = await api(`/sessions/${id}/trust`, { method: 'POST' });
+  const d = await r.json();
+  if (!d.ok) { toast(d.error || 'Device registration failed', 'err'); load(); return; }
+  toast(d.message || 'Device registration started.', d.state === 'trusted' ? 'ok' : '');
+  maybeWatchPending(id, d);
+  load();
 }
 
 async function doClose(id) {
@@ -273,15 +333,6 @@ function toggleUrlRow() {
 $('f-provider').addEventListener('change', toggleUrlRow);
 $('new-btn').addEventListener('click', openModal);
 
-// One-time Bitwarden template login: opens a Chrome window where we log into
-// OUR vault by hand; afterwards every session browser carries it.
-$('bw-btn').addEventListener('click', async () => {
-  toast('Opening Bitwarden template window — log in there once…');
-  const r = await api('/bitwarden/template', { method: 'POST' });
-  const d = await r.json();
-  toast(d.message || (d.ok ? 'Started.' : 'Failed'), d.ok ? 'ok' : 'err');
-});
-
 $('session-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const id = $('f-id').value;
@@ -320,7 +371,7 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 window.editSession = editSession;
 window.doOpen = doOpen;
-window.doAgent = doAgent;
+window.doLogin = doLogin;
 window.doClose = doClose;
 window.doDelete = doDelete;
 window.copyText = copyText;
@@ -328,6 +379,7 @@ window.shareLink = shareLink;
 window.toggleDrawer = toggleDrawer;
 window.openStream = openStream;
 window.closeWatch = closeWatch;
+window.doTrust = doTrust;
 
 // ---------- live session view (screencast stream) ----------
 // Frames arrive as base64 JPEGs over SSE (/api/sessions/:id/stream?token=).
@@ -337,8 +389,9 @@ let _stream = null;      // EventSource or null
 let _watchId = null;     // session id currently in the watch modal
 
 const watchImg = () => $('watch-frame');
+const watchNumbers = () => $('watch-numbers');
 const watchMsg = () => $('watch-msg');
-function openWatchShell(title, message) {
+function openWatchShell(title, message, options) {
   $('watch-title').textContent = title;
   $('watch-modal').classList.remove('hidden');
   watchImg().classList.add('hidden');
@@ -349,12 +402,16 @@ function openWatchShell(title, message) {
   } else {
     watchMsg().classList.add('hidden');
   }
+  if (options !== undefined) renderPending({ options });
+  else watchNumbers().classList.add('hidden');
 }
 
 function openStream(id, name) {
+  stopPending();
   _watchId = id;
   $('watch-title').textContent = `Live: ${name}`;
   watchMsg().classList.add('hidden');
+  watchNumbers().classList.add('hidden');
   watchImg().src = '';
   watchImg().classList.remove('hidden');
   $('watch-live').classList.remove('hidden');
@@ -378,6 +435,7 @@ function closeStream() {
   if (_stream) { _stream.close(); _stream = null; }
 }
 function closeWatch() {
+  stopPending();
   closeStream();
   _watchId = null;
   $('watch-modal').classList.add('hidden');

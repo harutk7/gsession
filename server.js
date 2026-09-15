@@ -34,10 +34,8 @@ for (const kind of ['unhandledRejection', 'uncaughtException']) {
 // imported after env is loaded (crypto key read lazily, but be safe)
 const store = await import('./lib/store.js');
 const browser = await import('./lib/browser.js');
-const agent = await import('./lib/agent.js');
 const invites = await import('./lib/invites.js');
 const events = await import('./lib/events.js');
-const bitwarden = await import('./lib/bitwarden.js');
 
 const app = express();
 app.use(express.json());
@@ -74,34 +72,58 @@ app.patch('/api/sessions/:id', auth, (req, res) => {
   res.json(s);
 });
 
-// Open launches a VISIBLE (headed) browser at the provider's login URL and
-// pre-warms the LLM agent (desktop client up, screenshot works), so the first
-// instruction has zero startup lag.
 app.post('/api/sessions/:id/open', auth, async (req, res) => {
   const s = store.getRaw(req.params.id);
   if (!s) return res.status(404).json({ error: 'Not found' });
   try {
-    const url = s.loginUrl || (s.provider === 'google' ? 'https://accounts.google.com/' : undefined);
-    await browser.open(s.id, url, { headless: false });
-    store.update(s.id, { lastOpenedAt: new Date().toISOString() });
-    const ready = await agent.warmup().catch((e) => ({ ok: false, error: e.message }));
-    res.json({ ok: true, open: true, message: 'Browser opened. Agent ready.', agent: ready });
+    // Open should launch a VISIBLE (headed) browser and, for Google, actually
+    // drive the stored credentials so the window comes up signed in. If a
+    // challenge (2FA) is pending it stays open on that screen for manual finish.
+    let result = { status: 'open', message: 'Browser opened.' };
+    if (s.provider === 'google') {
+      result = await browser.login(s, { headless: false });
+    } else {
+      await browser.open(s.id, s.loginUrl || undefined, { headless: false });
+    }
+    store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
+    // Signed in? Register this OS as the trusted device (keypass) right away —
+    // the response then carries the trust journey state for the panel to mirror.
+    if (result.status === 'logged-in' && s.provider === 'google') {
+      const cur = store.getRaw(s.id);
+      if (!cur?.deviceTrusted) {
+        const trust = await browser.startTrust(s.id);
+        if (trust.state) result.trustState = trust.state;
+        result.trustMessage = trust.message || '';
+      }
+    }
+    res.json({ ok: true, open: true, ...result });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// Drive the session with the LLM computer-use agent. `instruction` is free
-// text (e.g. "sign in with the stored credentials", "click the number 4").
-// Progress streams over /api/events as agent.step; this responds with the
-// final summary when the agent calls done.
-app.post('/api/sessions/:id/agent', auth, async (req, res) => {
-  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Open the session first.' });
-  const instruction = String((req.body && req.body.instruction) || '').trim();
-  if (!instruction) return res.status(400).json({ error: 'Missing instruction.' });
+app.post('/api/sessions/:id/login', auth, async (req, res) => {
+  const s = store.getRaw(req.params.id);
+  if (!s) return res.status(404).json({ error: 'Not found' });
   try {
-    const r = await agent.run(req.params.id, instruction);
-    res.json({ ok: true, ...r });
+    const result = await browser.login(s, { headless: false });
+    store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
+    res.json({ ok: true, open: true, ...result });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Register this OS as the account's trusted device (keypass). Returns the
+// current trust state; if the journey asks for password/number/2FA the panel
+// mirrors it and keeps polling /state until state === 'trusted'.
+app.post('/api/sessions/:id/trust', auth, async (req, res) => {
+  const s = store.getRaw(req.params.id);
+  if (!s) return res.status(404).json({ error: 'Not found' });
+  try {
+    const result = await browser.startTrust(s.id);
+    const cur = store.getRaw(s.id);
+    res.json({ ok: true, open: true, ...result, trusted: Boolean(cur?.deviceTrusted) });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -110,34 +132,6 @@ app.post('/api/sessions/:id/agent', auth, async (req, res) => {
 app.post('/api/sessions/:id/close', auth, async (req, res) => {
   const closed = await browser.close(req.params.id);
   res.json({ ok: true, closed });
-});
-
-// Navigate the session's page to a URL directly (CDP), no UI clicks needed.
-app.post('/api/sessions/:id/navigate', auth, async (req, res) => {
-  const url = String((req.body && req.body.url) || '');
-  if (!/^https?:\/\//.test(url)) return res.status(400).json({ error: 'Bad url.' });
-  try {
-    await browser.pageNavigate(req.params.id, url);
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// ---------------- Bitwarden template (one-time, manual login) ----------------
-// Opens a Chrome window with the extension; the operator logs into OUR vault
-// by hand once. When the vault appears, every session profile (existing +
-// future) gets seeded with the logged-in vault automatically.
-app.get('/api/bitwarden/status', auth, (req, res) => {
-  res.json({ ok: true, ready: bitwarden.templateReady(), autoConfigured: bitwarden.configured() });
-});
-
-app.post('/api/bitwarden/template', auth, (req, res) => {
-  if (bitwarden.templateReady()) {
-    return res.json({ ok: true, ready: true, message: 'Bitwarden template is already set up.' });
-  }
-  bitwarden.manualTemplateLogin((pid) => browser.isOpen(pid));
-  res.json({ ok: true, started: true, message: 'Template window opening — log into our Bitwarden account there (one time).' });
 });
 
 app.delete('/api/sessions/:id', auth, async (req, res) => {
@@ -164,13 +158,7 @@ app.post('/api/wizard/:token/step', async (req, res) => {
   const { step, value } = req.body || {};
   // wid travels in the query string (sent by wizard.js on every request)
   const wid = req.query.wid || (req.body && req.body.wid);
-  let w;
-  try {
-    w = await invites.step(req.params.token, wid, step, value);
-  } catch (e) {
-    console.error(`[gsession] step failed (${step}):`, e && e.message ? e.message : e);
-    return res.status(500).json({ error: 'Step failed — retrying.' });
-  }
+  const w = await invites.step(req.params.token, wid, step, value);
   if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
   res.json(w);
 });
@@ -206,24 +194,16 @@ app.get('/api/sessions/:id/stream', (req, res) => {
   });
 });
 
-// Current state of an open session: page URL/title + agent busy flag.
+// Current live login state of an open session (state + "pick the number"
+// options), so the panel can surface pending challenges (number/code/phone).
 app.get('/api/sessions/:id/state', auth, async (req, res) => {
   if (!browser.isOpen(req.params.id)) return res.json({ open: false, state: null });
-  const info = (await browser.pageInfo(req.params.id)) || {};
-  res.json({ open: true, state: 'open', url: info.url || null, title: info.title || null, agentBusy: agent.isRunning(req.params.id) });
-});
-
-// Debug: raw log sink for the patched Bitwarden SW (no-cors POST, no auth —
-// local debug only). Reads the raw body (text/plain), logs + appends to file.
-app.post('/api/debug/sw-log', (req, res) => {
-  let body = '';
-  req.on('data', (c) => { body += c; });
-  req.on('end', () => {
-    const line = `[${new Date().toISOString()}] ${body}`;
-    console.log('[sw-log]', line);
-    try { fs.appendFileSync(path.join(__dirname, 'data', 'sw-log.txt'), line + '\n'); } catch (e) {}
-    res.status(204).end();
-  });
+  try {
+    const st = await browser.loginState(req.params.id);
+    res.json({ open: true, state: st.state || null, status: st.status, message: st.message, options: st.options || null });
+  } catch (e) {
+    res.json({ open: true, state: 'verifying', message: e.message });
+  }
 });
 
 // EventSource can't send headers, so the admin token comes in as ?token=

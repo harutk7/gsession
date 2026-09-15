@@ -25,7 +25,6 @@
     <div class="logo sm">g<span>session</span></div>
     <div class="spacer"></div>
     <button id="new-btn" class="primary">+ New session</button>
-    <button id="bw-btn" class="ghost" title="One-time: log our Bitwarden vault into the template profile — every session browser then carries it">🔑 Bitwarden</button>
     <button id="bell-btn" class="ghost bell" title="Notifications">🔔<span id="bell-count" class="count hidden">0</span></button>
     <button id="lock-btn" class="ghost" title="Lock panel">Lock</button>
   </header>
@@ -111,6 +110,7 @@
     </div>
     <div id="watch-body" class="watch-body">
       <img id="watch-frame" alt="Live browser view" class="hidden" />
+      <div id="watch-numbers" class="watch-numbers hidden"></div>
       <p id="watch-msg" class="watch-msg hidden"></p>
     </div>
     <div class="modal-actions">

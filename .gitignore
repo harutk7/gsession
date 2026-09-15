@@ -4,4 +4,6 @@ extensions/
 data/
 .env
 *.log
+*.out
+claude.env
 .playwright-mcp/
