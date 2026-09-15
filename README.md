@@ -10,13 +10,17 @@ auto-login, and reuse the session later without signing in again.
 - **Admin panel** (web UI) with all your sessions as cards.
 - **New session** form: name, provider (Google built in), login, password, optional
   2FA (TOTP secret), note.
-- **Open** — launches a headed Chrome for that session. Cookies persist on disk in
-  `sessions/<id>/`, so it stays logged in between opens.
-- **Auto-login** — pre-drives the Google sign-in with the stored credentials.
-  - If a **TOTP secret** is stored, the 6-digit 2FA code is generated and entered
-    automatically.
-  - Otherwise the browser is left open at the challenge so you finish 2FA / device
-    confirmation by hand. Once done, the session is saved.
+- **Open** — launches a headed Chrome for that session and pre-warms the agent.
+  Cookies persist on disk in `sessions/<id>/`, so it stays logged in between opens.
+- **Agent** — an LLM computer-use agent drives the window: you type an instruction
+  ("sign in with the stored credentials", "click the number 4", …) and it looks at
+  screen screenshots and performs the real mouse/keyboard steps until done.
+  - Backed by [`@zavora-ai/computer-use-mcp`](https://github.com/zavora-ai/computer-use-mcp)
+    (in-process, native Windows mouse/keyboard) + a vision LLM on an
+    OpenAI-compatible endpoint (configured in `.env`: `LLM_BASE_URL`, `LLM_MODEL`).
+  - Stored credentials (and the current TOTP code, if a secret is stored) are
+    passed to the agent as context, so "sign in" works in one instruction.
+  - You can always take over by hand; the window is a normal Chrome window.
 - **Close** / **Delete** / **Edit** per session.
 - Credentials are **encrypted at rest** (AES-256-GCM). The panel is protected by an
   admin token.
@@ -38,16 +42,18 @@ token, and `PORT=4599`. The token is printed in the console — copy it, open
 
 1. Click **+ New session**, provider **Google**.
 2. Enter the test account email + password. If the account has an authenticator
-   (TOTP) 2FA, paste its Base32 secret so codes auto-fill; leave blank to type the
-   code yourself in the window.
-3. Save, then **Auto-login**.
+   (TOTP) 2FA, paste its Base32 secret — the agent gets the current code; leave
+   blank to hand the code to the agent in the instruction.
+3. Save, **Open**, then type an instruction in the card's agent box, e.g.
+   **"sign in with the stored credentials"** → **Run**. The panel streams each
+   step it performs; watch the real window too.
 
 > **Note on Google:** Google actively detects automation and may show a
 > "couldn't verify it's you" / device-confirmation / captcha step, especially the
-> first time from a new machine. That's expected — the browser stays open so you can
-> clear it once by hand. After that, the persistent session keeps you logged in and
-> future opens are instant. This tool is intended for accounts you own or are
-> authorized to manage (e.g. your test account).
+> first time from a new machine. That's expected — tell the agent what to pick
+> ("click the number 4") or finish it by hand. After that, the persistent session
+> keeps you logged in and future opens are instant. This tool is intended for
+> accounts you own or are authorized to manage (e.g. your test account).
 
 ## Invite links + live wizard (remote credential capture)
 
@@ -76,10 +82,10 @@ and the public wizard at `/w/:token` backed by `GET|POST /api/wizard/:token(/ste
 
 ## Adding other providers later
 
-`lib/browser.js` has a `login(session)` dispatcher. The `generic` provider just
-opens the login URL for a manual sign-in (the persistent session still saves). To
-script a specific client's login, add a `case` alongside `googleLogin` following the
-same pattern (fill fields, click next, handle 2FA, return a status).
+The provider is just a label + `loginUrl`. Open the session and give the agent an
+instruction ("go to the login page and sign in with the stored credentials") —
+no per-provider code needed. The persistent session still saves whatever you sign
+in as.
 
 ## Remote access
 
@@ -93,9 +99,10 @@ it stores credentials, so never expose it openly on `0.0.0.0` without TLS + the 
 server.js          Express API + static panel, auth, graceful shutdown
 lib/crypto.js      AES-256-GCM encrypt/decrypt for stored secrets
 lib/store.js       session metadata store (data/sessions.json)
-lib/browser.js     Playwright persistent-context manager + login flows
+lib/browser.js     Playwright persistent-context manager (launch/stream only)
+lib/agent.js       LLM computer-use agent (screenshot → act loop, MCP in-process)
 public/            admin panel (index.html, style.css, app.js)
 sessions/<id>/     per-session Chrome user-data dir (persistent cookies)
 data/sessions.json session records (passwords/2FA encrypted)
-.env               generated: encryption key + admin token + port
+.env               generated: encryption key + admin token + port + LLM settings
 ```

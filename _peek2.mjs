@@ -1,0 +1,12 @@
+import { createComputerUseServer } from '@zavora-ai/computer-use-mcp';
+import { connectInProcess } from '@zavora-ai/computer-use-mcp/client';
+import fs from 'fs';
+const c = await connectInProcess(createComputerUseServer());
+const w = await c.callTool('list_windows', { bundle_id: 'chrome.exe' });
+const m = w.content.map(p=>p.text||'').join('\n').match(/\{[\s\S]*\}/);
+const j = JSON.parse(m[0]); const win = j.windows[0];
+const shot = await c.screenshot({ target_window_id: win.windowId });
+const img = shot.content.find(p => p.type === 'image');
+fs.writeFileSync('_peek2.jpg', Buffer.from(img.data, 'base64'));
+console.log('saved', img.data.length);
+await c.close();
