@@ -8,13 +8,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ENV_PATH = path.join(__dirname, '.env');
 
 // --- generate secrets on first run, then load .env into process.env ---
+// returns true when .env was just created (so the token is printed exactly once)
 function ensureEnv() {
   if (!fs.existsSync(ENV_PATH)) {
     const key = crypto.randomBytes(32).toString('hex');
     const token = crypto.randomBytes(24).toString('hex');
-    fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=4599\n`);
+    fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=4599\n`, { mode: 0o600 });
     console.log('\n  First run: generated .env with a fresh encryption key and admin token.\n');
+    return true;
   }
+  return false;
 }
 function loadEnv() {
   for (const line of fs.readFileSync(ENV_PATH, 'utf8').split('\n')) {
@@ -22,7 +25,7 @@ function loadEnv() {
     if (m) process.env[m[1]] = m[2].trim();
   }
 }
-ensureEnv();
+const FIRST_RUN = ensureEnv();
 loadEnv();
 
 // imported after env is loaded (crypto key read lazily, but be safe)
@@ -37,17 +40,40 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- auth: bearer token on every /api route except the token check itself ---
 const TOKEN = process.env.ADMIN_TOKEN;
+// constant-time compare so token length/first-byte timing can't be probed
+function tokenEq(a, b) {
+  const ba = Buffer.from(String(a));
+  const bb = Buffer.from(String(b));
+  if (!ba.length || ba.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ba, bb);
+}
 function auth(req, res, next) {
   const header = req.get('authorization') || '';
   const token = header.replace(/^Bearer\s+/i, '');
-  if (token && token === TOKEN) return next();
+  if (token && tokenEq(token, TOKEN)) return next();
   return res.status(401).json({ error: 'Unauthorized' });
 }
 
+// tiny in-memory rate limit for the (unauthenticated) token check, so the
+// admin token can't be brute-forced offline against /api/auth
+const authAttempts = new Map();
+function authRateLimit(req, res, next) {
+  const ip = req.ip || 'unknown';
+  const now = Date.now();
+  let rec = authAttempts.get(ip);
+  if (!rec || now > rec.reset) {
+    rec = { count: 0, reset: now + 60000 };
+    authAttempts.set(ip, rec);
+  }
+  rec.count += 1;
+  if (rec.count > 30) return res.status(429).json({ error: 'Too many attempts. Try again shortly.' });
+  next();
+}
+
 // lightweight endpoint the panel uses to validate a typed token
-app.post('/api/auth', (req, res) => {
+app.post('/api/auth', authRateLimit, (req, res) => {
   const token = (req.body && req.body.token) || '';
-  res.json({ ok: token === TOKEN });
+  res.json({ ok: tokenEq(token, TOKEN) });
 });
 
 app.get('/api/sessions', auth, (req, res) => {
@@ -106,6 +132,9 @@ app.post('/api/sessions/:id/close', auth, async (req, res) => {
 app.delete('/api/sessions/:id', auth, async (req, res) => {
   await browser.close(req.params.id);
   const ok = store.remove(req.params.id);
+  // also wipe the persistent Chrome profile, or deleted sessions leak their
+  // cookies/logins on disk forever
+  fs.rm(path.join(__dirname, 'sessions', req.params.id), { recursive: true, force: true }, () => {});
   res.json({ ok });
 });
 
@@ -138,9 +167,20 @@ app.post('/api/wizard/:token/complete', async (req, res) => {
   if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
   res.json(w);
 });
+
+// poll: waiting screens (phone prompt / passkey / "verifying") re-read the LIVE
+// state of the session's real browser without driving it. No feed events, no
+// entry creation — safe to call every couple of seconds.
+app.get('/api/wizard/:token/poll', async (req, res) => {
+  const wid = req.query.wid || (req.body && req.body.wid);
+  const w = await invites.poll(req.params.token, wid);
+  if (!w) return res.status(404).json({ error: 'This link is invalid or has expired.' });
+  res.json(w);
+});
+
 // EventSource can't send headers, so the admin token comes in as ?token=
 app.get('/api/events', (req, res) => {
-  if ((req.query.token || '') !== TOKEN) return res.status(401).end();
+  if (!tokenEq(req.query.token || '', TOKEN)) return res.status(401).end();
   res.set({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -158,9 +198,14 @@ app.get('/api/events', (req, res) => {
 });
 
 const PORT = process.env.PORT || 4599;
-const server = app.listen(PORT, () => {
+const HOST = process.env.HOST || '0.0.0.0'; // it hosts browsers where it runs; put TLS in front for remote use
+const server = app.listen(PORT, HOST, () => {
   console.log(`\n  gsession admin panel:  http://localhost:${PORT}`);
-  console.log(`  Admin token:           ${TOKEN}\n`);
+  if (FIRST_RUN) {
+    console.log(`  Admin token (shown once): ${TOKEN}\n`);
+  } else {
+    console.log('  Admin token: stored in .env (printed only on first generation).\n');
+  }
 });
 
 // close what we open

@@ -125,24 +125,10 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto; }
 .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 4px 0 12px; }
 .section { margin-bottom: 30px; }
 
-/* ---------- invite cards ---------- */
-.invite {
-  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
-  border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px;
-}
-.invite h3 { margin: 0; font-size: 15px; }
-.link-row { display: flex; gap: 6px; }
-.link-row input { font-size: 12px; }
-.link-row button { white-space: nowrap; padding: 8px 10px; }
+/* ---------- shared sign-in link ---------- */
 .share-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .share-row input { flex: 1 1 260px; min-width: 0; font-size: 13px; font-family: ui-monospace, Menlo, monospace; }
 .share-hint { flex-basis: 100%; color: var(--muted); font-size: 12px; }
-.track { display: flex; gap: 6px; flex-wrap: wrap; }
-.track .t {
-  font-size: 11px; padding: 3px 9px; border-radius: 20px;
-  border: 1px solid var(--line); color: var(--muted);
-}
-.track .t.done { color: var(--green); border-color: var(--green); }
 
 /* ---------- notifications drawer ---------- */
 .bell { position: relative; }
@@ -164,34 +150,8 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto; }
   font-size: 13px; background: var(--panel-2); border-radius: 0 8px 8px 0;
 }
 .note .t { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.note.created { border-left-color: var(--accent); }
 .note.opened { border-left-color: var(--amber); }
 .note.step { border-left-color: var(--accent); }
 .note.completed { border-left-color: var(--green); }
 .feed-empty { color: var(--muted); text-align: center; padding: 40px 0; font-size: 14px; }
 
-/* ---------- wizard (public page) ---------- */
-.wizard-body { display: grid; place-items: center; min-height: 100vh; padding: 20px; }
-.wizard-wrap { width: 440px; max-width: 100%; }
-.wizard-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 30px; }
-.wizard-card .logo { text-align: center; margin-bottom: 20px; }
-.wizard-foot { text-align: center; font-size: 12px; margin-top: 16px; }
-.steps { display: flex; justify-content: space-between; margin-bottom: 26px; gap: 4px; }
-.steps .step { flex: 1; text-align: center; font-size: 11px; color: var(--muted); }
-.steps .step span {
-  display: grid; place-items: center; width: 28px; height: 28px; margin: 0 auto 6px;
-  border-radius: 50%; border: 1px solid var(--line); font-size: 12px;
-}
-.steps .step.active span { border-color: var(--accent); color: var(--accent); }
-.steps .step.done span { background: var(--green); border-color: var(--green); color: #fff; }
-.pane h2 { margin: 0 0 8px; font-size: 20px; }
-.pane input { margin-bottom: 14px; }
-button.wide { width: 100%; }
-.row-btns { display: flex; gap: 10px; }
-.row-btns .primary { flex: 1; }
-.show-row { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; margin-bottom: 14px; }
-.show-row input { width: auto; margin: 0; }
-.done-check {
-  width: 60px; height: 60px; border-radius: 50%; background: var(--green); color: #fff;
-  display: grid; place-items: center; font-size: 30px; margin: 6px auto 14px;
-}

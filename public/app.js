@@ -141,9 +141,8 @@ function bumpUnread() {
   c.classList.remove('hidden');
 }
 const noteClass = (type) =>
-  type === 'invite.created' ? 'created'
-  : type === 'wizard.opened' ? 'opened'
-  : type === 'wizard.completed' ? 'completed'
+  type === 'wizard.opened' ? 'opened'
+  : type === 'wizard.completed' || type === 'wizard.logged-in' ? 'completed'
   : 'step';
 let feedHasItems = false;
 function addNote(evt) {

