@@ -99,6 +99,7 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto; }
 .badge.open { color: var(--accent); border-color: var(--accent); }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip { font-size: 11px; color: var(--muted); border: 1px solid var(--line); padding: 2px 8px; border-radius: 6px; }
+.chip.trusted { color: var(--green); border-color: var(--green); }
 .card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 .card-actions button { padding: 6px 11px; font-size: 13px; }
 
@@ -110,6 +111,26 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto; }
 }
 .modal-card h2 { margin: 0 0 18px; font-size: 20px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+
+/* live session view / pending-challenge modal */
+.watch-card { width: 960px; max-width: 100%; }
+.watch-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.watch-head h2 { margin: 0; font-size: 18px; }
+.watch-head-actions { display: flex; align-items: center; gap: 10px; }
+.live-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .8px; color: var(--red); }
+.live-dot .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: pulse 1.2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+.watch-body { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #0b0d10; min-height: 120px; display: grid; place-items: center; }
+#watch-frame { width: 100%; display: block; }
+.watch-numbers { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px; padding: 34px 20px; background: #fff; }
+.watch-num-label { flex-basis: 100%; text-align: center; font-size: 13px; color: #5f6368; }
+.watch-number {
+  width: 130px; text-align: center; padding: 34px 10px; border-radius: 16px;
+  font-size: 64px; font-weight: 600; color: #1a73e8; background: #e8f0fe;
+  letter-spacing: 4px; font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif;
+  user-select: all;
+}
+.watch-msg { margin: 14px 2px 2px; font-size: 14px; line-height: 1.5; }
 
 /* toast */
 .toast {

