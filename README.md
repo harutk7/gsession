@@ -132,6 +132,41 @@ put it behind a reverse proxy / tunnel with HTTPS and keep the admin token secre
 it stores credentials, so never expose it openly on `0.0.0.0` without TLS + the
 token. The bind address can be set with the `HOST` env var (default `0.0.0.0`).
 
+## Docker / container deployment
+
+The repo ships a `Dockerfile` (single image: Node 20 + real Google Chrome +
+Playwright's Chromium as fallback) and a `docker-entrypoint.sh` that starts
+**Xvfb** — a virtual display — before the server. Headed Chrome needs a display
+and a container has none, so Chrome runs "headed" against the virtual screen:
+Open / Auto-login / wizard sign-ins behave exactly as on a desktop, and you
+watch and finish challenges (2FA, "pick the number", phone taps) through the
+panel's **live view** — there is simply no physical monitor attached.
+
+Container-specific behavior:
+
+- `GSESSION_CONTAINER=1` (set by the Dockerfile) makes `lib/browser.js` add
+  `--no-sandbox --disable-dev-shm-usage --disable-gpu` to Chrome — required
+  inside containers; desktop launches are untouched.
+- If `HTTPS_PROXY` / `HTTP_PROXY` is set (sandboxed hosts only allow outbound
+  traffic through an egress proxy), the browser is launched with that proxy so
+  Google sign-ins can reach the internet. Playwright does not read those env
+  vars for browser traffic on its own.
+- `GSESSION_MASTER_KEY` and `ADMIN_TOKEN` should be provided via environment
+  (e.g. container secrets). The real environment always wins over a generated
+  `.env` — a first run never replaces secrets you injected, and no `.env` is
+  generated at all when both are already present.
+- Persistent state lives in `sessions/` (per-session Chrome profiles) and
+  `data/` (encrypted session records). Mount both as volumes so they survive
+  container restarts and redeploys.
+
+```bash
+docker build -t gsession .
+docker run -p 3002:3002 \
+  -e GSESSION_MASTER_KEY=<64-hex-chars> -e ADMIN_TOKEN=<token> \
+  -v gsession-sessions:/app/sessions -v gsession-data:/app/data \
+  gsession
+```
+
 ## Layout
 
 ```

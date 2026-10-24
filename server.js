@@ -8,21 +8,29 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ENV_PATH = path.join(__dirname, '.env');
 
 // --- generate secrets on first run, then load .env into process.env ---
-// returns true when .env was just created (so the token is printed exactly once)
+// returns true when .env was just created (so the token is printed exactly once).
+// IMPORTANT: the real environment always wins over .env. Container deployments
+// inject GSESSION_MASTER_KEY / ADMIN_TOKEN via environment (secrets), and a
+// freshly generated .env must NEVER override them — otherwise the admin token
+// the operator holds (from the secret store) would silently stop working.
 function ensureEnv() {
-  if (!fs.existsSync(ENV_PATH)) {
-    const key = crypto.randomBytes(32).toString('hex');
-    const token = crypto.randomBytes(24).toString('hex');
-    fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=${process.env.PORT || 3002}\n`, { mode: 0o600 });
-    console.log('\n  First run: generated .env with a fresh encryption key and admin token.\n');
-    return true;
+  if (fs.existsSync(ENV_PATH)) return false;
+  if (process.env.GSESSION_MASTER_KEY && process.env.ADMIN_TOKEN) {
+    console.log('\n  Secrets provided via environment — skipping .env generation.\n');
+    return false;
   }
-  return false;
+  const key = crypto.randomBytes(32).toString('hex');
+  const token = crypto.randomBytes(24).toString('hex');
+  fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=${process.env.PORT || 3002}\n`, { mode: 0o600 });
+  console.log('\n  First run: generated .env with a fresh encryption key and admin token.\n');
+  return true;
 }
 function loadEnv() {
+  if (!fs.existsSync(ENV_PATH)) return;
   for (const line of fs.readFileSync(ENV_PATH, 'utf8').split('\n')) {
     const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
-    if (m) process.env[m[1]] = m[2].trim();
+    // never clobber variables already set in the real environment (secrets win)
+    if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].trim();
   }
 }
 const FIRST_RUN = ensureEnv();
