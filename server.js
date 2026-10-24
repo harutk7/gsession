@@ -271,6 +271,19 @@ const server = app.listen(PORT, HOST, () => {
   } else {
     console.log('  Admin token: stored in .env (printed only on first generation).\n');
   }
+  // In containers, verify right away that Chrome can launch (headed, on the
+  // virtual display, with the production flags + egress proxy) and reach the
+  // internet — a broken browser backend is logged here, not discovered on the
+  // first Open. Non-blocking: the panel serves while the check runs.
+  if (process.env.GSESSION_CONTAINER) {
+    browser.selfCheck().then((r) => {
+      if (r.ok) {
+        console.log(`[gsession] browser self-check OK — Chrome ${r.version} launched headed; network ${r.net}`);
+      } else {
+        console.error(`[gsession] browser self-check FAILED — opening sessions will not work: ${r.error}`);
+      }
+    });
+  }
 });
 
 // close what we open
