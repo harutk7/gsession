@@ -1,0 +1,9 @@
+node_modules
+sessions
+data
+extensions
+.env
+*.log
+*.out
+.playwright-mcp
+.git
