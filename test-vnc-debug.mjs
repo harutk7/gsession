@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const token = 'fb6d36f28fcd82ba411c4b64248af777fa8e98ce521cdcf3';
+const url = `http://127.0.0.1:3002/vnc/vnc.html?autoconnect=true&resize=scale&reconnect=true&cursor=auto&token=${token}`;
+const browser = await chromium.launch({ headless: true, channel: 'chrome' });
+const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
+page.on('console', (msg) => console.log('console', msg.type(), msg.text()));
+page.on('pageerror', (err) => console.log('pageerror', err.message));
+page.on('requestfailed', (req) => console.log('reqfail', req.url(), req.failure()?.errorText));
+page.on('response', (res) => { if (res.url().includes('vnc') || res.url().includes('websockify')) console.log('resp', res.status(), res.url()); });
+await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+await page.waitForTimeout(10000);
+const html = await page.evaluate(() => document.body.innerHTML.slice(0, 500));
+console.log('body', html);
+await browser.close();

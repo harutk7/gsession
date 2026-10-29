@@ -100,6 +100,12 @@ test('passkey heading -> passkey', () => {
   assert.equal(r.state, 'passkey');
 });
 
+test('/signin/challenge/pk url -> passkey even before DOM text loads', () => {
+  const r = classifyState({ ...base, url: 'https://accounts.google.com/v3/signin/challenge/pk?TL=abc&continue=https%3A%2F%2Fmyaccount.google.com%2Fsigninoptions%2Fpassword' });
+  assert.equal(r.state, 'passkey');
+  assert.equal(r.status, 'pending');
+});
+
 test('we\'ll text you a code number screen -> sms with phone extracted', () => {
   const r = classifyState({
     ...base,
@@ -114,6 +120,30 @@ test('we\'ll text you a code number screen -> sms with phone extracted', () => {
 test('push notification prompt heading -> prompt', () => {
   const r = classifyState({ ...base, heading: "Confirm it's you", bodyText: 'Check your phone' });
   assert.equal(r.state, 'prompt');
+});
+
+// Regression: the REAL /challenge/dp page (captured from a stuck session) —
+// heading is just "2-Step Verification", the prompt markers are in the BODY.
+test('real /challenge/dp prompt page -> prompt (markers in body, not heading)', () => {
+  const r = classifyState({
+    ...base,
+    url: 'https://accounts.google.com/v3/signin/challenge/dp?TL=abc',
+    heading: '2-Step Verification',
+    bodyText: 'To help keep your account safe, Google wants to make sure it\u2019s really you trying to sign in. Check your POCO X8 Pro. Google sent a notification to your POCO X8 Pro. Tap Yes on the notification to verify it\u2019s you. Don\u2019t ask again on this device.',
+    buttons: ['Resend it', 'Try another way', 'Help', 'Privacy', 'Terms'],
+  });
+  assert.equal(r.state, 'prompt');
+});
+
+test('sms "we\'ll text a code to +1 \u2022\u2022" (no "you") -> sms with phone', () => {
+  const r = classifyState({
+    ...base,
+    heading: 'Verify it\u2019s you',
+    bodyText: 'We\u2019ll text a code to +1 415 555 0100',
+    buttons: ['Resend it', 'Try another way'],
+  });
+  assert.equal(r.state, 'sms');
+  assert.match(r.phone, /\+1 415/);
 });
 
 test('visible Google error text -> error with the message', () => {

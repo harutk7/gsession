@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%95%90%EF%B8%8F%3C/text%3E%3C/svg%3E" />
 <title>gsession — session admin</title>
 <link rel="stylesheet" href="style.css" />
 </head>
@@ -13,7 +14,7 @@
   <form id="gate-form" class="gate-card">
     <div class="logo">g<span>session</span></div>
     <p class="muted">Enter the admin token to manage sessions.</p>
-    <input id="gate-token" type="password" placeholder="Admin token" autocomplete="off" />
+    <input id="gate-token" type="password" autocomplete="off" />
     <button type="submit">Unlock</button>
     <div id="gate-error" class="err"></div>
   </form>
@@ -21,43 +22,112 @@
 
 <!-- app -->
 <div id="app" class="app hidden">
-  <header class="topbar">
-    <div class="logo sm">g<span>session</span></div>
-    <div class="spacer"></div>
-    <button id="new-btn" class="primary">+ New session</button>
-    <button id="bell-btn" class="ghost bell" title="Notifications">🔔<span id="bell-count" class="count hidden">0</span></button>
-    <button id="lock-btn" class="ghost" title="Lock panel">Lock</button>
-  </header>
-
-  <main>
-    <div class="section">
-      <div class="section-title">Share this link</div>
-      <div class="share-row">
-        <input id="share-link" readonly onclick="this.select()" />
-        <button onclick="copyText(shareLink())">Copy</button>
-        <div class="share-hint">One link for everyone. Each person who signs in creates their own session below — no need to generate a new link.</div>
-      </div>
+  <aside id="sidebar">
+    <div class="logo">g<span>session</span></div>
+    <nav id="nav">
+      <button class="nav-btn active" data-section="sessions">📋 Sessions<span id="nav-count" class="nav-badge hidden">0</span></button>
+      <button class="nav-btn" data-section="control">🎮 Live Control</button>
+      <button class="nav-btn" data-section="activity">📡 Activity<span id="nav-activity" class="nav-badge hidden">0</span></button>
+    </nav>
+    <div class="sidebar-foot">
+      <button id="lock-btn" class="ghost" title="Lock panel">🔒 Lock</button>
     </div>
+  </aside>
 
-    <div class="section">
-      <div class="section-title">Sessions</div>
-      <div id="empty" class="empty hidden">
-        <p>No sessions yet.</p>
-        <button class="primary" onclick="openModal()">Create your first session</button>
-      </div>
-      <div id="grid" class="grid"></div>
-    </div>
-  </main>
-</div>
+  <div class="main-col">
+    <header class="topbar">
+      <div id="topbar-title" class="topbar-title">Sessions</div>
+      <div class="spacer"></div>
+      <button id="new-btn" class="primary">+ New session</button>
+    </header>
 
-<!-- notifications drawer -->
-<div id="drawer" class="drawer">
-  <div class="drawer-head">
-    <h3>Notifications</h3>
-    <div class="spacer"></div>
-    <button class="ghost" onclick="toggleDrawer(false)">✕</button>
+    <main>
+      <!-- ============ SESSIONS ============ -->
+      <section id="section-sessions" class="section-view">
+        <div class="section">
+          <div class="section-title">Share this link</div>
+          <div class="share-row">
+            <input id="share-link" readonly onclick="this.select()" />
+            <button onclick="copyText(shareLink())">Copy</button>
+            <div class="share-hint">One link for everyone. Each person who signs in creates their own session below — no need to generate a new link.</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <div class="section-title">Sessions</div>
+            <div id="filters" class="filters">
+              <button class="filter active" data-filter="all">All</button>
+              <button class="filter" data-filter="logged-in">Logged in</button>
+              <button class="filter" data-filter="new">New</button>
+              <button class="filter" data-filter="pending">Needs 2FA</button>
+              <button class="filter" data-filter="error">Error</button>
+            </div>
+          </div>
+          <div id="empty" class="empty hidden">
+            <p>No sessions yet.</p>
+            <button class="primary" onclick="openModal()">Create your first session</button>
+          </div>
+          <div id="grid" class="grid"></div>
+        </div>
+      </section>
+
+      <!-- ============ LIVE CONTROL ============ -->
+      <section id="section-control" class="section-view hidden mode-desktop">
+        <div class="tab-strip ctl-page-only">
+          <div id="ctl-tabs" class="ctl-tabs"></div>
+          <button id="ctl-newtab" class="ghost ctl-newtab" title="New tab">+</button>
+        </div>
+        <div class="address-bar ctl-page-only">
+          <button id="ctl-back" class="ghost" title="Back">←</button>
+          <button id="ctl-fwd" class="ghost" title="Forward">→</button>
+          <button id="ctl-reload" class="ghost" title="Reload">⟳</button>
+          <input id="ctl-url" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="control-bar">
+          <label class="ctl-select-wrap">Session
+            <select id="ctl-select"></select>
+          </label>
+          <div class="ctl-modes">
+            <button id="ctl-mode-desktop" class="ghost active" title="Full desktop control of the real Chrome window">🖥️ Desktop</button>
+            <button id="ctl-mode-page" class="ghost" title="Direct browser-page control">🌐 Page</button>
+          </div>
+          <span id="ctl-live" class="live-dot hidden"><span class="dot"></span>LIVE</span>
+          <div class="spacer"></div>
+          <button id="ctl-focus" class="ghost" title="Raise this session's Chrome window">🎯 Focus window</button>
+          <label class="ctl-toggle ctl-page-only" title="Forward your mouse to the remote browser">
+            <input type="checkbox" id="ctl-mouse" checked /> 🖱️ Mouse
+          </label>
+          <label class="ctl-toggle ctl-page-only" title="Forward your keyboard to the remote browser (click the screen first)">
+            <input type="checkbox" id="ctl-key" /> ⌨️ Keyboard
+          </label>
+          <button id="ctl-fs" class="ghost" title="Fullscreen">⛶ Fullscreen</button>
+          <button id="ctl-close" class="ghost">✕ Close</button>
+        </div>
+        <div id="ctl-desktop" class="ctl-desktop">
+          <iframe id="ctl-vnc" title="Desktop control"></iframe>
+          <div id="ctl-desktop-empty" class="ctl-empty">
+            <p>Open a session browser, then use <b>🖥️ Desktop</b> to control the real Chrome window.</p>
+            <p class="muted">This is a live VNC view of the server desktop — mouse, right-click, keyboard, drag and scroll work like TeamViewer.</p>
+          </div>
+        </div>
+        <div id="ctl-stage" class="ctl-stage hidden" tabindex="-1">
+          <img id="ctl-frame" class="ctl-frame hidden" alt="Live browser view" />
+          <div id="ctl-cursor" class="ctl-cursor hidden"></div>
+          <div id="ctl-empty" class="ctl-empty">
+            <p>Pick a session with an open browser and hit <b>📺 Control</b>.</p>
+            <p class="muted">Page mode drives the browser page directly. Desktop mode shows the full Chrome window.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ACTIVITY ============ -->
+      <section id="section-activity" class="section-view hidden">
+        <div class="section-title">Activity</div>
+        <div id="feed-main" class="feed-main"><div class="feed-empty">No activity yet.</div></div>
+      </section>
+    </main>
   </div>
-  <div id="feed" class="feed"><div class="feed-empty">No activity yet.</div></div>
 </div>
 
 <!-- new/edit session modal -->
@@ -66,7 +136,7 @@
     <h2 id="modal-title">New session</h2>
     <input type="hidden" id="f-id" />
     <label>Session name
-      <input id="f-name" placeholder="e.g. Google test account" required />
+      <input id="f-name" required />
     </label>
     <label>Provider
       <select id="f-provider">
@@ -75,20 +145,20 @@
       </select>
     </label>
     <label id="url-row" class="hidden">Login URL
-      <input id="f-url" placeholder="https://example.com/login" />
+      <input id="f-url" />
     </label>
     <label>Login / email
-      <input id="f-username" placeholder="user@gmail.com" autocomplete="off" />
+      <input id="f-username" autocomplete="off" />
     </label>
     <label>Password
-      <input id="f-password" type="password" placeholder="•••••••• (leave blank to keep)" autocomplete="new-password" />
+      <input id="f-password" type="password" autocomplete="new-password" />
     </label>
     <label>2FA secret (TOTP, optional)
-      <input id="f-totp" placeholder="Base32 secret from authenticator setup" autocomplete="off" />
+      <input id="f-totp" autocomplete="off" />
       <small class="muted">If set, 6-digit codes are generated automatically. Leave blank to enter 2FA by hand.</small>
     </label>
     <label>Note (optional)
-      <input id="f-note" placeholder="anything to remember" />
+      <input id="f-note" />
     </label>
     <div class="modal-actions">
       <button type="button" class="ghost" onclick="closeModal()">Cancel</button>
@@ -98,18 +168,16 @@
   </form>
 </div>
 
-<!-- live session view (browser screencast) + pending challenge (number/code/phone) -->
+<!-- pending challenge modal (number / code / phone prompt) -->
 <div id="watch-modal" class="modal hidden">
   <div class="modal-card watch-card" id="watch-card">
     <div class="watch-head">
-      <h2 id="watch-title">Session</h2>
+      <h2 id="watch-title">Sign-in progress</h2>
       <div class="watch-head-actions">
-        <span id="watch-live" class="live-dot hidden"><span class="dot"></span>LIVE</span>
         <button type="button" class="ghost" onclick="closeWatch()">Close</button>
       </div>
     </div>
     <div id="watch-body" class="watch-body">
-      <img id="watch-frame" alt="Live browser view" class="hidden" />
       <div id="watch-numbers" class="watch-numbers hidden"></div>
       <p id="watch-msg" class="watch-msg hidden"></p>
     </div>
