@@ -8,26 +8,41 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ENV_PATH = path.join(__dirname, '.env');
 
-// --- generate secrets on first run, then load .env into process.env ---
-// returns true when .env was just created (so the token is printed exactly once)
-function ensureEnv() {
-  if (!fs.existsSync(ENV_PATH)) {
-    const key = crypto.randomBytes(32).toString('hex');
-    const token = crypto.randomBytes(24).toString('hex');
-    fs.writeFileSync(ENV_PATH, `GSESSION_MASTER_KEY=${key}\nADMIN_TOKEN=${token}\nPORT=${process.env.PORT || 3002}\n`, { mode: 0o600 });
-    console.log('\n  First run: generated .env with a fresh encryption key and admin token.\n');
-    return true;
-  }
-  return false;
-}
+// --- resolve secrets: injected env > persisted .env > freshly generated ---
+// The container filesystem (and thus .env) is ephemeral, so the only value
+// that survives a redeploy is what the deployment injects (project secrets).
+// Injected vars therefore win — that's what keeps the encryption key stable
+// across redeploys. Anything not injected is generated once and persisted to
+// .env so a plain container restart reuses it.
 function loadEnv() {
+  if (!fs.existsSync(ENV_PATH)) return;
   for (const line of fs.readFileSync(ENV_PATH, 'utf8').split('\n')) {
     const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
-    if (m) process.env[m[1]] = m[2].trim();
+    // only fill vars the deployment didn't already provide
+    if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].trim();
   }
 }
-const FIRST_RUN = ensureEnv();
+// returns the list of secrets that had to be generated (empty when the
+// deployment supplied them)
+function ensureEnv() {
+  const generated = [];
+  if (!process.env.GSESSION_MASTER_KEY) {
+    process.env.GSESSION_MASTER_KEY = crypto.randomBytes(32).toString('hex');
+    generated.push('GSESSION_MASTER_KEY');
+  }
+  if (!process.env.ADMIN_TOKEN) {
+    process.env.ADMIN_TOKEN = crypto.randomBytes(24).toString('hex');
+    generated.push('ADMIN_TOKEN');
+  }
+  // persist the resolved values so a container restart reuses them
+  fs.writeFileSync(ENV_PATH,
+    `GSESSION_MASTER_KEY=${process.env.GSESSION_MASTER_KEY}\n` +
+    `ADMIN_TOKEN=${process.env.ADMIN_TOKEN}\n` +
+    `PORT=${process.env.PORT || 3002}\n`, { mode: 0o600 });
+  return generated;
+}
 loadEnv();
+const GENERATED = ensureEnv();
 
 // A single thrown journey step (locator timeout, flaky page) must never kill
 // the whole server — wizard.js polls /step and retries, so a 500 is recoverable.
@@ -402,10 +417,10 @@ const PORT = process.env.PORT || 3002;
 const HOST = process.env.HOST || '0.0.0.0'; // it hosts browsers where it runs; put TLS in front for remote use
 const server = app.listen(PORT, HOST, () => {
   console.log(`\n  gsession admin panel:  http://localhost:${PORT}`);
-  if (FIRST_RUN) {
-    console.log(`  Admin token (shown once): ${TOKEN}\n`);
+  if (GENERATED.includes('ADMIN_TOKEN')) {
+    console.log(`  Admin token (generated, shown once): ${TOKEN}\n`);
   } else {
-    console.log('  Admin token: stored in .env (printed only on first generation).\n');
+    console.log('  Admin token: provided by the deployment (stable across redeploys).\n');
   }
 });
 
