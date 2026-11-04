@@ -56,11 +56,11 @@ $('lock-btn').addEventListener('click', () => {
 });
 
 // ---------- sections ----------
-const SECTION_TITLES = { sessions: 'Sessions', control: 'Live Control', activity: 'Activity', drivers: 'Drivers' };
+const SECTION_TITLES = { sessions: 'Sessions', control: 'Live Control', activity: 'Activity' };
 let currentSection = 'sessions';
 function showSection(name) {
   currentSection = name;
-  for (const id of ['section-sessions', 'section-control', 'section-activity', 'section-drivers']) {
+  for (const id of ['section-sessions', 'section-control', 'section-activity']) {
     document.getElementById(id).classList.toggle('hidden', id !== 'section-' + name);
   }
   for (const btn of document.querySelectorAll('.nav-btn')) {
@@ -112,7 +112,6 @@ const origShow = showSection;
 showSection = function (name) {
   origShow(name);
   if (name === 'activity') clearUnread();
-  if (name === 'drivers') loadDrivers();
 };
 
 // ---------- render sessions ----------
@@ -203,35 +202,6 @@ document.querySelectorAll('#filters .filter').forEach((btn) =>
     load();
   }),
 );
-
-// ---------- drivers view ----------
-async function loadDrivers() {
-  const list = $('drivers-list');
-  const empty = $('drivers-empty');
-  if (!list || !empty) return;
-  try {
-    const r = await api('/sessions');
-    if (r.status === 401) return $('lock-btn').click();
-    const sessions = await r.json();
-    const hasDriverData = (s) =>
-      [s.driverName, s.driverPhone, s.truckPlate, s.trailerPlate].some((v) => v && String(v).trim() !== '');
-    const rows = sessions.filter(hasDriverData);
-    empty.classList.toggle('hidden', rows.length > 0);
-    list.innerHTML = rows.map(driverRow).join('');
-  } catch { /* server gone */ }
-}
-
-function driverRow(s) {
-  const cell = (v) => escapeHtml(v && String(v).trim() ? v : '—');
-  const labels = { 'logged-in': 'logged in', trusted: 'keypass ✓', pending: 'needs 2FA', error: 'error', new: 'new' };
-  return `<div class="driver-row">
-    <span class="driver-cell">${cell(s.driverName)}</span>
-    <span class="driver-cell">${cell(s.driverPhone)}</span>
-    <span class="driver-cell"><b>${cell(s.truckPlate)}</b></span>
-    <span class="driver-cell">${cell(s.trailerPlate)}</span>
-    <span class="driver-cell muted">${escapeHtml(s.name)} · ${labels[s.status] || s.status}</span>
-  </div>`;
-}
 
 // ---------- single static link ----------
 function shareLink() {
