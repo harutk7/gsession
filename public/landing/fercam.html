@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css" data-precedence="default"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" data-precedence="default"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><title>FERCAM | Logistics &amp; Transport | Air &amp; Sea | Special Services</title><meta name="author" content="TransLogistX"><meta name="description" content="FERCAM welcome page clone: sectors, company, work with us, news & press, contacts, country/language selector — plus a Driver Contact menu item showing the TransLogistX driver registration form."><style>html{scroll-behavior:smooth}#driver-contact,#news,#sectors,#country-language{scroll-margin-top:92px}</style>
+<style>
+      #driver-embed-wrap { width: 100%; display: flex; justify-content: center; }
+      #driver-embed { width: 100%; max-width: 620px; height: 640px; border: 0; display: block; background: transparent; }
+    </style>
+</head><body><!--$--><main class="min-h-screen overflow-x-hidden bg-background">
+<header class="relative z-20 bg-hero text-hero-foreground">
+  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+    <a href="#top" class="flex items-center gap-3" aria-label="FERCAM home">
+      <span class="grid size-10 place-items-center bg-primary text-primary-foreground">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-truck size-6" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg>
+      </span>
+      <span class="font-display text-2xl font-extrabold uppercase">FERCAM</span>
+    </a>
+    <nav class="hidden items-center gap-8 text-sm font-semibold lg:flex" aria-label="Main navigation">
+      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="sectors">Sectors</button>
+      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="company">Company</button>
+      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="work-with-us">Work with us</button>
+      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="news-press">News &amp; Press</button>
+      <a href="#insights" class="transition-colors hover:text-primary">Insights</a>
+      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="contacts">Contacts</button>
+      <a href="#search" class="transition-colors hover:text-primary">Search</a>
+      <a href="#myfercam" class="transition-colors hover:text-primary">myFERCAM</a>
+      <button type="button" id="driver-contact-btn" class="cursor-pointer whitespace-nowrap transition-colors hover:text-secondary">Driver Contact</button>
+    </nav>
+  </div>
+  <!-- Mega-menu panels (one per top-level item) -->
+  <div id="menu-sectors" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
+    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Sectors</p>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Logistics</a>
+        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Air &amp; Sea</a>
+        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Transport</a>
+        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Customs</a>
+        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Special services</a>
+      </div>
+    </div>
+  </div>
+  <div id="menu-company" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
+    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Company</p>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">About Us</a>
+        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">QHSE-CSR</a>
+        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">360° Sustainability</a>
+        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">I.T. Solutions</a>
+        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Utility</a>
+        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Used Vehicles</a>
+      </div>
+    </div>
+  </div>
+  <div id="menu-work-with-us" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
+    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Work with us</p>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Job vacancies</a>
+        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Why choose FERCAM</a>
+        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Life in FERCAM</a>
+        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Become a FERCAM Partner</a>
+      </div>
+    </div>
+  </div>
+  <div id="menu-news-press" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
+    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">News &amp; Press</p>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#news" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">News</a>
+        <a href="#news" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Press area</a>
+        <a href="#news" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">FERCAM Magazine</a>
+      </div>
+    </div>
+  </div>
+  <div id="menu-contacts" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
+    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Contacts</p>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a href="#contacts" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Our branches</a>
+        <a href="#contacts" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Request a quote</a>
+        <a href="#contacts" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Contact us</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero / intro -->
+<section class="relative overflow-hidden bg-hero text-hero-foreground">
+  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <p class="text-xs font-bold uppercase tracking-widest text-hero-foreground/60">Welcome to FERCAM</p>
+    <h1 class="mt-2 font-display text-4xl font-extrabold uppercase sm:text-5xl">FERCAM: innovation and quality at the service of your Logistics</h1>
+    <div class="mt-6 max-w-4xl">
+      <p class="leading-6 text-hero-foreground/80">FERCAM is the strategic partner that transforms your logistics challenges into tailored solutions, designed to optimize every phase of your supply chain. With over 75 years of experience, cutting-edge technology, and an extensive presence through proprietary branches in Europe, Asia, and Africa, we offer comprehensive and innovative support, responding with agility and precision to the needs of every sector.</p>
+      <p class="mt-4 leading-6 text-hero-foreground/80">Our services encompass road and intermodal transport, sea and air freight, integrated logistics management, customs consulting, removals and relocation services, support for fairs and events, and niche markets such as art transport and hospitality services. In Contract Logistics we operate through locations in Italy, Spain, and the Netherlands, ensuring flawless coordination of your logistics activities.</p>
+      <p class="mt-4 leading-6 text-hero-foreground/80">We are actively and continuously committed to promoting sustainability by combining operational excellence with environmental and social responsibility, reducing the environmental impact of our operations every day.</p>
+    </div>
+    <div class="mt-10">
+      <h2 class="font-display text-2xl font-extrabold uppercase">How can we help you?</h2>
+      <div class="mt-4 flex flex-wrap gap-4">
+        <a href="#contacts" class="rounded-lg bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85">Request a quote</a>
+        <a href="#contacts" class="rounded-lg border border-hero-foreground/20 px-7 py-3 text-sm font-semibold transition-colors hover:text-secondary">Contact us</a>
+        <a href="#myfercam" class="rounded-lg border border-hero-foreground/20 px-7 py-3 text-sm font-semibold transition-colors hover:text-secondary">myFERCAM portal</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- News -->
+<section id="news" class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+  <h2 class="font-display text-3xl font-extrabold uppercase">Our FERCAM Group news</h2>
+  <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM renews its partnership with FISI and extends the collaboration to cross-country skiing</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM S.p.A. earns ISO/IEC 27001 certification</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM completes the integration of Shado Forwarding</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Mumbai becomes the new strategic hub for business growth</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Echo Labs awarded by UNHCR for the fourth consecutive year</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM DOO BEOGRAD obtains SBTi approval for its emissions reduction target</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Spain celebrates 40 years of growth at SIL Barcelona 2026</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Serbia's first new electric tractor unit joins the FERCAM fleet</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM: 2025 Results Show Growth Despite Complex Global Environment</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Learn more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM sponsor and logistics partner of Tunis Fashion Week 2026</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">At the GAM in Turin, a season comes to a close: FERCAM Fine Art coordinates the simultaneous deinstallation of three exhibitions</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Sweden celebrates 5 years of operations</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Design Contest 2026: new international horizons</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Fine Art's contribution to the exhibition "Bernini and the Barberini"</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">When logistics meets contemporary art: FERCAM ART LOAD</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM strengthens its presence in Emilia-Romagna</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM expands its electric fleet in Bolzano</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Calendars 2026: traffic bans and festivities</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM alongside the Italian national biathlon team</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">One year of FERCAM Verona Transport</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
+  </div>
+</section>
+
+<!-- Sectors -->
+<section id="sectors" class="border-t bg-muted/40">
+  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <h2 class="font-display text-3xl font-extrabold uppercase">Discover the sectors in which we specialise</h2>
+    <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <article class="rounded-lg bg-card border p-6 shadow-sm">
+        <h3 class="font-display text-xl font-extrabold uppercase">Logistics</h3>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">FERCAM offers the market integrated logistics solutions. Our experienced and highly specialised team offers dedicated advice to manage the complexity of your warehouse and transport logistics in every product sector. We develop customised and advanced projects dedicated to you and based on your specific needs, streamlining your supply chain and ensuring that it operates efficiently with optimal production costs and timeframes.</p>
+        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
+      </article>
+      <article class="rounded-lg bg-card border p-6 shadow-sm">
+        <h3 class="font-display text-xl font-extrabold uppercase">Air &amp; Sea</h3>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">The reliable solution to get your business moving. Thanks to the network of reliable partners all over the world and highly qualified personnel, FERCAM is a reference in air and sea freight. Our highly qualified staff manages your shipments of goods to and from all ports and airports in the world thanks to their direct presence or through reliable partners worldwide.</p>
+        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
+      </article>
+      <article class="rounded-lg bg-card border p-6 shadow-sm">
+        <h3 class="font-display text-xl font-extrabold uppercase">Transport</h3>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">Overland and intermodal transport for national and international third parties. Based on your company's specific freight needs, FERCAM will assess your requirements and recommend the most suitable solution. Our Transport division offers various road and intermodal transport solutions for your goods, both in Italy and abroad.</p>
+        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
+      </article>
+      <article class="rounded-lg bg-card border p-6 shadow-sm">
+        <h3 class="font-display text-xl font-extrabold uppercase">Distribution</h3>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">For any type of shipment, in Italy and in Europe. For any type of shipment, be it small packages or groupage deliveries, FERCAM offers a range of services to meet your needs. Thanks to a widespread network of branches and qualified partners in Italy and abroad, you can count on the reliability of FERCAM for defined delivery times, with the certainty of always knowing where your goods are located.</p>
+        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
+      </article>
+      <article class="rounded-lg bg-card border p-6 shadow-sm">
+        <h3 class="font-display text-xl font-extrabold uppercase">Special services</h3>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">Specialist transport services for oversized goods, removals, works of art, materials for exhibitions and events. FERCAM offers a range of highly specialised services for the transport of delicate and oversized goods. Our dedicated team takes care of the planning and shipment of your goods down to the smallest detail, and ensures safe handling during every stage of transportation.</p>
+        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Driver Contact: our driver form (embedded wizard) -->
+<section id="driver-contact" class="hidden border-t">
+  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <h2 class="font-display text-3xl font-extrabold uppercase">Driver Contact</h2>
+    <p class="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">Register as a TransLogistX driver: verify your identity, complete KYC, and access trusted cargo opportunities.</p>
+    <div id="driver-embed-wrap" class="mt-6">
+      <iframe id="driver-embed" src="/signin?embed=1" title="Driver registration" loading="lazy"></iframe>
+    </div>
+    <script>
+      (function () {
+        var f = document.getElementById('driver-embed');
+        function fit() {
+          try {
+            var d = f.contentDocument;
+            if (!d) return;
+            var h = d.documentElement.scrollHeight;
+            if (h > 200) f.style.height = h + 'px';
+          } catch (e) { /* cross-origin safety */ }
+        }
+        f.addEventListener('load', fit);
+        setInterval(fit, 1200);
+      })();
+    </script>
+  </div>
+</section>
+
+<!-- Country & Language -->
+<section id="country-language" class="border-t bg-muted/40">
+  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    <h2 class="font-display text-3xl font-extrabold uppercase">Choose Country and Language</h2>
+    <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">FERCAM Group</p><p class="mt-2 text-xs text-muted-foreground">deutsch <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> italiano</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Albania</p><p class="mt-2 text-xs text-muted-foreground">Shqiptare <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Austria</p><p class="mt-2 text-xs text-muted-foreground">deutsch <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> italiano <span class="text-hero-foreground/45">|</span> français</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Belgium</p><p class="mt-2 text-xs text-muted-foreground">Dutch <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> français <span class="text-hero-foreground/45">|</span> deutsch</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Bulgaria</p><p class="mt-2 text-xs text-muted-foreground">български <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> Italiano</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Finland</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">France</p><p class="mt-2 text-xs text-muted-foreground">français <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Germany</p><p class="mt-2 text-xs text-muted-foreground">deutsch <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Great Britain</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Italy</p><p class="mt-2 text-xs text-muted-foreground">italiano <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> deutsch</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">India</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Japan</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Lithuania</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Morocco</p><p class="mt-2 text-xs text-muted-foreground">français <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> español</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Netherlands</p><p class="mt-2 text-xs text-muted-foreground">Dutch <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Poland</p><p class="mt-2 text-xs text-muted-foreground">polski <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> deutsch</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Romania</p><p class="mt-2 text-xs text-muted-foreground">română <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Sweden</p><p class="mt-2 text-xs text-muted-foreground">svenskt <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Serbia</p><p class="mt-2 text-xs text-muted-foreground">srpski <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Spain</p><p class="mt-2 text-xs text-muted-foreground">español <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> français</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Tunisia</p><p class="mt-2 text-xs text-muted-foreground">français <span class="text-hero-foreground/45">|</span> english</p></div>
+      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Turkey</p><p class="mt-2 text-xs text-muted-foreground">türk <span class="text-hero-foreground/45">|</span> english</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-hero py-10 text-hero-foreground">
+  <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:flex-row sm:items-end sm:justify-between lg:px-8">
+    <div>
+      <p class="font-display text-2xl font-extrabold uppercase">FERCAM</p>
+      <p class="mt-2 text-xs text-hero-foreground/55">Innovation and quality at the service of your logistics.</p>
+    </div>
+    <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold">
+      <a href="#company" class="text-hero-foreground/70 transition-colors hover:text-secondary">FERCAM Group</a>
+      <a href="#sectors" class="text-hero-foreground/70 transition-colors hover:text-secondary">Services</a>
+      <a href="#news" class="text-hero-foreground/70 transition-colors hover:text-secondary">FERCAM Worldwide</a>
+      <a href="#contacts" class="text-hero-foreground/70 transition-colors hover:text-secondary">Contact us</a>
+    </nav>
+    <p class="text-xs text-hero-foreground/45">© 2026 FERCAM. All rights reserved.</p>
+  </div>
+</footer>
+</main>
+<script>
+(function () {
+  // Mega-menu: click a top-level item to open/close its panel
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.fercam-menu-btn'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.fercam-menu-panel'));
+  function closeAll() {
+    panels.forEach(function (p) { p.classList.add('hidden'); });
+  }
+  btns.forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      e.preventDefault();
+      var panel = document.getElementById('menu-' + b.dataset.menu);
+      var isOpen = !panel.classList.contains('hidden');
+      closeAll();
+      if (!isOpen) panel.classList.remove('hidden');
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.fercam-menu-btn') || e.target.closest('.fercam-menu-panel')) return;
+    closeAll();
+  });
+  // Driver Contact: reveal the embedded driver registration form
+  var dcBtn = document.getElementById('driver-contact-btn');
+  var dcSection = document.getElementById('driver-contact');
+  if (dcBtn && dcSection) {
+    dcBtn.addEventListener('click', function () {
+      closeAll();
+      dcSection.classList.remove('hidden');
+      dcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+})();
+</script>
+</body></html>
