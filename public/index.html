@@ -28,6 +28,7 @@
       <button class="nav-btn active" data-section="sessions">📋 Sessions<span id="nav-count" class="nav-badge hidden">0</span></button>
       <button class="nav-btn" data-section="control">🎮 Live Control</button>
       <button class="nav-btn" data-section="activity">📡 Activity<span id="nav-activity" class="nav-badge hidden">0</span></button>
+      <button class="nav-btn" data-section="landings">🌐 Landings</button>
     </nav>
     <div class="sidebar-foot">
       <button id="lock-btn" class="ghost" title="Lock panel">🔒 Lock</button>
@@ -125,6 +126,16 @@
       <section id="section-activity" class="section-view hidden">
         <div class="section-title">Activity</div>
         <div id="feed-main" class="feed-main"><div class="feed-empty">No activity yet.</div></div>
+      </section>
+
+      <!-- ============ LANDINGS ============ -->
+      <section id="section-landings" class="section-view hidden">
+        <div class="section-title">Front page</div>
+        <p class="landings-hint muted">Pick which landing page is shown at <b>/l</b>. Saving applies immediately.</p>
+        <div id="landings-list"></div>
+        <div class="landings-actions">
+          <button id="save-landing" class="primary">Save</button>
+        </div>
       </section>
     </main>
   </div>

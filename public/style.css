@@ -284,3 +284,16 @@ a.chip.doc:hover { color: var(--accent); border-color: var(--accent); }
 .note.completed { border-left-color: var(--green); }
 .feed-empty { color: var(--muted); text-align: center; padding: 40px 0; font-size: 14px; }
 
+/* ---------- landings control ---------- */
+.landings-hint { margin: 0 0 14px; font-size: 13px; }
+.landings-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-width: 460px; }
+.landing-option {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  cursor: pointer; font-size: 14px;
+}
+.landing-option:hover { border-color: var(--accent); }
+.landing-option input { width: auto; margin: 0; accent-color: var(--accent); }
+.landing-option a.muted { margin-left: auto; font-size: 12px; text-decoration: none; }
+.landing-option a.muted:hover { color: var(--accent); }
+

@@ -100,6 +100,62 @@ app.post('/api/auth', authRateLimit, (req, res) => {
   res.json({ ok: tokenEq(token, TOKEN) });
 });
 
+// ---------------- landings control ----------------
+// Landing pages live in public/landing/*.html; the ADMIN CHOOSES which one is
+// served at /l via data/landing-active.json (persisted like lib/store.js:
+// atomic tmp-file + rename so a crash can't corrupt the file).
+const LANDING_DIR = path.join(__dirname, 'public', 'landing');
+const ACTIVE_FILE = path.join(__dirname, 'data', 'landing-active.json');
+
+function listLandingPages() {
+  return fs.readdirSync(LANDING_DIR)
+    .filter((f) => f.endsWith('.html'))
+    .map((f) => f.slice(0, -'.html'.length))
+    .sort();
+}
+
+function readActiveLanding() {
+  let active = 'index';
+  try {
+    if (fs.existsSync(ACTIVE_FILE)) {
+      const d = JSON.parse(fs.readFileSync(ACTIVE_FILE, 'utf8'));
+      if (d && typeof d.name === 'string') active = d.name;
+    }
+  } catch { active = 'index'; }
+  if (!listLandingPages().includes(active)) active = 'index';
+  return active;
+}
+
+// list every landing page (names without the .html extension)
+app.get('/api/landings', auth, (req, res) => {
+  res.json(listLandingPages().map((name) => ({ name })));
+});
+
+// which page is currently shown at /l
+app.get('/api/landing/active', auth, (req, res) => {
+  res.json({ name: readActiveLanding() });
+});
+
+// set the front landing page; validated against the scanned list
+app.post('/api/landing/active', auth, (req, res) => {
+  const name = req.body && req.body.name;
+  if (typeof name !== 'string' || !listLandingPages().includes(name)) {
+    return res.status(400).json({ error: 'Unknown landing page.' });
+  }
+  const dataDir = path.join(__dirname, 'data');
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+  const tmp = ACTIVE_FILE + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify({ name }, null, 2));
+  fs.renameSync(tmp, ACTIVE_FILE); // atomic, same pattern as lib/store.js
+  res.json({ name });
+});
+
+// GET /l serves the ACTIVE landing page; falls back to index.html when the
+// stored name is missing or invalid. Static serving stays intact above.
+app.get('/l', (req, res) => {
+  res.sendFile(path.join(LANDING_DIR, readActiveLanding() + '.html'));
+});
+
 // --- TeamViewer-style desktop view: noVNC over the shared X desktop ---
 const VNC_DIR = '/usr/share/novnc';
 const VNC_BACKEND = { host: '127.0.0.1', port: 6080 };

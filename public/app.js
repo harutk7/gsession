@@ -56,11 +56,11 @@ $('lock-btn').addEventListener('click', () => {
 });
 
 // ---------- sections ----------
-const SECTION_TITLES = { sessions: 'Sessions', control: 'Live Control', activity: 'Activity' };
+const SECTION_TITLES = { sessions: 'Sessions', control: 'Live Control', activity: 'Activity', landings: 'Landings' };
 let currentSection = 'sessions';
 function showSection(name) {
   currentSection = name;
-  for (const id of ['section-sessions', 'section-control', 'section-activity']) {
+  for (const id of ['section-sessions', 'section-control', 'section-activity', 'section-landings']) {
     document.getElementById(id).classList.toggle('hidden', id !== 'section-' + name);
   }
   for (const btn of document.querySelectorAll('.nav-btn')) {
@@ -69,6 +69,8 @@ function showSection(name) {
   $('topbar-title').textContent = SECTION_TITLES[name] || name;
   // keyboard control only makes sense while the control section is on screen
   if (name !== 'control') $('ctl-stage').blur();
+  // entering the landings view loads its page list + active selection
+  if (name === 'landings') loadLandings();
 }
 document.querySelectorAll('.nav-btn').forEach((btn) =>
   btn.addEventListener('click', () => {
@@ -80,6 +82,29 @@ document.querySelectorAll('.nav-btn').forEach((btn) =>
     }
   }),
 );
+
+// ---------- landings control ----------
+async function loadLandings() {
+  const list = $('landings-list');
+  if (!list) return;
+  const [rl, ra] = await Promise.all([api('/landings'), api('/landing/active')]);
+  const pages = rl.ok ? await rl.json() : [];
+  const activeName = ra.ok ? ((await ra.json()).name || 'index') : 'index';
+  list.innerHTML = pages.map((p) => `
+    <label class="landing-option">
+      <input type="radio" name="landing-page" value="${escapeHtml(p.name)}" ${p.name === activeName ? 'checked' : ''} />
+      <span>${escapeHtml(p.name)}</span>
+      <a class="muted" href="/landing/${encodeURIComponent(p.name)}.html" target="_blank">preview ↗</a>
+    </label>`).join('');
+}
+
+$('save-landing').addEventListener('click', async () => {
+  const sel = document.querySelector('#landings-list input[name="landing-page"]:checked');
+  if (!sel) return;
+  const r = await api('/landing/active', { method: 'POST', body: JSON.stringify({ name: sel.value }) });
+  if (r.ok) toast('Front page set to ' + sel.value + '.', 'ok');
+  else toast('Could not save front page.', 'err');
+});
 
 // ---------- activity feed (section replaces the old bell drawer) ----------
 let unread = 0;
