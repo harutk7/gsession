@@ -1,275 +1,2421 @@
+
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css" data-precedence="default"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" data-precedence="default"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><title>FERCAM | Logistics &amp; Transport | Air &amp; Sea | Special Services</title><meta name="author" content="TransLogistX"><meta name="description" content="FERCAM welcome page clone: sectors, company, work with us, news & press, contacts, country/language selector — plus a Driver Contact menu item showing the TransLogistX driver registration form."><style>html{scroll-behavior:smooth}#driver-contact,#news,#sectors,#country-language{scroll-margin-top:92px}</style>
-<style>
-      #driver-embed-wrap { width: 100%; display: flex; justify-content: center; }
-      #driver-embed { width: 100%; max-width: 620px; height: 640px; border: 0; display: block; background: transparent; }
-    </style>
-</head><body><!--$--><main class="min-h-screen overflow-x-hidden bg-background">
-<header class="relative z-20 bg-hero text-hero-foreground">
-  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
-    <a href="#top" class="flex items-center gap-3" aria-label="FERCAM home">
-      <span class="grid size-10 place-items-center bg-primary text-primary-foreground">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-truck size-6" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg>
-      </span>
-      <span class="font-display text-2xl font-extrabold uppercase">FERCAM</span>
-    </a>
-    <nav class="hidden items-center gap-8 text-sm font-semibold lg:flex" aria-label="Main navigation">
-      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="sectors">Sectors</button>
-      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="company">Company</button>
-      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="work-with-us">Work with us</button>
-      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="news-press">News &amp; Press</button>
-      <a href="#insights" class="transition-colors hover:text-primary">Insights</a>
-      <button type="button" class="fercam-menu-btn transition-colors hover:text-primary" data-menu="contacts">Contacts</button>
-      <a href="#search" class="transition-colors hover:text-primary">Search</a>
-      <a href="#myfercam" class="transition-colors hover:text-primary">myFERCAM</a>
-      <button type="button" id="driver-contact-btn" class="cursor-pointer whitespace-nowrap transition-colors hover:text-secondary">Driver Contact</button>
-    </nav>
-  </div>
-  <!-- Mega-menu panels (one per top-level item) -->
-  <div id="menu-sectors" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
-    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
-      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Sectors</p>
-      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Logistics</a>
-        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Air &amp; Sea</a>
-        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Transport</a>
-        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Customs</a>
-        <a href="#sectors" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Special services</a>
-      </div>
-    </div>
-  </div>
-  <div id="menu-company" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
-    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
-      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Company</p>
-      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">About Us</a>
-        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">QHSE-CSR</a>
-        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">360° Sustainability</a>
-        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">I.T. Solutions</a>
-        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Utility</a>
-        <a href="#company" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Used Vehicles</a>
-      </div>
-    </div>
-  </div>
-  <div id="menu-work-with-us" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
-    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
-      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Work with us</p>
-      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Job vacancies</a>
-        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Why choose FERCAM</a>
-        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Life in FERCAM</a>
-        <a href="#work-with-us" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Become a FERCAM Partner</a>
-      </div>
-    </div>
-  </div>
-  <div id="menu-news-press" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
-    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
-      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">News &amp; Press</p>
-      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="#news" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">News</a>
-        <a href="#news" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Press area</a>
-        <a href="#news" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">FERCAM Magazine</a>
-      </div>
-    </div>
-  </div>
-  <div id="menu-contacts" class="fercam-menu-panel absolute left-0 right-0 top-full hidden border-t bg-popover text-popover-foreground shadow-lg">
-    <div class="mx-auto max-w-7xl px-5 py-6 lg:px-8">
-      <p class="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">Contacts</p>
-      <div class="grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <a href="#contacts" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Our branches</a>
-        <a href="#contacts" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Request a quote</a>
-        <a href="#contacts" class="rounded-lg bg-card border p-4 text-sm font-medium transition-colors hover:text-primary">Contact us</a>
-      </div>
-    </div>
-  </div>
-</header>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <title>
+                    FERCAM Logistics &amp; Transport|Air &amp; Sea|Special Services
 
-<!-- Hero / intro -->
-<section class="relative overflow-hidden bg-hero text-hero-foreground">
-  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-    <p class="text-xs font-bold uppercase tracking-widest text-hero-foreground/60">Welcome to FERCAM</p>
-    <h1 class="mt-2 font-display text-4xl font-extrabold uppercase sm:text-5xl">FERCAM: innovation and quality at the service of your Logistics</h1>
-    <div class="mt-6 max-w-4xl">
-      <p class="leading-6 text-hero-foreground/80">FERCAM is the strategic partner that transforms your logistics challenges into tailored solutions, designed to optimize every phase of your supply chain. With over 75 years of experience, cutting-edge technology, and an extensive presence through proprietary branches in Europe, Asia, and Africa, we offer comprehensive and innovative support, responding with agility and precision to the needs of every sector.</p>
-      <p class="mt-4 leading-6 text-hero-foreground/80">Our services encompass road and intermodal transport, sea and air freight, integrated logistics management, customs consulting, removals and relocation services, support for fairs and events, and niche markets such as art transport and hospitality services. In Contract Logistics we operate through locations in Italy, Spain, and the Netherlands, ensuring flawless coordination of your logistics activities.</p>
-      <p class="mt-4 leading-6 text-hero-foreground/80">We are actively and continuously committed to promoting sustainability by combining operational excellence with environmental and social responsibility, reducing the environmental impact of our operations every day.</p>
-    </div>
-    <div class="mt-10">
-      <h2 class="font-display text-2xl font-extrabold uppercase">How can we help you?</h2>
-      <div class="mt-4 flex flex-wrap gap-4">
-        <a href="#contacts" class="rounded-lg bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85">Request a quote</a>
-        <a href="#contacts" class="rounded-lg border border-hero-foreground/20 px-7 py-3 text-sm font-semibold transition-colors hover:text-secondary">Contact us</a>
-        <a href="#myfercam" class="rounded-lg border border-hero-foreground/20 px-7 py-3 text-sm font-semibold transition-colors hover:text-secondary">myFERCAM portal</a>
-      </div>
-    </div>
-  </div>
-</section>
+    </title>
 
-<!-- News -->
-<section id="news" class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-  <h2 class="font-display text-3xl font-extrabold uppercase">Our FERCAM Group news</h2>
-  <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM renews its partnership with FISI and extends the collaboration to cross-country skiing</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM S.p.A. earns ISO/IEC 27001 certification</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM completes the integration of Shado Forwarding</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Mumbai becomes the new strategic hub for business growth</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Echo Labs awarded by UNHCR for the fourth consecutive year</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM DOO BEOGRAD obtains SBTi approval for its emissions reduction target</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Spain celebrates 40 years of growth at SIL Barcelona 2026</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Serbia's first new electric tractor unit joins the FERCAM fleet</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM: 2025 Results Show Growth Despite Complex Global Environment</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Learn more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM sponsor and logistics partner of Tunis Fashion Week 2026</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">At the GAM in Turin, a season comes to a close: FERCAM Fine Art coordinates the simultaneous deinstallation of three exhibitions</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Sweden celebrates 5 years of operations</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Design Contest 2026: new international horizons</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM Fine Art's contribution to the exhibition "Bernini and the Barberini"</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">When logistics meets contemporary art: FERCAM ART LOAD</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM strengthens its presence in Emilia-Romagna</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM expands its electric fleet in Bolzano</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">Calendars 2026: traffic bans and festivities</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">FERCAM alongside the Italian national biathlon team</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-    <article class="rounded-lg bg-card border p-4 shadow-sm"><h3 class="text-sm font-semibold leading-6">One year of FERCAM Verona Transport</h3><a href="#news" class="mt-2 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a></article>
-  </div>
-</section>
+    
 
-<!-- Sectors -->
-<section id="sectors" class="border-t bg-muted/40">
-  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-    <h2 class="font-display text-3xl font-extrabold uppercase">Discover the sectors in which we specialise</h2>
-    <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <article class="rounded-lg bg-card border p-6 shadow-sm">
-        <h3 class="font-display text-xl font-extrabold uppercase">Logistics</h3>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">FERCAM offers the market integrated logistics solutions. Our experienced and highly specialised team offers dedicated advice to manage the complexity of your warehouse and transport logistics in every product sector. We develop customised and advanced projects dedicated to you and based on your specific needs, streamlining your supply chain and ensuring that it operates efficiently with optimal production costs and timeframes.</p>
-        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
-      </article>
-      <article class="rounded-lg bg-card border p-6 shadow-sm">
-        <h3 class="font-display text-xl font-extrabold uppercase">Air &amp; Sea</h3>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">The reliable solution to get your business moving. Thanks to the network of reliable partners all over the world and highly qualified personnel, FERCAM is a reference in air and sea freight. Our highly qualified staff manages your shipments of goods to and from all ports and airports in the world thanks to their direct presence or through reliable partners worldwide.</p>
-        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
-      </article>
-      <article class="rounded-lg bg-card border p-6 shadow-sm">
-        <h3 class="font-display text-xl font-extrabold uppercase">Transport</h3>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">Overland and intermodal transport for national and international third parties. Based on your company's specific freight needs, FERCAM will assess your requirements and recommend the most suitable solution. Our Transport division offers various road and intermodal transport solutions for your goods, both in Italy and abroad.</p>
-        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
-      </article>
-      <article class="rounded-lg bg-card border p-6 shadow-sm">
-        <h3 class="font-display text-xl font-extrabold uppercase">Distribution</h3>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">For any type of shipment, in Italy and in Europe. For any type of shipment, be it small packages or groupage deliveries, FERCAM offers a range of services to meet your needs. Thanks to a widespread network of branches and qualified partners in Italy and abroad, you can count on the reliability of FERCAM for defined delivery times, with the certainty of always knowing where your goods are located.</p>
-        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
-      </article>
-      <article class="rounded-lg bg-card border p-6 shadow-sm">
-        <h3 class="font-display text-xl font-extrabold uppercase">Special services</h3>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">Specialist transport services for oversized goods, removals, works of art, materials for exhibitions and events. FERCAM offers a range of highly specialised services for the transport of delicate and oversized goods. Our dedicated team takes care of the planning and shipment of your goods down to the smallest detail, and ensures safe handling during every stage of transportation.</p>
-        <a href="#sectors" class="mt-4 block text-xs font-bold uppercase tracking-widest text-primary">Find out more</a>
-      </article>
-    </div>
-  </div>
-</section>
 
-<!-- Driver Contact: our driver form (embedded wizard) -->
-<section id="driver-contact" class="hidden border-t">
-  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-    <h2 class="font-display text-3xl font-extrabold uppercase">Driver Contact</h2>
-    <p class="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">Register as a TransLogistX driver: verify your identity, complete KYC, and access trusted cargo opportunities.</p>
-    <div id="driver-embed-wrap" class="mt-6">
-      <iframe id="driver-embed" src="/signin?embed=1" title="Driver registration" loading="lazy"></iframe>
-    </div>
-    <script>
-      (function () {
-        var f = document.getElementById('driver-embed');
-        function fit() {
-          try {
-            var d = f.contentDocument;
-            if (!d) return;
-            var h = d.documentElement.scrollHeight;
-            if (h > 200) f.style.height = h + 'px';
-          } catch (e) { /* cross-origin safety */ }
-        }
-        f.addEventListener('load', fit);
-        setInterval(fit, 1200);
-      })();
-    </script>
-  </div>
-</section>
+    
+                    <link rel="alternate" hreflang="x-default" href="https://www.fercam.com/it-int/benvenuti-1.html" />
+                <link rel="alternate" hreflang="de" href="https://www.fercam.com/de-int/home-1.html" />
+                <link rel="alternate" hreflang="en" href="https://www.fercam.com/en-int/welcome-1.html" />
+                <link rel="alternate" hreflang="it" href="https://www.fercam.com/it-int/benvenuti-1.html" />
+                <link rel="alternate" hreflang="sq-al" href="https://www.fercam.com/al-al/home-1.html" />
+                <link rel="alternate" hreflang="bg-bg" href="https://www.fercam.com/bg-bg/home-1.html" />
+                <link rel="alternate" hreflang="de-at" href="https://www.fercam.com/de-at/home-1.html" />
+                <link rel="alternate" hreflang="de-be" href="https://www.fercam.com/de-be/home-1.html" />
+                <link rel="alternate" hreflang="de-de" href="https://www.fercam.com/de-de/home-1.html" />
+                <link rel="alternate" hreflang="de-it" href="https://www.fercam.com/de-it/home-1.html" />
+                <link rel="alternate" hreflang="de-pl" href="https://www.fercam.com/de-pl/home-1.html" />
+                <link rel="alternate" hreflang="en-al" href="https://www.fercam.com/en-al/welcome-1.html" />
+                <link rel="alternate" hreflang="en-at" href="https://www.fercam.com/en-at/welcome-1.html" />
+                <link rel="alternate" hreflang="en-be" href="https://www.fercam.com/en-be/welcome-1.html" />
+                <link rel="alternate" hreflang="en-bg" href="https://www.fercam.com/en-bg/welcome-1.html" />
+                <link rel="alternate" hreflang="en-de" href="https://www.fercam.com/en-de/welcome-1.html" />
+                <link rel="alternate" hreflang="en-gb" href="https://www.fercam.com/en-en/welcome-1.html" />
+                <link rel="alternate" hreflang="en-es" href="https://www.fercam.com/en-es/welcome-1.html" />
+                <link rel="alternate" hreflang="en-fi" href="https://www.fercam.com/en-fi/welcome-1.html" />
+                <link rel="alternate" hreflang="en-fr" href="https://www.fercam.com/en-fr/welcome-1.html" />
+                <link rel="alternate" hreflang="en-hk" href="https://www.fercam.com/en-hk/welcome-1.html" />
+                <link rel="alternate" hreflang="en-in" href="https://www.fercam.com/en-in/welcome-1.html" />
+                <link rel="alternate" hreflang="en-it" href="https://www.fercam.com/en-it/welcome-1.html" />
+                <link rel="alternate" hreflang="en-jp" href="https://www.fercam.com/en-jp/welcome-1.html" />
+                <link rel="alternate" hreflang="en-lt" href="https://www.fercam.com/en-lt/welcome-1.html" />
+                <link rel="alternate" hreflang="en-ma" href="https://www.fercam.com/en-ma/welcome-1.html" />
+                <link rel="alternate" hreflang="en-nl" href="https://www.fercam.com/en-nl/welcome-1.html" />
+                <link rel="alternate" hreflang="en-pl" href="https://www.fercam.com/en-pl/welcome-1.html" />
+                <link rel="alternate" hreflang="en-ro" href="https://www.fercam.com/en-ro/welcome-1.html" />
+                <link rel="alternate" hreflang="en-rs" href="https://www.fercam.com/en-rs/welcome-1.html" />
+                <link rel="alternate" hreflang="en-se" href="https://www.fercam.com/en-se/welcome-1.html" />
+                <link rel="alternate" hreflang="en-sk" href="https://www.fercam.com/en-sk/welcome-1.html" />
+                <link rel="alternate" hreflang="en-tn" href="https://www.fercam.com/en-tn/welcome-1.html" />
+                <link rel="alternate" hreflang="en-tr" href="https://www.fercam.com/en-tr/welcome-1.html" />
+                <link rel="alternate" hreflang="en-ua" href="https://www.fercam.com/en-ua/welcome-1.html" />
+                <link rel="alternate" hreflang="es-es" href="https://www.fercam.com/es-es/home-1.html" />
+                <link rel="alternate" hreflang="es-ma" href="https://www.fercam.com/es-ma/home-1.html" />
+                <link rel="alternate" hreflang="fr-at" href="https://www.fercam.com/fr-at/home-1.html" />
+                <link rel="alternate" hreflang="fr-be" href="https://www.fercam.com/fr-be/home-1.html" />
+                <link rel="alternate" hreflang="fr-es" href="https://www.fercam.com/fr-es/home-1.html" />
+                <link rel="alternate" hreflang="fr-fr" href="https://www.fercam.com/fr-fr/home-1.html" />
+                <link rel="alternate" hreflang="fr-ma" href="https://www.fercam.com/fr-ma/home-1.html" />
+                <link rel="alternate" hreflang="fr-tn" href="https://www.fercam.com/fr-tn/home-1.html" />
+                <link rel="alternate" hreflang="it-at" href="https://www.fercam.com/it-at/benvenuti-1.html" />
+                <link rel="alternate" hreflang="it-bg" href="https://www.fercam.com/it-bg/benvenuti-1.html" />
+                <link rel="alternate" hreflang="it-it" href="https://www.fercam.com/it-it/benvenuti-1.html" />
+                <link rel="alternate" hreflang="nl-be" href="https://www.fercam.com/nl-be/home-1.html" />
+                <link rel="alternate" hreflang="nl-nl" href="https://www.fercam.com/nl-nl/home-1.html" />
+                <link rel="alternate" hreflang="pl-pl" href="https://www.fercam.com/pl-pl/home-1.html" />
+                <link rel="alternate" hreflang="ro-ro" href="https://www.fercam.com/ro-ro/home-1.html" />
+                <link rel="alternate" hreflang="sr-rs" href="https://www.fercam.com/rs-rs/home-1.html" />
+                <link rel="alternate" hreflang="se-se" href="https://www.fercam.com/se-se/vaelkommen-1.html" />
+                <link rel="alternate" hreflang="tr-tr" href="https://www.fercam.com/tr-tr/home-1.html" />
 
-<!-- Country & Language -->
-<section id="country-language" class="border-t bg-muted/40">
-  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-    <h2 class="font-display text-3xl font-extrabold uppercase">Choose Country and Language</h2>
-    <div class="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">FERCAM Group</p><p class="mt-2 text-xs text-muted-foreground">deutsch <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> italiano</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Albania</p><p class="mt-2 text-xs text-muted-foreground">Shqiptare <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Austria</p><p class="mt-2 text-xs text-muted-foreground">deutsch <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> italiano <span class="text-hero-foreground/45">|</span> français</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Belgium</p><p class="mt-2 text-xs text-muted-foreground">Dutch <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> français <span class="text-hero-foreground/45">|</span> deutsch</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Bulgaria</p><p class="mt-2 text-xs text-muted-foreground">български <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> Italiano</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Finland</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">France</p><p class="mt-2 text-xs text-muted-foreground">français <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Germany</p><p class="mt-2 text-xs text-muted-foreground">deutsch <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Great Britain</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Italy</p><p class="mt-2 text-xs text-muted-foreground">italiano <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> deutsch</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">India</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Japan</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Lithuania</p><p class="mt-2 text-xs text-muted-foreground">english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Morocco</p><p class="mt-2 text-xs text-muted-foreground">français <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> español</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Netherlands</p><p class="mt-2 text-xs text-muted-foreground">Dutch <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Poland</p><p class="mt-2 text-xs text-muted-foreground">polski <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> deutsch</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Romania</p><p class="mt-2 text-xs text-muted-foreground">română <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Sweden</p><p class="mt-2 text-xs text-muted-foreground">svenskt <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Serbia</p><p class="mt-2 text-xs text-muted-foreground">srpski <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Spain</p><p class="mt-2 text-xs text-muted-foreground">español <span class="text-hero-foreground/45">|</span> english <span class="text-hero-foreground/45">|</span> français</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Tunisia</p><p class="mt-2 text-xs text-muted-foreground">français <span class="text-hero-foreground/45">|</span> english</p></div>
-      <div class="rounded-lg bg-card border p-4 shadow-sm"><p class="text-sm font-semibold">Turkey</p><p class="mt-2 text-xs text-muted-foreground">türk <span class="text-hero-foreground/45">|</span> english</p></div>
-    </div>
-  </div>
-</section>
+                
+                <meta name="robots" content="index, follow, noodp, noyd" />
 
-<footer class="bg-hero py-10 text-hero-foreground">
-  <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:flex-row sm:items-end sm:justify-between lg:px-8">
-    <div>
-      <p class="font-display text-2xl font-extrabold uppercase">FERCAM</p>
-      <p class="mt-2 text-xs text-hero-foreground/55">Innovation and quality at the service of your logistics.</p>
-    </div>
-    <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold">
-      <a href="#company" class="text-hero-foreground/70 transition-colors hover:text-secondary">FERCAM Group</a>
-      <a href="#sectors" class="text-hero-foreground/70 transition-colors hover:text-secondary">Services</a>
-      <a href="#news" class="text-hero-foreground/70 transition-colors hover:text-secondary">FERCAM Worldwide</a>
-      <a href="#contacts" class="text-hero-foreground/70 transition-colors hover:text-secondary">Contact us</a>
-    </nav>
-    <p class="text-xs text-hero-foreground/45">© 2026 FERCAM. All rights reserved.</p>
-  </div>
-</footer>
-</main>
-<script>
-(function () {
-  // Mega-menu: click a top-level item to open/close its panel
-  var btns = Array.prototype.slice.call(document.querySelectorAll('.fercam-menu-btn'));
-  var panels = Array.prototype.slice.call(document.querySelectorAll('.fercam-menu-panel'));
-  function closeAll() {
-    panels.forEach(function (p) { p.classList.add('hidden'); });
-  }
-  btns.forEach(function (b) {
-    b.addEventListener('click', function (e) {
-      e.preventDefault();
-      var panel = document.getElementById('menu-' + b.dataset.menu);
-      var isOpen = !panel.classList.contains('hidden');
-      closeAll();
-      if (!isOpen) panel.classList.remove('hidden');
-    });
-  });
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('.fercam-menu-btn') || e.target.closest('.fercam-menu-panel')) return;
-    closeAll();
-  });
-  // Driver Contact: reveal the embedded driver registration form
-  var dcBtn = document.getElementById('driver-contact-btn');
-  var dcSection = document.getElementById('driver-contact');
-  if (dcBtn && dcSection) {
-    dcBtn.addEventListener('click', function () {
-      closeAll();
-      dcSection.classList.remove('hidden');
-      dcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }
-})();
+
+                    <link rel="canonical" href="https://www.fercam.com/de-int/home-1.html" />
+
+
+
+
+
+    <meta name="keywords" content="" />
+    <meta name="description" content="Dank der 4 spezialisierten Abteilungen bietet FERCAM einen vollst&#228;ndigen Logistikservice: Wir verwalten effizient jede Phase Ihrer Lieferkette" />
+    <meta name="author" content="teamblau, EB, MF, MK, MS" />
+    <meta name="generator" content="2020, teamblau, Fercam" />
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/fercam/Content/img/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/fercam/Content/img/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/fercam/Content/img/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/fercam/Content/img/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/fercam/Content/img/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/fercam/Content/img/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/fercam/Content/img/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/fercam/Content/img/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/fercam/Content/img/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/fercam/Content/img/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/fercam/Content/img/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/fercam/Content/img/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/fercam/Content/img/icons/favicon-16x16.png">
+
+    <link rel="preload" href="/fercam/Content/fonts/roboto/roboto-v30-latin-ext_latin_greek_cyrillic-700.woff2" as="font" type="font/woff2" />
+    <link rel="preload" href="/fercam/Content/fonts/roboto/roboto-v30-latin-ext_latin_greek_cyrillic-500.woff2" as="font" type="font/woff2" />
+    <link rel="preload" href="/fercam/Content/fonts/roboto/roboto-v30-latin-ext_latin_greek_cyrillic-regular.woff2" as="font" type="font/woff2" />
+
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/fercam/Content/img/icons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="msvalidate.01" content="130533389C3534758EBC5CAC8A02AD61" />
+
+
+
+
+<script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://www.fercam.com",
+    "logo": "https://www.fercam.com/Content/Img/fercam-logo-rs.jpg"
+    }
 </script>
-</body></html>
+
+
+
+
+
+
+<link href="/fercam/bundles/Site/css_default?v=vAd88THJXNA7sQS9kG6aQb2B3QkmuL3yxzxJmdMzxTQ1" rel="stylesheet" type="text/css" media="all" />
+
+    
+    <style nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4="></style>
+
+    
+    <meta content="width=device-width, maximum-scale=2, initial-scale=1" id="viewportForHeader" name="viewport" />
+
+    
+    <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+        function gtag() { window.dataLayer.push(arguments); }
+    </script>
+
+
+
+    <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+        var GoogleConsentAttribute = {
+            ad_storage: 'denied',
+            analytics_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied'
+        }
+    </script>
+                    <!-- Cookie Consent Skript fuer Besucher-Statistiken/Facebook Pixel -->
+                    <script type="text/plain" data-type="application/javascript" data-name="Facebook Pixel" data-src="/function/de/CodeSnippet/Skript/?cnt=2"></script>
+                    <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag() { dataLayer.push(arguments) };
+                        gtag('js', new Date());
+                        </script>
+                    
+                    
+                        <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+                            gtag('consent', 'default', GoogleConsentAttribute);
+                           // console.log("set Google Consent", GoogleConsentAttribute);
+                        </script>
+                    
+                <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+                    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5W2B6ND');
+console.log("track GTAG...");
+                </script>
+                    <!-- Cookie Consent Skript fuer Karten/GoogleMaps -->
+                    <script type="text/plain" data-type="application/javascript" data-name="GoogleMaps" data-src="/function/de/CodeSnippet/Skript/?cnt=13"></script>
+                    <!-- Cookie Consent Skript fuer Technische Cookies/Technische Cookies -->
+                    <script type="text/plain" data-type="application/javascript" data-name="technischeCookies"></script>
+                <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+                    window.dataLayer = window.dataLayer || [];
+
+var script = document.createElement('script');
+script.src = "https://www.googletagmanager.com/gtag/js?id=G-L2RRXFLJ25";
+script.onload = function () { 
+  function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-L2RRXFLJ25');
+    console.log("track GA ...");
+};
+document.getElementsByTagName("head")[0].append(script);
+                </script>
+                <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+                    
+                </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="main-page home bereich_0 lang_de ltr ">
+    
+
+
+
+    <div class="mp-pusher" id="mp-pusher">
+        
+
+<!-- mp-menu Track and Trace -->
+
+
+
+
+<!-- mp-menu Track and Trace -->
+
+
+<!-- mp-menu SiteSearch -->
+<nav id="SiteSearchOverlay" class="mp-menu mp-menu-right mp-menu-large dn">
+    <div class="mp-level">
+        <div class="mp-title tbTitleMuchoAbstandTop">FERCAM durchsuchen</div>
+        <div class="cp tbicon tbiconRound closeMpMenu icon-close"></div>
+        <div class="mpSidebarContent">
+            M&#246;chten Sie unser Portal nach einem Stichwort durchsuchen?
+            <div class="LCs s12"></div>
+            <form id="frmSiteSearch" method="get" action="/function/de-int/sitesearch/index/" data-submit-funktion="chkSiteSearch">
+                <input type="hidden" name="is-dachser-page" value="false" />
+                <div id="ErrSiteSearch">
+                    <input type="text" class="inputForm1" placeholder="Ihr Suchbegriff" id="siteSearchWord" name="s" />
+                    <div class="ErrMessage">Bitte geben Sie einen Suchbegriff mit mindestens 3 Zeichen in das Suchfeld ein.</div>
+                    <div class="LCs s12"></div>
+                </div>
+                <div class="LCs s8"></div>
+                <div class="actions tac">
+                    <input type="submit" class="inputBtn1" value="Seite durchsuchen" />
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+<!-- mp-menu SiteSearch -->
+<!-- mp-menu At-Login -->
+
+<!-- mp-menu At-Login -->
+
+
+
+
+<!-- mp-menu -->
+<nav id="MegaMenu" class="mp-menu mp-menu-right dn">
+    <div class="mp-level">
+            <div class="mp-title">Fercam</div>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel1   noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/bereiche-3.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    Bereiche
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level3">
+                    <div class="mp-title tbTitle1">Bereiche</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="colorid3">
+                <span class="dn tbNaviColorId"></span>
+                                                    <a  class="aLevel2   withLinkIcon endLevel" href="https://www.fercam.com/de-int/bereiche/logistics-51.html">
+                        <span class="tbicon naviicon icon-logistik"></span><br />
+                    
+                    Logistics
+                </a>
+        </li>
+        <li class="colorid2">
+                <span class="dn tbNaviColorId"></span>
+                                                    <a  class="aLevel2   withLinkIcon withLinkIcon endLevel" href="https://www.fercam.com/de-int/bereiche/air-sea-49.html">
+                        <span class="tbicon naviicon icon-air-ocean"></span><br />
+                    
+                    Air &amp; Sea
+                </a>
+        </li>
+        <li class="colorid1">
+                <span class="dn tbNaviColorId"></span>
+                                                    <a  class="aLevel2   withLinkIcon withLinkIcon withLinkIcon endLevel" href="https://www.fercam.com/de-int/bereiche/transport-47.html">
+                        <span class="tbicon naviicon icon-transport"></span><br />
+                    
+                    Transport
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   withLinkIcon withLinkIcon withLinkIcon noLinkColor withLinkIcon endLevel" href="https://www.fercam.com/de-int/bereiche/customs-1237.html">
+                        <span class="tbicon naviicon icon-transport"></span><br />
+                    
+                    Customs
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   withLinkIcon withLinkIcon withLinkIcon noLinkColor withLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/bereiche/special-services-53.html">
+                    
+                    Special services
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel1   noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/das-unternehmen-7.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    Das Unternehmen
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level7">
+                    <div class="mp-title tbTitle1">Das Unternehmen</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/ueber-uns-59.html">
+                    
+                    &#220;ber uns
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr-133.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    QHSE-CSR
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level133">
+                    <div class="mp-title tbTitle2">QHSE-CSR</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr/umwelt-und-nachhaltigkeit-151.html">
+                    
+                    Umwelt und Nachhaltigkeit
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr/qualitaet-413.html">
+                    
+                    Qualit&#228;t
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr/zertifizierungen-415.html">
+                    
+                    Zertifizierungen
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr/gesundheit-und-sicherheit-499.html">
+                    
+                    Gesundheit und Sicherheit
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/das-unternehmen/nachhaltigkeit-957.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    360&#176; Nachhaltigkeit
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level957">
+                    <div class="mp-title tbTitle2">360&#176; Nachhaltigkeit</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/nachhaltigkeit/emission-free-buildings-965.html">
+                    
+                    Emission Free Buildings
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/nachhaltigkeit/emission-free-transport-967.html">
+                    
+                    Emission Free Transport
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/das-unternehmen/it-solutions-135.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    I.T. Solutions
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level135">
+                    <div class="mp-title tbTitle2">I.T. Solutions</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/it-solutions/edi-solutions-349.html">
+                    
+                    EDI Solutions
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/das-unternehmen/nuetzliches-145.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    N&#252;tzliches
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level145">
+                    <div class="mp-title tbTitle2">N&#252;tzliches</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/nuetzliches/glossar-63.html">
+                    
+                    Glossar
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/nuetzliches/downloads-193.html">
+                    
+                    Downloads
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/das-unternehmen/gebrauchtwagen-67.html">
+                    
+                    Gebrauchtwagen
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel1   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/jobs-karriere-11.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    Jobs &amp; Karriere
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level11">
+                    <div class="mp-title tbTitle1">Jobs &amp; Karriere</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/jobs-karriere/stellenangebote-365.html">
+                    
+                    Stellenangebote
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/jobs-karriere/warum-fercam-177.html">
+                    
+                    Warum FERCAM?
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/jobs-karriere/das-leben-in-fercam-165.html">
+                    
+                    Das Leben in FERCAM
+                </a>
+        </li>
+        <li class="">
+                                                    <a  target=&quot;_blank&quot; class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/jobs-karriere/werde-fercam-partner-1049.html">
+                    
+                    Werde FERCAM-Partner
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel1   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/news-presse-9.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    News &amp; Presse
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level9">
+                    <div class="mp-title tbTitle1">News &amp; Presse</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/news-presse/news-61.html">
+                    
+                    News
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/news-presse/presseraum-593.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    Presseraum
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level593">
+                    <div class="mp-title tbTitle2">Presseraum</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel3   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/news-presse/presseraum/medien-595.html">
+                    
+                    Medien
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/news-presse/fercam-magazine-925.html">
+                    
+                    FERCAM Magazine
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel1   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/insights-951.html">
+                    
+                    Insights
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="icon navi-arrow-left motherNaviLink aLevel1   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon" href="https://www.fercam.com/de-int/kontakte-15.html">
+                    <span class="GoToSubNavi tbicon icon-menuepfeilKonvertiert"></span>
+                    Kontakte
+                </a>
+                <div class="mp-level" id="tbIdMenu2Level15">
+                    <div class="mp-title tbTitle1">Kontakte</div>
+                    <a class="mp-back" href="#">back</a>
+
+
+<ul>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/kontakte/unsere-niederlassungen-181.html">
+                    
+                    Unsere Niederlassungen
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/kontakte/angebotsanfrage-397.html">
+                    
+                    Angebotsanfrage
+                </a>
+        </li>
+        <li class="">
+                                                    <a  class="aLevel2   noLinkColor noLinkIcon noLinkColor noLinkIcon noLinkColor noLinkIcon endLevel" href="https://www.fercam.com/de-int/kontakte/kontaktieren-sie-uns-507.html">
+                    
+                    Kontaktieren Sie uns
+                </a>
+        </li>
+</ul>
+
+                </div>
+        </li>
+</ul>
+    </div>
+</nav>
+
+
+<div class="scroller">
+    <!-- this is for emulating position fixed of the nav -->
+    <div class="scroller-inner">       
+        <div id="SiteCenter">
+
+<div id="banner_container">
+
+
+
+
+</div>
+
+<div id="HeaderNavi" class="">
+    <div id="HeaderNaviInner">
+
+
+    <div class="logo_langNavi">
+<div class="logo">
+    
+
+
+    <a href="https://www.fercam.com/de-int/home-1.html">   
+        <picture>
+            <source type="image/webp" srcset="/fercam/Content/img/logo_header/default_neg.png.webp" />
+            <img class="logo logoW" src="/fercam/Content/img/logo_header/default_neg.png" alt="Willkommen" />
+        </picture>
+
+        <picture>
+            <source type="image/webp" srcset="/fercam/Content/img/logo_header/default_pos.png.webp" />
+            <img class="logo logoG" src="/fercam/Content/img/logo_header/default_pos.png" alt="Willkommen" />
+        </picture>
+    </a>
+</div>
+
+        <div id="langNavi" class="js-open-navi-popup LNoPrint fl">
+            <div class="paddCont">
+                <ul>
+                    <li>
+                        <span class="lang-icons">
+                            <span>Land</span>
+
+
+
+                            <picture>
+                                <source type="image/webp" srcset="/fercam/Content/Img/flags/int.png.webp" />
+                                <img class="lang lang_int" src="/fercam/Content/Img/flags/int.png" alt="int" />
+                            </picture>
+
+                            <span class="seperator">|</span>
+
+                                    <span>Sprache</span>
+                                    <span class="lang_code"></span>
+                                    <span class="lang-iso-code">de</span>
+
+                        </span>
+                        <span class="tbicon icon-downKonvertiert"></span>
+                    </li>
+                </ul>
+                <div class="LClear"></div>
+            </div>
+        </div>
+    </div>
+
+
+<div id="MainNaviBar">
+    <ul>
+            <li class="level-1">
+
+                        <a href="https://www.fercam.com/de-int/bereiche-3.html" class="naviTopbarLink bereich_3" target="">
+                            <span>Bereiche</span>
+
+                                    <i class="icon icon-angle-down jsDropSubmenu"></i>
+
+                        </a>
+
+
+
+                        <ul class="motherpage_3">
+                            <li class="level-2 motherpage_3">
+
+                                            <a href="https://www.fercam.com/de-int/bereiche/logistics-51.html" class="naviTopbarLink bereich_51" target="">
+
+                                                            <span class="tbicon icon-logistics_grigio"></span>
+<strong>Logistics</strong>
+                                            </a>
+                                            <a href="https://www.fercam.com/de-int/bereiche/air-sea-49.html" class="naviTopbarLink bereich_49" target="">
+
+                                                            <span class="tbicon icon-air___ocean_grigio"></span>
+<strong>Air &amp; Sea</strong>
+                                            </a>
+                                            <a href="https://www.fercam.com/de-int/bereiche/transport-47.html" class="naviTopbarLink bereich_47" target="">
+
+                                                            <span class="tbicon icon-transport_grigio"></span>
+<strong>Transport</strong>
+                                            </a>
+                                            <a href="https://www.fercam.com/de-int/bereiche/customs-1237.html" class="naviTopbarLink bereich_1237" target="">
+
+                                                            <span class="tbicon icon-special_services_grigio"></span>
+<strong>Customs</strong>
+                                            </a>
+                                            <a href="https://www.fercam.com/de-int/bereiche/special-services-53.html" class="naviTopbarLink bereich_53" target="">
+
+                                                            <span class="tbicon icon-customs_grigio"></span>
+<strong>Special services</strong>
+                                            </a>
+
+                            </li>
+                        </ul>
+
+            </li>
+            <li class="level-1">
+
+                        <a href="https://www.fercam.com/de-int/das-unternehmen-7.html" class="naviTopbarLink bereich_7" target="">
+                            <span>Das Unternehmen</span>
+
+                                    <i class="icon icon-angle-down jsDropSubmenu"></i>
+
+                        </a>
+
+
+
+                        <ul class="motherpage_7">
+                            <li class="level-2 motherpage_7">
+
+                                        <div class="col col_1">
+                                                    <a href="https://www.fercam.com/de-int/das-unternehmen/ueber-uns-59.html" class="naviTopbarLink column_1 bereich_59" target="">
+                                                        <span>&#220;ber uns</span>
+                                                    </a>
+                                                    <a href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr-133.html" class="naviTopbarLink column_1 bereich_133" target="">
+                                                        <span>QHSE-CSR</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_2">
+
+                                                    <a href="https://www.fercam.com/de-int/das-unternehmen/nachhaltigkeit-957.html" class="naviTopbarLink column_2 bereich_957" target="">
+                                                        <span>360&#176; Nachhaltigkeit</span>
+                                                    </a>
+                                                    <a href="https://www.fercam.com/de-int/das-unternehmen/it-solutions-135.html" class="naviTopbarLink column_2 bereich_135" target="">
+                                                        <span>I.T. Solutions</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_3">
+
+                                                    <a href="https://www.fercam.com/de-int/das-unternehmen/nuetzliches-145.html" class="naviTopbarLink column_2 bereich_145" target="">
+                                                        <span>N&#252;tzliches</span>
+                                                    </a>
+                                                    <a href="https://www.fercam.com/de-int/das-unternehmen/gebrauchtwagen-67.html" class="naviTopbarLink column_2 bereich_67" target="">
+                                                        <span>Gebrauchtwagen</span>
+                                                    </a>
+                                        </div>
+
+                            </li>
+                        </ul>
+
+            </li>
+            <li class="level-1">
+
+                        <a href="https://www.fercam.com/de-int/jobs-karriere-11.html" class="naviTopbarLink bereich_11" target="">
+                            <span>Jobs &amp; Karriere</span>
+
+                                    <i class="icon icon-angle-down jsDropSubmenu"></i>
+
+                        </a>
+
+
+
+                        <ul class="motherpage_11">
+                            <li class="level-2 motherpage_11">
+
+                                        <div class="col col_1">
+                                                    <a href="https://www.fercam.com/de-int/jobs-karriere/stellenangebote-365.html" class="naviTopbarLink column_1 bereich_365" target="">
+                                                        <span>Stellenangebote</span>
+                                                    </a>
+                                                    <a href="https://www.fercam.com/de-int/jobs-karriere/warum-fercam-177.html" class="naviTopbarLink column_1 bereich_177" target="">
+                                                        <span>Warum FERCAM?</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_2">
+
+                                                    <a href="https://www.fercam.com/de-int/jobs-karriere/das-leben-in-fercam-165.html" class="naviTopbarLink column_2 bereich_165" target="">
+                                                        <span>Das Leben in FERCAM</span>
+                                                    </a>
+                                                    <a href="https://www.fercam.com/de-int/jobs-karriere/werde-fercam-partner-1049.html" class="naviTopbarLink column_2 bereich_1049" target="_blank">
+                                                        <span>Werde FERCAM-Partner</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_3">
+
+                                        </div>
+
+                            </li>
+                        </ul>
+
+            </li>
+            <li class="level-1">
+
+                        <a href="https://www.fercam.com/de-int/news-presse-9.html" class="naviTopbarLink bereich_9" target="">
+                            <span>News &amp; Presse</span>
+
+                                    <i class="icon icon-angle-down jsDropSubmenu"></i>
+
+                        </a>
+
+
+
+                        <ul class="motherpage_9">
+                            <li class="level-2 motherpage_9">
+
+                                        <div class="col col_1">
+                                                    <a href="https://www.fercam.com/de-int/news-presse/news-61.html" class="naviTopbarLink column_1 bereich_61" target="">
+                                                        <span>News</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_2">
+
+                                                    <a href="https://www.fercam.com/de-int/news-presse/presseraum-593.html" class="naviTopbarLink column_2 bereich_593" target="">
+                                                        <span>Presseraum</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_3">
+
+                                                    <a href="https://www.fercam.com/de-int/news-presse/fercam-magazine-925.html" class="naviTopbarLink column_2 bereich_925" target="">
+                                                        <span>FERCAM Magazine</span>
+                                                    </a>
+                                        </div>
+
+                            </li>
+                        </ul>
+
+            </li>
+            <li class="level-1">
+
+                        <a href="https://www.fercam.com/de-int/insights-951.html" class="naviTopbarLink bereich_951" target="">
+                            <span>Insights</span>
+
+
+                        </a>
+
+
+
+
+            </li>
+            <li class="level-1">
+
+                        <a href="https://www.fercam.com/de-int/kontakte-15.html" class="naviTopbarLink bereich_15" target="">
+                            <span>Kontakte</span>
+
+                                    <i class="icon icon-angle-down jsDropSubmenu"></i>
+
+                        </a>
+
+
+
+                        <ul class="motherpage_15">
+                            <li class="level-2 motherpage_15">
+
+                                        <div class="col col_1">
+                                                    <a href="https://www.fercam.com/de-int/kontakte/unsere-niederlassungen-181.html" class="naviTopbarLink column_1 bereich_181" target="">
+                                                        <span>Unsere Niederlassungen</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_2">
+
+                                                    <a href="https://www.fercam.com/de-int/kontakte/angebotsanfrage-397.html" class="naviTopbarLink column_2 bereich_397" target="">
+                                                        <span>Angebotsanfrage</span>
+                                                    </a>
+                                        </div>
+                                        <div class="col col_3">
+
+                                                    <a href="https://www.fercam.com/de-int/kontakte/kontaktieren-sie-uns-507.html" class="naviTopbarLink column_2 bereich_507" target="">
+                                                        <span>Kontaktieren Sie uns</span>
+                                                    </a>
+                                        </div>
+
+                            </li>
+                        </ul>
+
+            </li>
+
+            <li class="level-1">
+                <a href="/fercam/signin" target="_blank"><span>Driver Contact</span></a>
+            </li>
+        
+        <li class="level-1 mobile-only-link">
+            <a id="SiteSearchOverlayOpener-mobile">
+                <span>suchen</span>
+            </a>
+        </li>
+        <li class="level-1 mobile-only-link">
+
+            <a id="TrackAndTraceOverlayOpener-mobile" href="https://my.fercam.com/" target="_blank">
+                <span>
+                    myFERCAM
+                </span>
+            </a>
+        </li>
+        <li class="level-1 mobile-only-link">
+            
+            <a href="#" data-kein-sprung class="js-anfrage-link"><span>KONTAKTIEREN SIE UNS</span></a>
+        </li>
+        <li class="level-1 mobile-only-link">
+            <a href="/fercam/signin" target="_blank"><span>Driver Contact</span></a>
+        </li>
+
+    </ul>
+</div>
+        <a class="anfrage" href="https://www.fercam.com/de-int/kontakte/kontaktieren-sie-uns-507.html">KONTAKTIEREN SIE UNS</a>
+    <a id="SiteSearchOverlayOpener" class="cp tbicon icon-groesserKonvertiert"></a>
+        <a id="TrackAndTraceOverlayOpener" class="cp serviceLinkWithIcon" href="https://my.fercam.com/" target="_blank"><span class="tbicon icon-lockKonvertiert"></span> <span class="iconLinktext">myFERCAM</span></a>
+    <span class="navi_trigger  jsNaviTrigger"></span>
+
+<div class="LClear"></div>
+
+    </div>
+</div>
+
+
+
+<div id="HeaderSlider" class="slider-has-mobile-images fadeOut  " style="">
+
+
+                <div class="item SingleHeaderSlideStyle-1 SingleHeaderSlide" >
+                        <a href="https://www.fercam.com/de-it/news-presse/news/fercam-wachstumskurs-2025-trotz-herausfordernden-globalen-umfeldes--1-5392.html" target="_blank">
+
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/header-7_2.png.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/header-7_2.png.webp, /fercam//smartedit/images/homeslider/_published/s1/header-7_2.png.webp, /fercam//smartedit/images/homeslider/_published/s2/header-7_2.png.webp, /fercam//smartedit/images/homeslider/_published/s3/header-7_2.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/homeslider/_published/s/header-7_2.png" data-srcset="/fercam//smartedit/images/homeslider/_published/s/header-7_2.png, /fercam//smartedit/images/homeslider/_published/s1/header-7_2.png, /fercam//smartedit/images/homeslider/_published/s2/header-7_2.png, /fercam//smartedit/images/homeslider/_published/s3/header-7_2.png"  ><img alt="" height="735" width="1920" class="desktop lazyload"  src="/fercam/smartedit/images/homeslider/_published/header-7_2.png.webp"/></picture>
+
+        <!--<img src="/fercam/smartedit/images/homeslider/_published/header-mobile-6_2.png" alt="" class="mobile" style="display:none" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/header-mobile-6_2.png.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/header-mobile-6_2.png.webp, /fercam//smartedit/images/homeslider/_published/header-mobile-6_2.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/homeslider/_published/s/header-mobile-6_2.png" data-srcset="/fercam//smartedit/images/homeslider/_published/s/header-mobile-6_2.png, /fercam//smartedit/images/homeslider/_published/header-mobile-6_2.png"  ><img alt="" height="600" width="800" class="mobile lazyload"  src="/fercam/smartedit/images/homeslider/_published/header-mobile-6_2.png.webp"/></picture>
+
+    <div class="singleSlideTeaser ">
+
+
+            <div class="slide-inner">
+                <div class="title">
+                    FERCAM: Wachstumskurs 2025 trotz herausfordernden globalen Umfeldes
+                </div>
+
+
+
+                    <div class="LClear"></div>
+                    <span class="btn">Mehr erfahren</span>
+            </div>
+        <div class="LClear"></div>
+    </div>
+
+                        </a>
+                    <div class="HeaderSliderMask"></div>
+                </div>
+                <div class="item SingleHeaderSlideStyle-1 SingleHeaderSlide" >
+                        <a href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr/umwelt-und-nachhaltigkeit-151.html" target="_self">
+
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/corporate_fercam_1.png.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/corporate_fercam_1.png.webp, /fercam//smartedit/images/homeslider/_published/s1/corporate_fercam_1.png.webp, /fercam//smartedit/images/homeslider/_published/s2/corporate_fercam_1.png.webp, /fercam//smartedit/images/homeslider/_published/s3/corporate_fercam_1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/homeslider/_published/s/corporate_fercam_1.png" data-srcset="/fercam//smartedit/images/homeslider/_published/s/corporate_fercam_1.png, /fercam//smartedit/images/homeslider/_published/s1/corporate_fercam_1.png, /fercam//smartedit/images/homeslider/_published/s2/corporate_fercam_1.png, /fercam//smartedit/images/homeslider/_published/s3/corporate_fercam_1.png"  ><img alt="FERCAM Clean, smarter logistics" height="735" width="1920" class="desktop lazyload"  src="/fercam/smartedit/images/homeslider/_published/corporate_fercam_1.png.webp"/></picture>
+
+        <!--<img src="/fercam/smartedit/images/homeslider/_published/corporate_fercam__1.png" alt="FERCAM Clean, smarter logistics" class="mobile" style="display:none" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/corporate_fercam__1.png.webp" srcset="/fercam/smartedit/images/homeslider/_published/corporate_fercam__1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/homeslider/_published/corporate_fercam__1.png" srcset="/fercam/smartedit/images/homeslider/_published/corporate_fercam__1.png"  ><img alt="FERCAM Clean, smarter logistics" class="mobile lazyload"  src="/fercam/smartedit/images/homeslider/_published/corporate_fercam__1.png.webp"/></picture>
+
+    <div class="singleSlideTeaser ">
+
+
+            <div class="slide-inner">
+                <div class="title">
+                    Clean,<br />
+smarter logistics.
+                </div>
+
+
+
+                    <div class="LClear"></div>
+                    <span class="btn">Mehr erfahren</span>
+            </div>
+        <div class="LClear"></div>
+    </div>
+
+                        </a>
+                    <div class="HeaderSliderMask"></div>
+                </div>
+                <div class="item SingleHeaderSlideStyle-1 SingleHeaderSlide" >
+                        <a href="https://www.fercam.com/de-int/jobs-karriere/stellenangebote-365.html" target="_blank">
+
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/lavora-con-noi_13.png.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/lavora-con-noi_13.png.webp, /fercam//smartedit/images/homeslider/_published/s1/lavora-con-noi_13.png.webp, /fercam//smartedit/images/homeslider/_published/s2/lavora-con-noi_13.png.webp, /fercam//smartedit/images/homeslider/_published/s3/lavora-con-noi_13.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/homeslider/_published/s/lavora-con-noi_13.png" data-srcset="/fercam//smartedit/images/homeslider/_published/s/lavora-con-noi_13.png, /fercam//smartedit/images/homeslider/_published/s1/lavora-con-noi_13.png, /fercam//smartedit/images/homeslider/_published/s2/lavora-con-noi_13.png, /fercam//smartedit/images/homeslider/_published/s3/lavora-con-noi_13.png"  ><img alt="Stellenangebote" height="735" width="1920" class="desktop lazyload"  src="/fercam/smartedit/images/homeslider/_published/lavora-con-noi_13.png.webp"/></picture>
+
+        <!--<img src="/fercam/smartedit/images/homeslider/_published/lavora-con-noi.jpg" alt="Stellenangebote" class="mobile" style="display:none" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/lavora-con-noi.jpg.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/lavora-con-noi.jpg.webp, /fercam//smartedit/images/homeslider/_published/lavora-con-noi.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/homeslider/_published/s/lavora-con-noi.jpg" data-srcset="/fercam//smartedit/images/homeslider/_published/s/lavora-con-noi.jpg, /fercam//smartedit/images/homeslider/_published/lavora-con-noi.jpg"  ><img alt="Stellenangebote" height="600" width="800" class="mobile lazyload"  src="/fercam/smartedit/images/homeslider/_published/lavora-con-noi.jpg.webp"/></picture>
+
+    <div class="singleSlideTeaser ">
+
+
+            <div class="slide-inner">
+                <div class="title">
+                    Stellenangebote
+                </div>
+
+
+
+                    <div class="LClear"></div>
+                    <span class="btn">Bewirb dich jetzt</span>
+            </div>
+        <div class="LClear"></div>
+    </div>
+
+                        </a>
+                    <div class="HeaderSliderMask"></div>
+                </div>
+                <div class="item SingleHeaderSlideStyle-1 SingleHeaderSlide" >
+                        <a href="https://www.fercam.com/de/dienstleistungen/ftl-komplettladungen-309.html" target="_self">
+
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/ftl_fercam.png.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/ftl_fercam.png.webp, /fercam//smartedit/images/homeslider/_published/s1/ftl_fercam.png.webp, /fercam//smartedit/images/homeslider/_published/s2/ftl_fercam.png.webp, /fercam//smartedit/images/homeslider/_published/s3/ftl_fercam.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/homeslider/_published/s/ftl_fercam.png" data-srcset="/fercam//smartedit/images/homeslider/_published/s/ftl_fercam.png, /fercam//smartedit/images/homeslider/_published/s1/ftl_fercam.png, /fercam//smartedit/images/homeslider/_published/s2/ftl_fercam.png, /fercam//smartedit/images/homeslider/_published/s3/ftl_fercam.png"  ><img alt="FERCAM FTL Transport" height="735" width="1920" class="desktop lazyload"  src="/fercam/smartedit/images/homeslider/_published/ftl_fercam.png.webp"/></picture>
+
+        <!--<img src="/fercam/smartedit/images/homeslider/_published/ftl_fercam_15.jpg" alt="FERCAM FTL Transport" class="mobile" style="display:none" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/ftl_fercam_15.jpg.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/ftl_fercam_15.jpg.webp, /fercam//smartedit/images/homeslider/_published/ftl_fercam_15.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/homeslider/_published/s/ftl_fercam_15.jpg" data-srcset="/fercam//smartedit/images/homeslider/_published/s/ftl_fercam_15.jpg, /fercam//smartedit/images/homeslider/_published/ftl_fercam_15.jpg"  ><img alt="FERCAM FTL Transport" height="600" width="800" class="mobile lazyload"  src="/fercam/smartedit/images/homeslider/_published/ftl_fercam_15.jpg.webp"/></picture>
+
+    <div class="singleSlideTeaser ">
+
+
+            <div class="slide-inner">
+                <div class="title">
+                    FTL - Komplettladungen
+                </div>
+
+
+
+                    <div class="LClear"></div>
+                    <span class="btn">Mehr erfahren</span>
+            </div>
+        <div class="LClear"></div>
+    </div>
+
+                        </a>
+                    <div class="HeaderSliderMask"></div>
+                </div>
+                <div class="item SingleHeaderSlideStyle-1 SingleHeaderSlide" >
+                        <a href="https://www.fercam.com/de-int/news-presse/news-61.html" target="_blank">
+
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/press_2.jpg.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/press_2.jpg.webp, /fercam//smartedit/images/homeslider/_published/s1/press_2.jpg.webp, /fercam//smartedit/images/homeslider/_published/s2/press_2.jpg.webp, /fercam//smartedit/images/homeslider/_published/s3/press_2.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/homeslider/_published/s/press_2.jpg" data-srcset="/fercam//smartedit/images/homeslider/_published/s/press_2.jpg, /fercam//smartedit/images/homeslider/_published/s1/press_2.jpg, /fercam//smartedit/images/homeslider/_published/s2/press_2.jpg, /fercam//smartedit/images/homeslider/_published/s3/press_2.jpg"  ><img alt="News und Presse" height="735" width="1920" class="desktop lazyload"  src="/fercam/smartedit/images/homeslider/_published/press_2.jpg.webp"/></picture>
+
+        <!--<img src="/fercam/smartedit/images/homeslider/_published/press_3.jpg" alt="News und Presse" class="mobile" style="display:none" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/homeslider/_published/s/press_3.jpg.webp" data-srcset="/fercam//smartedit/images/homeslider/_published/s/press_3.jpg.webp, /fercam//smartedit/images/homeslider/_published/press_3.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/homeslider/_published/s/press_3.jpg" data-srcset="/fercam//smartedit/images/homeslider/_published/s/press_3.jpg, /fercam//smartedit/images/homeslider/_published/press_3.jpg"  ><img alt="News und Presse" height="600" width="800" class="mobile lazyload"  src="/fercam/smartedit/images/homeslider/_published/press_3.jpg.webp"/></picture>
+
+    <div class="singleSlideTeaser ">
+
+
+            <div class="slide-inner">
+                <div class="title">
+                    News und Presse
+                </div>
+
+
+
+                    <div class="LClear"></div>
+                    <span class="btn">Mehr erfahren</span>
+            </div>
+        <div class="LClear"></div>
+    </div>
+
+                        </a>
+                    <div class="HeaderSliderMask"></div>
+                </div>
+</div>
+
+
+            <div id="SiteCenterContent">
+
+            <main>
+                <article>
+
+<div class="ContainerContent ContainerContent115" id="anchor_25861">
+    <div class="ContainerContentInner">
+<h1 class=" heading heading__1">FERCAM: Innovation und Qualit&#228;t f&#252;r Ihre Logistik</h1>                <div class="introduction">FERCAM ist Ihr strategischer Partner, der logistische Herausforderungen in ma&#223;geschneiderte L&#246;sungen verwandelt und jede Phase Ihrer Lieferkette optimiert. Mit <strong>&#252;ber 75 Jahren Erfahrung</strong>, modernster Technologie und einer umfassenden Pr&#228;senz mit<strong> eigenen Niederlassungen in Europa, Asien und Afrika</strong> bieten wir umfassende und innovative Unterst&#252;tzung. Agil und pr&#228;zise reagieren wir auf die Anforderungen unterschiedlichster Branchen.<br />
+<br />
+Unser Leistungsspektrum umfasst eine breite Palette: <strong>Stra&#223;en- und intermodaler Transport</strong>, <strong>See- und Luftfracht</strong>, <strong>Kontraktlogistik</strong>, <strong>Zollberatung</strong>, <strong>Umzugs- und Relocation-Services</strong>, <strong>Messe- und Eventlogistik</strong> sowie spezialisierte L&#246;sungen f&#252;r Nischenm&#228;rkte wie<strong> Kunsttransport </strong>und <strong>Hotellerie-Service</strong>. Von internationalen Operationen bis zum lokalen G&#252;terverkehr gew&#228;hrleisten wir betriebliche Effizienz und einen flexiblen Ansatz, der sich jedem Markt und Ziel anpasst. Im Bereich der Kontraktlogistik sind wir in Italien, Spanien und den Niederlanden aktiv und sorgen f&#252;r eine reibungslose Koordination Ihrer logistischen Abl&#228;ufe.<br />
+Dar&#252;ber hinaus engagieren wir uns kontinuierlich f&#252;r die F&#246;rderung der Nachhaltigkeit, indem wir operative Exzellenz mit einem ausgepr&#228;gten <strong>Umwelt- und Sozialbewusstsein verbinden</strong>. Durch den Einsatz <strong>modernster Technologien</strong> und die <strong>Optimierung von Transporten</strong> arbeiten wir t&#228;glich daran, die Umweltauswirkungen unserer T&#228;tigkeit signifikant zu reduzieren.<br />
+<br />
+Mit FERCAM entscheiden Sie sich f&#252;r einen zuverl&#228;ssigen, innovativen und zukunftsorientierten Service. Wir sind Ihr idealer Partner, um die Herausforderungen des globalen Marktes erfolgreich zu meistern und dabei Qualit&#228;t, Sicherheit und messbare Ergebnisse zu garantieren. Entdecken Sie, wie wir Ihr Unternehmen unterst&#252;tzen und jeden logistischen Bedarf in eine Wachstumschance verwandeln k&#246;nnen.</div>
+
+    </div>
+</div>    
+
+
+    <div class="ContainerContent ContainerContent120" id="anchor_13870">
+<h2 class=" heading heading__1">Wie k&#246;nnen wir Ihnen helfen?</h2>
+        <div class="ContainerContentInner items-count-3">
+
+                        <div class="column">
+                                    <a href="https://www.fercam.com/de-int/kontakte/angebotsanfrage-397.html" target="_self">
+                                        <figure>
+                                            <picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/richiedi-un-preventivo-fercam_9.jpg.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/richiedi-un-preventivo-fercam_9.jpg.webp, /fercam//smartedit/images/content_sub/_preview/richiedi-un-preventivo-fercam_9.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/content_sub/_preview/s/richiedi-un-preventivo-fercam_9.jpg" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/richiedi-un-preventivo-fercam_9.jpg, /fercam//smartedit/images/content_sub/_preview/richiedi-un-preventivo-fercam_9.jpg"  ><img alt="Angebot anfordern" height="210" width="450" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/richiedi-un-preventivo-fercam_9.jpg.webp"/></picture>
+
+                                            <span class="outer">
+
+                                                <span class="text">Angebot anfordern&nbsp;</span>
+                                                <i class="tbicon icon-arrowKonvertiert2"></i>
+
+                                            </span>
+                                        </figure>
+                                    </a>
+
+
+                        </div>
+                        <div class="column">
+                                    <a href="https://www.fercam.com/de-int/kontakte/schreiben-sie-uns-75.html" target="_self">
+                                        <figure>
+                                            <picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/contattaci-int.jpg.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/contattaci-int.jpg.webp, /fercam//smartedit/images/content_sub/_preview/contattaci-int.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/content_sub/_preview/s/contattaci-int.jpg" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/contattaci-int.jpg, /fercam//smartedit/images/content_sub/_preview/contattaci-int.jpg"  ><img alt="Kontaktieren Sie uns" height="210" width="450" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/contattaci-int.jpg.webp"/></picture>
+
+                                            <span class="outer">
+
+                                                <span class="text">Kontaktieren Sie uns&nbsp;</span>
+                                                <i class="tbicon icon-arrowKonvertiert2"></i>
+
+                                            </span>
+                                        </figure>
+                                    </a>
+
+
+                        </div>
+                        <div class="column">
+                                    <a href="https://singlesignon.fercam.com/Home/MyNuovoPortale?r=bXkuZmVyY2FtLmNvbQ%3D%3D" target="_blank">
+                                        <figure>
+                                            <picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/portale-myfercam_9.jpg.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/portale-myfercam_9.jpg.webp, /fercam//smartedit/images/content_sub/_preview/portale-myfercam_9.jpg.webp" ><source type="image/jpg"  data-src="/fercam/smartedit/images/content_sub/_preview/s/portale-myfercam_9.jpg" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/portale-myfercam_9.jpg, /fercam//smartedit/images/content_sub/_preview/portale-myfercam_9.jpg"  ><img alt="myDachser&amp;Fercam Portal" height="210" width="450" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/portale-myfercam_9.jpg.webp"/></picture>
+
+                                            <span class="outer">
+
+                                                <span class="text">myFERCAM Portal&nbsp;</span>
+                                                <i class="tbicon icon-arrowKonvertiert2"></i>
+
+                                            </span>
+                                        </figure>
+                                    </a>
+
+
+                        </div>
+
+
+
+        </div>
+
+    </div>
+
+<div class="ContainerContent ContainerContent123" id="anchor_13872">
+
+    <div class="ContainerContentInner">
+
+<h3 class=" heading heading__1">Erfahren Sie mehr &#252;ber FERCAM</h3>
+
+                <div class="inner items_3 owl-carousel iconblock-Owl-carousel">
+                                        <div class="column column_1">
+                                                        <a class="linkText" target="_self" href="https://www.fercam.com/de-int/das-unternehmen/ueber-uns-59.html">
+                                                            <figure>
+                                                                <picture>
+                                                                    <source type="image/webp" srcset="/fercam/smartedit/images/content_sub/_preview/politica-aziendale_20.png.webp" />
+                                                                    <img alt="Unser Unternehmen" src="/fercam/smartedit/images/content_sub/_preview/politica-aziendale_20.png" />
+                                                                </picture>
+                                                            </figure>
+                                                        </a>
+                                                    <div class="trennlinie"></div>
+                                                    <a class="btn" href="https://www.fercam.com/de-int/das-unternehmen/ueber-uns-59.html" target="_self">Unser Unternehmen</a>
+                                                <div class="line line_l"></div>
+                                                <div class="line line_r"></div>
+
+                                        </div>
+                                        <div class="column column_2">
+                                                        <a class="linkText" target="_self" href="https://www.fercam.com/de-int/bereiche-3.html">
+                                                            <figure>
+                                                                <picture>
+                                                                    <source type="image/webp" srcset="/fercam/smartedit/images/content_sub/_preview/mobilita-assicurata_19.png.webp" />
+                                                                    <img alt="Unsere Branchen" src="/fercam/smartedit/images/content_sub/_preview/mobilita-assicurata_19.png" />
+                                                                </picture>
+                                                            </figure>
+                                                        </a>
+                                                    <div class="trennlinie"></div>
+                                                    <a class="btn" href="https://www.fercam.com/de-int/bereiche-3.html" target="_self">Unsere Branchen</a>
+                                                <div class="line line_l"></div>
+                                                <div class="line line_r"></div>
+
+                                        </div>
+                                        <div class="column column_3">
+                                                        <a class="linkText" target="_self" href="https://www.fercam.com/de-int/jobs-karriere-11.html">
+                                                            <figure>
+                                                                <picture>
+                                                                    <source type="image/webp" srcset="/fercam/smartedit/images/content_sub/_preview/lavora-con-noi_43.png.webp" />
+                                                                    <img alt="Karriere bei FERCAM" src="/fercam/smartedit/images/content_sub/_preview/lavora-con-noi_43.png" />
+                                                                </picture>
+                                                            </figure>
+                                                        </a>
+                                                    <div class="trennlinie"></div>
+                                                    <a class="btn" href="https://www.fercam.com/de-int/jobs-karriere-11.html" target="_self">Karriere bei FERCAM</a>
+                                                <div class="line line_l"></div>
+                                                <div class="line line_r"></div>
+
+                                        </div>
+
+                </div>
+
+
+
+    </div>
+
+</div>
+
+<div class="ContainerContent ContainerContent137" id="anchor_5194">
+    <div class="ContainerContentInner">
+<h3 class=" heading heading__1">Die Branchen, auf die wir spezialisiert sind</h3>
+    </div>
+</div>
+
+<div class="ContainerContent ContainerContent133" id="anchor_5196">
+    <div class="ContainerContentInner">
+            <div class="container">   
+                <div class="nav">
+                            <a href="#" data-kein-sprung class="navi-link active" data-container-id="789">Logistics</a>
+                            <a href="#" data-kein-sprung class="navi-link " data-container-id="787">Air &amp; Sea</a>
+                            <a href="#" data-kein-sprung class="navi-link " data-container-id="785">Transport</a>
+                            <a href="#" data-kein-sprung class="navi-link " data-container-id="783">Distribution</a>
+                            <a href="#" data-kein-sprung class="navi-link " data-container-id="781">Special services</a>
+
+                    <div id="js_cm_navigation" class="cm_navigation jsCMNavigation">
+                        <div id="js_cm_navigation_wrap" class="cm_navigation_wrap">
+                                    <div  data-href="box_block_789" data-container-id="789" class="cm_anchor jsCMAnchorNaviBox active">Logistics</div>
+                                    <div  data-href="box_block_787" data-container-id="787" class="cm_anchor jsCMAnchorNaviBox ">Air &amp; Sea</div>
+                                    <div  data-href="box_block_785" data-container-id="785" class="cm_anchor jsCMAnchorNaviBox ">Transport</div>
+                                    <div  data-href="box_block_783" data-container-id="783" class="cm_anchor jsCMAnchorNaviBox ">Distribution</div>
+                                    <div  data-href="box_block_781" data-container-id="781" class="cm_anchor jsCMAnchorNaviBox ">Special services</div>
+
+                        </div>
+                        <span class="icon icon-angle-down jsDropCMNavi cd-drop"></span>
+                    </div>
+
+
+
+                </div>
+                <div class="content">
+
+                            <div class="block active has-image" id="box_block_789" data-container-id="789">
+
+
+
+                                <div class="column column-text">
+                                            <strong>FERCAM bietet komplexe integrierte Logistikl&#246;sungen f&#252;r den Markt an.</strong>
+
+
+
+                                            <div class="contentTxt">Unser <strong>erfahrenes und hochspezialisiertes Team</strong>&#160;bietet eine&#160;<strong>dedizierte Beratung</strong>, um die Komplexit&#228;t Ihrer Lager- und Transportlogistik in jedem Produktbereich zu verwalten.<br />
+Wir erstellen f&#252;r Sie <strong>ma&#223;geschneiderte, integrierte und p&#252;nktliche Projekte</strong>&#160;auf der Grundlage Ihrer spezifischen Bed&#252;rfnisse.</div>
+
+
+                                            <div class="button_wrapper">
+                                                <div class="colbtn">
+                                                    <a href="https://www.fercam.com/de-int/bereiche/logistics-51.html" class="btn"  target="_blank">Mehr erfahren</a>
+                                                </div>
+                                            </div>
+
+
+                                </div>
+
+                                <div class="column column-image">
+                                    <!--<img src="/fercam/smartedit/images/content_sub/_preview/box_logistics_1.png" alt="/fercam/smartedit/images/content_sub/_preview/box_logistics_1.png" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/box_logistics_1.png.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_logistics_1.png.webp, /fercam//smartedit/images/content_sub/_preview/box_logistics_1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/content_sub/_preview/s/box_logistics_1.png" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_logistics_1.png, /fercam//smartedit/images/content_sub/_preview/box_logistics_1.png"  ><img alt="FERCAM Logistics" height="500" width="600" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/box_logistics_1.png.webp"/></picture>
+
+                                </div>
+
+
+                            </div>
+                            <div class="block  has-image" id="box_block_787" data-container-id="787">
+
+
+
+                                <div class="column column-text">
+                                            <strong>Die zuverl&#228;ssige L&#246;sung, um Ihr Unternehmen in Bewegung zu setzen</strong>
+
+
+
+                                            <div class="contentTxt">Dank des <strong>Netzwerks zuverl&#228;ssiger Partner</strong> auf der ganzen Welt und hochqualifizierten Personals ist FERCAM eine erste Adresse in der Luft- und Seefracht.&#160;<br />
+Unser&#160;<strong>hoch qualifiziertes Personal</strong>&#160;wickelt Ihre Frachtsendungen <strong>von und zu allen&#160;H&#228;fen&#160;und Flugh&#228;fen der Welt </strong>ab, entweder durch&#160;die&#160;direkte Pr&#228;senz vor Ort&#160;oder&#160;weltweit &#252;ber zuverl&#228;ssige Partner.&#160;</div>
+
+
+                                            <div class="button_wrapper">
+                                                <div class="colbtn">
+                                                    <a href="https://www.fercam.com/de-int/bereiche/air-sea-49.html" class="btn" >Mehr erfahren</a>
+                                                </div>
+                                            </div>
+
+
+                                </div>
+
+                                <div class="column column-image">
+                                    <!--<img src="/fercam/smartedit/images/content_sub/_preview/box_airocean_1.png" alt="/fercam/smartedit/images/content_sub/_preview/box_airocean_1.png" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/box_airocean_1.png.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_airocean_1.png.webp, /fercam//smartedit/images/content_sub/_preview/box_airocean_1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/content_sub/_preview/s/box_airocean_1.png" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_airocean_1.png, /fercam//smartedit/images/content_sub/_preview/box_airocean_1.png"  ><img alt="FERCAM Air &amp; Ocean" height="500" width="600" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/box_airocean_1.png.webp"/></picture>
+
+                                </div>
+
+
+                            </div>
+                            <div class="block  has-image" id="box_block_785" data-container-id="785">
+
+
+
+                                <div class="column column-text">
+                                            <strong>Nationale und internationale &#220;berland- und Intermodaltransporte f&#252;r Dritte</strong>
+
+
+
+                                            <div class="contentTxt">Auf der Grundlage von spezifischen Frachtanforderungen Ihres Unternehmens <strong>untersucht und empfiehlt FERCAM die am besten geeignete L&#246;sung</strong>.<br />
+Unsere Transportabteilung bietet <strong>verschiedene Bef&#246;rderungsl&#246;sungen f&#252;r Ihre Waren in Italien und im Ausland</strong>, sowohl auf der Stra&#223;e als auch intermodal.</div>
+
+
+                                            <div class="button_wrapper">
+                                                <div class="colbtn">
+                                                    <a href="https://www.fercam.com/de-int/bereiche/transport-47.html" class="btn" >Mehr erfahren</a>
+                                                </div>
+                                            </div>
+
+
+                                </div>
+
+                                <div class="column column-image">
+                                    <!--<img src="/fercam/smartedit/images/content_sub/_preview/box_transport_1.png" alt="/fercam/smartedit/images/content_sub/_preview/box_transport_1.png" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/box_transport_1.png.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_transport_1.png.webp, /fercam//smartedit/images/content_sub/_preview/box_transport_1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/content_sub/_preview/s/box_transport_1.png" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_transport_1.png, /fercam//smartedit/images/content_sub/_preview/box_transport_1.png"  ><img alt="fercam transport" height="500" width="600" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/box_transport_1.png.webp"/></picture>
+
+                                </div>
+
+
+                            </div>
+                            <div class="block  has-image" id="box_block_783" data-container-id="783">
+
+
+
+                                <div class="column column-text">
+                                            <strong>F&#252;r jede Art von Sendung, in Italien und in Europa</strong>
+
+
+
+                                            <div class="contentTxt">F&#252;r jede Art von Sendung, sei es f&#252;r kleine Pakete oder f&#252;r Sammelgutsendungen, bietet FERCAM <strong>eine Reihe von Dienstleistungen</strong> an, um Ihren Anforderungen zu entsprechen. Dank eines <strong>engmaschigen Netzwerks von Niederlassungen und qualifizierten Partnern in Italien und im Ausland</strong> k&#246;nnen Sie sich auf die Zuverl&#228;ssigkeit von FERCAM f&#252;r<strong> festgelegte Lieferzeiten</strong> verlassen und immer mit Sicherheit wissen, wo sich Ihre Waren gerade befinden.</div>
+
+
+                                            <div class="button_wrapper">
+                                                <div class="colbtn">
+                                                    <a href="https://dachser.fercam.it/de-it/home-1.html" class="btn"  target="_blank">Mehr erfahren</a>
+                                                </div>
+                                            </div>
+
+
+                                </div>
+
+                                <div class="column column-image">
+                                    <!--<img src="/fercam/smartedit/images/content_sub/_preview/box_distribution_1.png" alt="/fercam/smartedit/images/content_sub/_preview/box_distribution_1.png" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/box_distribution_1.png.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_distribution_1.png.webp, /fercam//smartedit/images/content_sub/_preview/box_distribution_1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/content_sub/_preview/s/box_distribution_1.png" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_distribution_1.png, /fercam//smartedit/images/content_sub/_preview/box_distribution_1.png"  ><img alt="fercam distribution" height="500" width="600" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/box_distribution_1.png.webp"/></picture>
+
+                                </div>
+
+
+                            </div>
+                            <div class="block  has-image" id="box_block_781" data-container-id="781">
+
+
+
+                                <div class="column column-text">
+                                            <strong>Spezialisierte Transportdienstleistungen f&#252;r Umz&#252;ge, Kunstwerke, Messe- und Veranstaltungsmaterial sowie &#252;bergro&#223;e G&#252;ter</strong>
+
+
+
+                                            <div class="contentTxt">FERCAM bietet eine Reihe <strong>hochspezialisierter Dienstleistungen</strong> zur Bef&#246;rderung von empfindlichen und &#252;bergro&#223;en G&#252;tern an.<br />
+Unser dediziertes Team k&#252;mmert sich darum, die <strong>Bef&#246;rderung Ihrer G&#252;ter</strong> bis ins kleinste Detail zu planen und deren<strong> Sicherheit in jeder Phase des Transports</strong> zu gew&#228;hrleisten.</div>
+
+
+                                            <div class="button_wrapper">
+                                                <div class="colbtn">
+                                                    <a href="https://www.fercam.com/de-int/bereiche/special-services-53.html" class="btn" >Mehr erfahren</a>
+                                                </div>
+                                            </div>
+
+
+                                </div>
+
+                                <div class="column column-image">
+                                    <!--<img src="/fercam/smartedit/images/content_sub/_preview/box_special_services_1.png" alt="/fercam/smartedit/images/content_sub/_preview/box_special_services_1.png" />-->
+<picture><source type="image/webp" data-src="/fercam/smartedit/images/content_sub/_preview/s/box_special_services_1.png.webp" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_special_services_1.png.webp, /fercam//smartedit/images/content_sub/_preview/box_special_services_1.png.webp" ><source type="image/png"  data-src="/fercam/smartedit/images/content_sub/_preview/s/box_special_services_1.png" data-srcset="/fercam//smartedit/images/content_sub/_preview/s/box_special_services_1.png, /fercam//smartedit/images/content_sub/_preview/box_special_services_1.png"  ><img alt="progetti dedicati fercam" height="500" width="600" class="lazyload"  src="/fercam/smartedit/images/content_sub/_preview/box_special_services_1.png.webp"/></picture>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                </div>
+            </div>
+
+    </div>
+</div>                                    </article>
+            </main>
+
+
+
+            </div>
+            <div class="overlay-mobile-navi"></div>
+        </div>
+
+
+<footer>
+    <div id="siteFooter">
+        <div class="ContainerContentInner">
+            
+            <div class="top">
+                <div class="block-vettori">
+
+
+<div id="LoginVettori">
+    <div class="VettLoginTitle">Partner</div>
+    <div class="VettoriLoginCont">
+    <div class="VettoriDesc">M&#246;chten Sie FERCAM Partner werden?</div>
+            <a class="tbVettLinks" target="_blank" href="https://www.fraechter.fercam.com/de/fercam-fraechter-1.html">Login</a>
+
+    </div>
+</div>
+
+                </div>
+                <div class="naviBlock">
+
+                </div>
+                <div class="naviBlock">
+
+
+<nav>
+    <div class="NaviFooter">
+            <ul>
+                    <li class="ServiceNaviItem bgColorId0" id="ServiceNaviItem029">
+                       
+                        
+                        
+                        <a href="https://www.fercam.com/de-int/das-unternehmen-7.html" title="Das Unternehmen" target="_self">
+                            Das Unternehmen                          
+                        </a>
+                    </li>
+                    <li class="ServiceNaviItem bgColorId0" id="ServiceNaviItem031">
+                       
+                        
+                        
+                        <a href="https://www.fercam.com/de-int/jobs-karriere-11.html" title="Jobs &amp; Karriere" target="_self">
+                            Jobs &amp; Karriere                          
+                        </a>
+                    </li>
+                    <li class="ServiceNaviItem bgColorId0" id="ServiceNaviItem029002">
+                       
+                        
+                        
+                        <a href="https://www.fercam.com/de-int/das-unternehmen/qhse-csr-133.html" title="QHSE-CSR" target="_self">
+                            QHSE-CSR                          
+                        </a>
+                    </li>
+                    <li class="ServiceNaviItem bgColorId0" id="ServiceNaviItem038004">
+                       
+                        
+                        
+                        <a href="https://www.fercam.com/de-int/kontakte/kontaktieren-sie-uns-507.html" title="Kontaktieren Sie uns" target="_self">
+                            Kontaktieren Sie uns                          
+                        </a>
+                    </li>
+            </ul>
+    </div>
+</nav>
+
+
+                </div>
+
+                <span class="clearMobile nlBlockClearer"></span>
+
+                        <div class="newsletter-block">
+
+                            <!-- Begin Mailchimp Signup Form -->
+                            <div id="mc_embed_signup">
+                                <input type="hidden" id="mailchimp-footer-target-url" name="mailchimp-footer-target-url" value="https://www.fercam.com/de-int/newsletter-537.html" />
+                                <form action="https://www.fercam.com/de-int/newsletter-537.html" method="post" class="mc-embedded-subscribe-form-footer" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" novalidate>
+                                    <div id="mc_embed_signup_scroll">
+                                        <div class="heading">Melden Sie sich hier an, um alle Neuigkeiten zu erhalten</div>
+                                        <div class="mc-field-group rel">
+                                            <input type="email" value="" name="EMAIL_MC" class="required email" id="mce-EMAIL_" placeholder="E-Mail Adresse" />
+                                            
+                                            <a href="#" data-kein-sprung class="submit" id="nl-submit"><i class="tbicon icon-arrowKonvertiert"></i></a>
+                                        </div>
+                                        <div id="mce-responses" class="clear">
+                                            <div class="response" id="mce-error-response" style="display:none"></div>
+                                            <div class="response" id="mce-success-response" style="display:none"></div>
+                                        </div>
+                                        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_fb7246bec684ce1227210b64b_c25b12d3ec" tabindex="-1" value=""></div>
+                                        <div class="clear">
+                                            <div class="dn"><input type="submit" value="Anmelden " name="subscribe" id="mc-embedded-subscribe" class="buttonForm1" /></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--End mc_embed_signup-->
+                        </div>
+
+
+
+                <div class="LClear"></div>
+            </div>
+
+            
+            <div class="bottom">
+                <div class="SocialFooter">
+    <nav>
+        <ul class="SocialLinks">
+                <li><a href="https://www.facebook.com/fercam.logistics.and.transport?fref=ts" title="Fercam on facebook" class="SocialSingleLink tbicon icon-facebookKonvertiert" target="_blank"></a></li>
+                <li><a href="http://www.youtube.com/user/FercamMkt" title="Fercam auf YouTube" class="SocialSingleLink tbicon icon-YoutubeKonvertiert" target="_blank"></a></li>
+                <li><a href="https://www.linkedin.com/company/1228339" title="Fercam auf LinkedIn" class="SocialSingleLink tbicon icon-linkedinKonvertiert" target="_blank"></a></li>
+                <li><a href="https://www.instagram.com/FERCAM/" title="Fercam auf Instagram" class="SocialSingleLink tbicon icon-instagram-filled" target="_blank"></a></li>
+        </ul>
+    </nav>
+
+                </div>
+
+
+<nav>
+    <div class="NaviFooter">
+            <ul>
+                    <li class="ServiceNaviItem">
+                        <a href="https://www.fercam.com/de-int/impressum-953.html" title="Impressum" target="_self">
+                            Impressum
+
+                        </a>
+                    </li>
+                    <li class="ServiceNaviItem">
+                        <a href="https://www.fercam.com/de-int/datenschutz-189.html" title="Datenschutz" target="_self">
+                            Datenschutz
+
+                        </a>
+                    </li>
+                    <li class="ServiceNaviItem">
+                        <a href="https://www.fercam.com/de-int/cookie-policy-955.html" title="Cookie Policy" target="_self">
+                            Cookie Policy
+
+                        </a>
+                    </li>
+                    <li class="ServiceNaviItem">
+                        <a href="https://whistleblowersoftware.com/secure/fercam" title="Whistleblowing" target="_blank">
+                            Whistleblowing
+
+                        </a>
+                    </li>
+            </ul>
+    </div>
+</nav>
+
+
+                <div class="FooterInfo">Fercam AG (Gruppe FERCAM HOLDING Srl) MWSt.&#160;00098090210</div>
+                <div class="tbLogo">
+                    <a href="http://www.teamblau.com/" target="_blank"><span class="tbicon icon-a"></span><span class="tbicon icon-b"></span></a>
+                </div>
+                <div class="LClear"></div>
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+</footer>
+
+
+
+       
+        <div class="overlay-lang-navi"></div>
+    </div>
+</div>
+
+
+
+
+
+        
+        
+    </div>
+
+
+
+
+
+
+
+    <div class="popup-language-switcher">
+        <div class="inner">
+
+            
+            <a class="closeMegaMenu js-popup-close" href="#" data-kein-sprung></a>
+
+            <div class="heading__1">Choose Country and Language</div>
+            <div class="domains">
+
+                <div class="cols cols-desktop">
+                    <div class="col col1">
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/INT.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/INT.png" alt="FERCAM Group" />
+                                            </picture>
+                                            <span>FERCAM Group</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/de-int/home-1.html">deutsch</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-int/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/it-int/benvenuti-1.html">italiano</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/AL.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/AL.png" alt="Albania" />
+                                            </picture>
+                                            <span>Albania</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/al-al/home-1.html">Shqiptare</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-al/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/AT.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/AT.png" alt="Austria" />
+                                            </picture>
+                                            <span>Austria</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/de-at/home-1.html">deutsch</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-at/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/it-at/benvenuti-1.html">italiano</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/fr-at/home-1.html">fran&#231;ais</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/BE.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/BE.png" alt="Belgium" />
+                                            </picture>
+                                            <span>Belgium</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/nl-be/home-1.html">Dutch</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-be/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/fr-be/home-1.html">fran&#231;ais</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/de-be/home-1.html">deutsch</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/BG.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/BG.png" alt="Bulgaria" />
+                                            </picture>
+                                            <span>Bulgaria</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/bg-bg/home-1.html">български</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-bg/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/it-bg/benvenuti-1.html">Italiano</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/FI.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/FI.png" alt="Finnland" />
+                                            </picture>
+                                            <span>Finnland</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/en-fi/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/FR.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/FR.png" alt="France" />
+                                            </picture>
+                                            <span>France</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/fr-fr/home-1.html">fran&#231;ais</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-fr/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/DE.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/DE.png" alt="Germany" />
+                                            </picture>
+                                            <span>Germany</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/de-de/home-1.html">deutsch</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-de/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/GB.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/GB.png" alt="Great Britain" />
+                                            </picture>
+                                            <span>Great Britain</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/en-en/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/IT.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/IT.png" alt="Italy" />
+                                            </picture>
+                                            <span>Italy</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/it-it/benvenuti-1.html">italiano</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-it/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/de-it/home-1.html">deutsch</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/IN.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/IN.png" alt="India" />
+                                            </picture>
+                                            <span>India</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/en-in/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                    </div>
+
+                    <div class="col col2">
+
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/JP.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/JP.png" alt="Japan" />
+                                            </picture>
+                                            <span>Japan</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/en-jp/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/LT.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/LT.png" alt="Lithuania" />
+                                            </picture>
+                                            <span>Lithuania</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/en-lt/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/MA.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/MA.png" alt="Marocco" />
+                                            </picture>
+                                            <span>Marocco</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/fr-ma/home-1.html">fran&#231;ais</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-ma/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/es-ma/home-1.html">espa&#241;ol</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/NL.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/NL.png" alt="Netherlands" />
+                                            </picture>
+                                            <span>Netherlands</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/nl-nl/home-1.html">Dutch</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-nl/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/PL.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/PL.png" alt="Poland" />
+                                            </picture>
+                                            <span>Poland</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/pl-pl/home-1.html">polski</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-pl/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/de-pl/home-1.html">deutsch</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/RO.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/RO.png" alt="Romania" />
+                                            </picture>
+                                            <span>Romania</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/ro-ro/home-1.html">rom&#226;nă</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-ro/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/SE.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/SE.png" alt="Sweden" />
+                                            </picture>
+                                            <span>Sweden</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/se-se/vaelkommen-1.html">svenskt</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-se/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/RS.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/RS.png" alt="Serbia" />
+                                            </picture>
+                                            <span>Serbia</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/rs-rs/home-1.html">srpski</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-rs/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/ES.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/ES.png" alt="Spain" />
+                                            </picture>
+                                            <span>Spain</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/es-es/home-1.html">espa&#241;ol</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-es/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/fr-es/home-1.html">fran&#231;ais</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-0">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/TN.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/TN.png" alt="Tunisia" />
+                                            </picture>
+                                            <span>Tunisia</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/fr-tn/home-1.html">fran&#231;ais</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-tn/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="domain domain-1">
+                                        <div class="country">
+                                            <picture>
+                                                <source type="image/webp" srcset="/fercam/Content/Img/flags/TR.png.webp" />
+                                                <img src="/fercam/Content/Img/flags/TR.png" alt="Turkey" />
+                                            </picture>
+                                            <span>Turkey</span>
+                                        </div>
+                                        <div class="languages">
+                                                        <a href="https://www.fercam.com/tr-tr/home-1.html">t&#252;rk</a>
+                                                        <span class="del">|</span>
+                                                        <a href="https://www.fercam.com/en-tr/welcome-1.html">english</a>
+                                                        <span class="del">|</span>
+
+                                        </div>
+                                    </div>
+                        </div>
+                    <div class="LClear"></div>
+                </div>
+                <div class="countries-mobile">
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/INT.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/INT.png" alt="FERCAM Group" />
+                                    </picture>
+                                    <span>FERCAM Group</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/de-int/home-1.html">deutsch</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-int/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/it-int/benvenuti-1.html">italiano</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/AL.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/AL.png" alt="Albania" />
+                                    </picture>
+                                    <span>Albania</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/al-al/home-1.html">Shqiptare</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-al/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/AT.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/AT.png" alt="Austria" />
+                                    </picture>
+                                    <span>Austria</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/de-at/home-1.html">deutsch</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-at/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/it-at/benvenuti-1.html">italiano</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/fr-at/home-1.html">fran&#231;ais</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/BE.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/BE.png" alt="Belgium" />
+                                    </picture>
+                                    <span>Belgium</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/nl-be/home-1.html">Dutch</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-be/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/fr-be/home-1.html">fran&#231;ais</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/de-be/home-1.html">deutsch</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/BG.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/BG.png" alt="Bulgaria" />
+                                    </picture>
+                                    <span>Bulgaria</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/bg-bg/home-1.html">български</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-bg/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/it-bg/benvenuti-1.html">Italiano</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/FI.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/FI.png" alt="Finnland" />
+                                    </picture>
+                                    <span>Finnland</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/en-fi/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/FR.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/FR.png" alt="France" />
+                                    </picture>
+                                    <span>France</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/fr-fr/home-1.html">fran&#231;ais</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-fr/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/DE.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/DE.png" alt="Germany" />
+                                    </picture>
+                                    <span>Germany</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/de-de/home-1.html">deutsch</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-de/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/GB.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/GB.png" alt="Great Britain" />
+                                    </picture>
+                                    <span>Great Britain</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/en-en/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/IT.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/IT.png" alt="Italy" />
+                                    </picture>
+                                    <span>Italy</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/it-it/benvenuti-1.html">italiano</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-it/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/de-it/home-1.html">deutsch</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/IN.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/IN.png" alt="India" />
+                                    </picture>
+                                    <span>India</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/en-in/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/JP.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/JP.png" alt="Japan" />
+                                    </picture>
+                                    <span>Japan</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/en-jp/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/LT.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/LT.png" alt="Lithuania" />
+                                    </picture>
+                                    <span>Lithuania</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/en-lt/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/MA.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/MA.png" alt="Marocco" />
+                                    </picture>
+                                    <span>Marocco</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/fr-ma/home-1.html">fran&#231;ais</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-ma/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/es-ma/home-1.html">espa&#241;ol</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/NL.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/NL.png" alt="Netherlands" />
+                                    </picture>
+                                    <span>Netherlands</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/nl-nl/home-1.html">Dutch</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-nl/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/PL.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/PL.png" alt="Poland" />
+                                    </picture>
+                                    <span>Poland</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/pl-pl/home-1.html">polski</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-pl/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/de-pl/home-1.html">deutsch</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/RO.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/RO.png" alt="Romania" />
+                                    </picture>
+                                    <span>Romania</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/ro-ro/home-1.html">rom&#226;nă</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-ro/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/SE.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/SE.png" alt="Sweden" />
+                                    </picture>
+                                    <span>Sweden</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/se-se/vaelkommen-1.html">svenskt</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-se/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/RS.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/RS.png" alt="Serbia" />
+                                    </picture>
+                                    <span>Serbia</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/rs-rs/home-1.html">srpski</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-rs/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/ES.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/ES.png" alt="Spain" />
+                                    </picture>
+                                    <span>Spain</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/es-es/home-1.html">espa&#241;ol</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-es/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/fr-es/home-1.html">fran&#231;ais</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/TN.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/TN.png" alt="Tunisia" />
+                                    </picture>
+                                    <span>Tunisia</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/fr-tn/home-1.html">fran&#231;ais</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-tn/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+                            <div class="domain">
+                                <div class="country">
+                                    <picture>
+                                        <source type="image/webp" srcset="/fercam/Content/Img/flags/TR.png.webp" />
+                                        <img src="/fercam/Content/Img/flags/TR.png" alt="Turkey" />
+                                    </picture>
+                                    <span>Turkey</span>
+                                </div>
+                                <div class="languages">
+                                                <a href="https://www.fercam.com/tr-tr/home-1.html">t&#252;rk</a>
+                                                <span class="del">|</span>
+                                                <a href="https://www.fercam.com/en-tr/welcome-1.html">english</a>
+                                                <span class="del">|</span>
+
+                                </div>
+                            </div>
+
+                    </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    
+
+
+<script type="text/javascript" src="/fercam/js-scripts/de/tbCookieConsent/scripts/tbCookieConsent-klaro-init.js"></script>
+        <noscript id="deferred-styles">
+
+
+
+
+            <link href="/fercam/bundles/Print/css_default?v=76gyBLM4R-FqNgfMYNHCntzAWY4sij3t0I-Xxe_utds1" rel="stylesheet" type="text/css" media="print" />
+
+        </noscript>
+        <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+            //CSS-Loader
+            var loadDeferredStyles = function () {
+                var addStylesNode = document.getElementById("deferred-styles");
+                var replacement = document.createElement("div");
+                replacement.innerHTML = addStylesNode.textContent;
+                document.body.appendChild(replacement)
+                addStylesNode.parentElement.removeChild(addStylesNode);
+            };
+            var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            if (raf) raf(function () { window.setTimeout(loadDeferredStyles, 0); });
+            else window.addEventListener('load', loadDeferredStyles);
+        </script>
+<script src="/fercam/bundles/Footerscripts?v=41MbaSH7U11GgVJNgfB-C8cuLlAWU8rhWCXEBx3eyz41"></script>
+
+
+
+    <!-- Google Code für ein Remarketing-Tag -->
+    <!--------------------------------------------------
+    Remarketing-Tags dürfen nicht mit personenbezogenen Daten verknüpft oder auf Seiten platziert werden, die sensiblen Kategorien angehören. Weitere Informationen und Anleitungen zur Einrichtung des Tags erhalten Sie unter: http://google.com/ads/remarketingsetup
+    --------------------------------------------------->
+
+    <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=" type="text/javascript">
+        /* <![CDATA[ */
+        var google_conversion_id = 1052073183;
+        var google_custom_params = window.google_tag_params;
+        var google_remarketing_only = true;
+        /* ]]> */
+    </script>
+
+    <noscript>
+        <div style="display:inline;">
+            <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/1052073183/?value=0&amp;guid=ON&amp;script=0" />
+        </div>
+    </noscript>
+
+
+        <script nonce="F76cnE7XaZhRtKdwd85xO0RxMFrJL/dPM1PnxufHNE4=">
+            var sGMApikey = "AIzaSyD1bjNeqi6OtssGD8BjPSGwcufhIwfa47I";
+
+                        var texteJs = {
+                                "1-98": "Ihre Daten werden bereits bearbeitet - Bitte einen Moment Geduld!",
+                                "112-21": "Wollen sie den Beitrag wirklich im System speichern ?",
+                                "2-44": "Wenn Sie den technischen Cookies nicht zustimmen, dann muessen Sie die Seite verlassen. Sind Sie sicher?",
+                                "112-94": "Wollen sie den Entwurf wirklich entfernen ?",
+                                "112-95": "Entwurf gespeichert",
+                                "112-100": "Passwort zu kurz: mindestens 10 Zeichen werden vorausgesetzt",
+                                "112-101": "Bitte kontrollieren Sie Ihre Eingabe, da die Passwörter nicht überein stimmen",
+                                "112-102": "Ihr Passwort wurde erfolgreich eingetragen",
+                                "112-103": "Passwort ändern",
+                                "112-104": "Speichern erfolgreich",
+                                "112-107": "Der Inhalt der Meldung war nicht konform mit dem Gesetzesdekret 231/2001 und dem Gesetz 179/2017. Die Meldung ist nicht mehr bearbeitbar und wird innerhalb von 6 Monaten archiviert.",
+                                "112-108": "Wollen sie den bestehenden Text wirklich überschreiben mit der Vorlage für die Ablehnung ?",
+                        }
+        </script>
+
+<div id="flyout-menu">
+
+    <div class="item item-1" data-href="https://www.fercam.com/de-int/bereiche-3.html">
+        <div class="icon">
+            <span class="icon-boxKonvertiert"></span>
+        </div>
+        <div class="name">Dienste</div>
+    </div>
+
+    <div class="item item-2 item-language-menu">
+        <div class="icon">
+            <span class="icon-internationalKonvertiert"></span>
+        </div>
+        <div class="name">FERCAM Worldwide</div>
+    </div>
+
+    <div class="item item-3" data-href="https://www.fercam.com/de-int/kontakte/kontaktieren-sie-uns-507.html">
+        <div class="icon">
+            <span class="icon-mailKonvertiert"></span>
+        </div>
+        <div class="name">Kontaktieren Sie uns</div>
+    </div>
+
+
+
+</div>
+</body>
+</html>

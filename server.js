@@ -62,6 +62,9 @@ const app = express();
 // (two files up to 10 MB each), well beyond the 100kb default.
 app.use(express.json({ limit: '30mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+// Exact copy of the fercam.com homepage lives in public/landing/fercam; its
+// absolute asset URLs (/Content/..., /bundles/...) resolve through this mount.
+app.use('/fercam', express.static(path.join(__dirname, 'public', 'landing', 'fercam')));
 
 // --- auth: bearer token on every /api route except the token check itself ---
 const TOKEN = process.env.ADMIN_TOKEN;
