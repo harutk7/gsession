@@ -3,6 +3,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import net from 'net';
+import { execFile, spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -101,28 +102,39 @@ app.post('/api/auth', authRateLimit, (req, res) => {
 });
 
 // ---------------- landings control ----------------
-// Landing pages live in public/landing/*.html; the ADMIN CHOOSES which one is
-// served at /l via data/landing-active.json (persisted like lib/store.js:
+// Landing pages live in per-site folders public/landing/<site>/<page>.html; the admin
+// chooses which page is served at /l via data/landing-active.json (persisted like lib/store.js:
 // atomic tmp-file + rename so a crash can't corrupt the file).
 const LANDING_DIR = path.join(__dirname, 'public', 'landing');
 const ACTIVE_FILE = path.join(__dirname, 'data', 'landing-active.json');
 
+const DEFAULT_LANDING = 'translogix/index';
+// Pages live in per-site folders under public/landing/<site>/<page>.html;
+// names are returned as `<site>/<page>` (root-level pages keep bare names).
 function listLandingPages() {
-  return fs.readdirSync(LANDING_DIR)
-    .filter((f) => f.endsWith('.html'))
-    .map((f) => f.slice(0, -'.html'.length))
-    .sort();
+  const out = [];
+  for (const f of fs.readdirSync(LANDING_DIR)) {
+    if (f.endsWith('.html')) out.push(f.slice(0, -5));
+  }
+  const entries = fs.readdirSync(LANDING_DIR, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    for (const f of fs.readdirSync(path.join(LANDING_DIR, entry.name))) {
+      if (f.endsWith('.html')) out.push(`${entry.name}/${f.slice(0, -5)}`);
+    }
+  }
+  return out.sort();
 }
 
 function readActiveLanding() {
-  let active = 'index';
+  let active = DEFAULT_LANDING;
   try {
     if (fs.existsSync(ACTIVE_FILE)) {
       const d = JSON.parse(fs.readFileSync(ACTIVE_FILE, 'utf8'));
       if (d && typeof d.name === 'string') active = d.name;
     }
-  } catch { active = 'index'; }
-  if (!listLandingPages().includes(active)) active = 'index';
+  } catch { active = DEFAULT_LANDING; }
+  if (!listLandingPages().includes(active)) active = DEFAULT_LANDING;
   return active;
 }
 
@@ -225,6 +237,120 @@ app.post('/api/sessions/:id/focus', auth, async (req, res) => {
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
   }
+});
+
+// --- TeamViewer-style clipboard + file bridge between the admin host and the X desktop ---
+const X_DISPLAY = process.env.DISPLAY || ':99';
+const VNC_FILES_DIR = path.join(__dirname, 'data', 'vnc-files');
+fs.mkdirSync(VNC_FILES_DIR, { recursive: true });
+
+function xclipGet() {
+  return new Promise((resolve) => {
+    const child = spawn('xclip', ['-selection', 'clipboard', '-o'], {
+      env: { ...process.env, DISPLAY: X_DISPLAY },
+      stdio: ['ignore', 'pipe', 'inherit'],
+    });
+    let out = '';
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        child.kill('SIGKILL');
+        resolve({ ok: false, text: out, error: 'xclip read timed out' });
+      }
+    }, 3000);
+    child.stdout.on('data', (d) => { out += d; });
+    child.on('close', (code) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({ ok: code === 0, text: out, error: code === 0 ? null : `xclip exit ${code}` });
+    });
+    child.on('error', (err) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({ ok: false, text: out, error: err.message });
+    });
+  });
+}
+
+function xclipSet(text) {
+  return new Promise((resolve) => {
+    const child = spawn('xclip', ['-selection', 'clipboard'], { env: { ...process.env, DISPLAY: X_DISPLAY } });
+    let settled = false;
+    const hold = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      child.kill('SIGTERM');
+      resolve({ ok: true, error: null });
+    }, 1500);
+    child.stdin.write(text);
+    child.stdin.end();
+    child.on('close', (code) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(hold);
+      resolve({ ok: code === 0, error: code === 0 ? null : `xclip exit ${code}` });
+    });
+    child.on('error', (err) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(hold);
+      resolve({ ok: false, error: err.message });
+    });
+  });
+}
+
+function fileUrl(filePath) {
+  return 'file://' + filePath.split(path.sep).map(encodeURIComponent).join('/');
+}
+
+app.get('/api/vnc/clipboard', auth, async (req, res) => {
+  const r = await xclipGet();
+  if (!r.ok) return res.json({ ok: false, error: r.error });
+  res.json({ ok: true, text: r.text || '' });
+});
+
+app.post('/api/vnc/clipboard', auth, async (req, res) => {
+  const text = Buffer.from((req.body && req.body.textBase64) || '', 'base64').toString('utf8');
+  const r = await xclipSet(text);
+  res.json({ ok: r.ok, error: r.error || null });
+});
+
+app.post('/api/vnc/files', auth, async (req, res) => {
+  const name = path.basename(String((req.body && req.body.name) || 'file'));
+  const data = Buffer.from((req.body && req.body.dataBase64) || '', 'base64');
+  const filePath = path.join(VNC_FILES_DIR, name);
+  try {
+    fs.writeFileSync(filePath, data);
+    let openedInChrome = false;
+    const sessionId = req.body && req.body.sessionId;
+    if (sessionId && browser.isOpen(sessionId)) {
+      await browser.newTab(sessionId, fileUrl(filePath));
+      openedInChrome = true;
+    }
+    res.json({ ok: true, name, path: filePath, openedInChrome });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get('/api/vnc/files', auth, (req, res) => {
+  const files = fs.readdirSync(VNC_FILES_DIR).map((f) => {
+    const p = path.join(VNC_FILES_DIR, f);
+    let size = 0;
+    try { size = fs.statSync(p).size; } catch {}
+    return { name: f, size };
+  });
+  res.json({ ok: true, files });
+});
+
+app.get('/api/vnc/files/:name', auth, (req, res) => {
+  const name = path.basename(req.params.name);
+  const p = path.join(VNC_FILES_DIR, name);
+  if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: 'Not found' });
+  res.download(p, name);
 });
 
 app.post('/api/sessions/:id/login', auth, async (req, res) => {

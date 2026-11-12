@@ -555,6 +555,67 @@ function focusSession(id, attempt = 0) {
     .catch(() => {});
 }
 
+function toBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+async function pasteToRemote() {
+  if (!_ctlId) return;
+  let text = '';
+  try { text = await navigator.clipboard.readText(); }
+  catch { text = prompt('Paste text into the remote desktop:') || ''; }
+  if (!text) return toast('Nothing in clipboard.', 'err');
+  const body = JSON.stringify({ textBase64: toBase64(text) });
+  const r = await api('/vnc/clipboard', { method: 'POST', body });
+  if (r.ok) toast('Pasted into the remote desktop.', 'ok');
+  else toast('Paste failed: ' + (r.error || 'unknown'), 'err');
+}
+
+async function copyFromRemote() {
+  const r = await api('/vnc/clipboard');
+  if (!r.ok) return toast('Copy failed: ' + (r.error || 'unknown'), 'err');
+  const text = r.text || '';
+  if (!text) return toast('Remote clipboard is empty.', 'err');
+  try {
+    await navigator.clipboard.writeText(text);
+    toast('Remote text copied to this computer.', 'ok');
+  } catch {
+    prompt('Remote clipboard text:', text);
+  }
+}
+
+async function uploadCtlFile(file) {
+  const dataBase64 = await fileToBase64(file);
+  const body = JSON.stringify({ name: file.name, dataBase64, sessionId: _ctlId });
+  const r = await api('/vnc/files', { method: 'POST', body });
+  if (r.ok) toast(`Uploaded ${r.name}${r.openedInChrome ? ' and opened in Chrome.' : '.'}`, 'ok');
+  else toast('Upload failed: ' + (r.error || 'unknown'), 'err');
+}
+
+async function showCtlFiles() {
+  const r = await api('/vnc/files');
+  if (!r.ok) return toast('Files: ' + (r.error || 'load failed'), 'err');
+  if (!r.files.length) return toast('No files uploaded yet.', 'err');
+  const list = r.files.map((f) => `${f.name} (${f.size} bytes)`).join(', ');
+  toast('Files on server: ' + list, 'ok');
+  for (const f of r.files) {
+    const a = document.createElement('a');
+    a.href = '/api/vnc/files/' + encodeURIComponent(f.name) + '?token=' + encodeURIComponent(TOKEN);
+    a.download = f.name;
+    a.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+}
+
 function refreshCtlSelect() {
   const sel = $('ctl-select');
   if (!sel) return;
@@ -721,10 +782,22 @@ $('ctl-url').addEventListener('keydown', (e) => {
 $('ctl-back').addEventListener('click', () => ctlNav('back'));
 $('ctl-fwd').addEventListener('click', () => ctlNav('forward'));
 $('ctl-reload').addEventListener('click', () => ctlNav('reload'));
+$('ctl-mode-desktop').addEventListener('click', () => setCtlMode('desktop'));
+$('ctl-mode-page').addEventListener('click', () => setCtlMode('page'));
+$('ctl-focus').addEventListener('click', () => focusSession(_ctlId));
+$('ctl-clipboard-paste').addEventListener('click', pasteToRemote);
+$('ctl-clipboard-copy').addEventListener('click', copyFromRemote);
+$('ctl-file-upload').addEventListener('click', () => $('ctl-file-input').click());
+$('ctl-file-list').addEventListener('click', showCtlFiles);
+$('ctl-file-input').addEventListener('change', (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (f) uploadCtlFile(f);
+  e.target.value = '';
+});
 $('ctl-fs').addEventListener('click', () => {
-  const st = $('ctl-stage');
+  const target = _ctlMode === 'desktop' ? $('ctl-desktop') : $('ctl-stage');
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-  else st.requestFullscreen().catch(() => {});
+  else target.requestFullscreen().catch(() => {});
 });
 $('ctl-key').addEventListener('change', (e) => {
   if (e.target.checked && _ctlId) $('ctl-stage').focus();

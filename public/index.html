@@ -96,6 +96,13 @@
           <span id="ctl-live" class="live-dot hidden"><span class="dot"></span>LIVE</span>
           <div class="spacer"></div>
           <button id="ctl-focus" class="ghost" title="Raise this session's Chrome window">🎯 Focus window</button>
+          <span class="ctl-desktop-only">
+            <button id="ctl-clipboard-paste" class="ghost" title="Copy from your computer into the remote desktop">⧉ Paste to remote</button>
+            <button id="ctl-clipboard-copy" class="ghost" title="Copy from the remote desktop into your computer">⧈ Copy from remote</button>
+            <button id="ctl-file-upload" class="ghost" title="Upload a file and open it in the selected session">📁 Upload file</button>
+            <button id="ctl-file-list" class="ghost" title="List uploaded files">📂 Files</button>
+            <input type="file" id="ctl-file-input" class="hidden" />
+          </span>
           <label class="ctl-toggle ctl-page-only" title="Forward your mouse to the remote browser">
             <input type="checkbox" id="ctl-mouse" checked /> 🖱️ Mouse
           </label>

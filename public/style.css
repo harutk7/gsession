@@ -224,6 +224,9 @@ a.chip.doc:hover { color: var(--accent); border-color: var(--accent); }
 #section-control.mode-page .ctl-desktop { display: none !important; }
 #section-control.mode-desktop .ctl-stage { display: none !important; }
 #section-control.mode-page .ctl-desktop { display: none !important; }
+#section-control.mode-page .ctl-desktop-only { display: none !important; }
+.ctl-desktop-only { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.hidden { display: none !important; }
 .ctl-desktop {
   position: relative; flex: 0 1 auto; min-height: 0;
   width: 100%; max-width: min(100%, calc((100vh - 230px) * 16 / 9));

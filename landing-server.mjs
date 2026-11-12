@@ -35,6 +35,9 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.use(express.static(path.join(__dirname, 'public', 'landing')));
+// Sites live under public/landing/<site>/... served behind /landing/<site>/<page>.
+const STATIC_OPTS = { extensions: ['html'] };
+const landingStatic = express.static(path.join(__dirname, 'public', 'landing'), STATIC_OPTS);
+app.use('/landing', landingStatic);
 
 app.listen(PORT, '0.0.0.0', () => console.log(`\n  TransLogistX landing:  http://localhost:${PORT}\n`));
